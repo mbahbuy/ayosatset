@@ -24,5 +24,10 @@ class DatabaseSeeder extends Seeder
             'admin_status' => true,
             'editor_status' => true,
         ]);
+        \App\Models\Shop::create([
+            'user_hash' => substr(md5('Admin@ayosatset.com'), 0, 8),
+            'name' => 'Admin Ayosatset',
+            'shop_hash' => substr(md5(substr(md5('Admin@ayosatset.com'), 0, 8) . 'Admin Ayosatset'), 0, 12),
+        ]);
     }
 }

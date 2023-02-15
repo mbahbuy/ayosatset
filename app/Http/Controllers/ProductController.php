@@ -35,7 +35,23 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'name' => 'required|max:255',
+            'price' => 'required|max:20',
+            'image' => 'nullable|image|file|max:2048',
+            'description' => 'required'
+        ]);
+
+        if($request->file('image'))
+        {
+            $validatedData['image'] = $request->file('image')->store('product-image');
+        };
+
+        $validatedData['shop_hash'] = auth()->user()->shop->shop_hash;
+        $validatedData['product_hash'] = substr(md5($validatedData['shop_hash'].$validatedData['name'] ), 0, 12);
+        Product::create($validatedData);
+
+        return back()->with('success', 'New product has been added!!!');
     }
 
     /**

@@ -17,11 +17,12 @@ return new class extends Migration
             $table->id();
             $table->string('shop_hash');
             $table->string('name');
-            $table->string('product_hash');
+            $table->string('product_hash')->unique();
             $table->string('video')->nullable();
             $table->string('image')->nullable();
             $table->text('description')->nullable();
-            $table->foreignId('stock')->default(true);
+            $table->bigInteger('stock')->default(true);
+            $table->bigInteger('price');
             $table->timestamps();
         });
     }

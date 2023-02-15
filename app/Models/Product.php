@@ -15,8 +15,8 @@ class Product extends Model
         return 'product_hash';
     }
 
-    public function shope(){
-        return $this->belongsTo('App\Models\Shope', 'shope_hash', 'shope_hash');
+    public function shop(){
+        return $this->belongsTo('App\Models\Shop', 'shop_hash', 'shop_hash');
     }
 
 

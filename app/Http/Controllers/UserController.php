@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\{User,Product};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-
 class UserController extends Controller
 {
     /**
@@ -16,7 +15,16 @@ class UserController extends Controller
      */
     public function index()
     {
-        return view('profile.index');
+        if(!$this->middleware('verify')){
+            return redirect('checkemail');
+        }
+        if (auth()->user()->name == '' || auth()->user()->name == null) {
+            return redirect('profile/data/user');
+        }
+        $product = (auth()->user()->shop) ? Product::where('shop_hash', auth()->user()->shop->shop_hash)->orderBy('id', 'DESC')->get() : [];
+        return view('profile.index',[
+            'product' => $product
+        ]);
     }
 
     /**
@@ -87,21 +95,24 @@ class UserController extends Controller
 
     public function afterVerifyForm()
     {
-        $data = auth()->user();
-        dd($data);
-        return view('');
+        if(auth()->user()->name == '' || auth()->user()->name == null){
+            return view('auth.after_verify');
+        }
+        return redirect('profile');
     }
 
     public function afterVerifyPost(Request $request)
     {
         $validatedData = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'string', 'confirmed'],
         ]);
 
         auth()->user()->update([
             'name' => $validatedData['name'],
             'password' => Hash::make($validatedData['password']),
         ]);
+
+        return redirect('profile')->with('success', 'Selamat datang di ayosatset, belanja tampa ribet');
     }
 }

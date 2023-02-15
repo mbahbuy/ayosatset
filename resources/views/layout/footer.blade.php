@@ -181,7 +181,7 @@
       <div class="row">
         <div class="col-12">
           <div class="footer-bottom">
-            <p class="footer-copytext">&copy; All Copyrights Reserved by <a href="#">Mironcoder</a>
+            <p class="footer-copytext">&copy; All Copyrights Reserved by <a href="#">Verimer</a>
             </p>
             <div class="footer-card">
               <a href="#">

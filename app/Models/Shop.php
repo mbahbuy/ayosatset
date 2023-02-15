@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Shope extends Model
+class Shop extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
 
     public function getRouteKeyName()
     {
-        return 'shope_hash';
+        return 'shop_hash';
     }
 
     public function user(){
@@ -20,7 +20,6 @@ class Shope extends Model
     }
 
     public function product(){
-        return $this->hasMany('App\Models\Product', 'shope_hash', 'shope_hash');
+        return $this->hasMany('App\Models\Product', 'shop_hash', 'shop_hash');
     }
-
 }

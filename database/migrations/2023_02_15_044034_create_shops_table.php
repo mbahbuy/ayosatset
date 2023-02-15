@@ -13,15 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('shopes', function (Blueprint $table) {
+        Schema::create('shops', function (Blueprint $table) {
             $table->id();
             $table->string('user_hash');
-            $table->string('shop_hash');
-            $table->string('name');
+            $table->string('name')->unique();
+            $table->string('shop_hash')->unique();
             $table->string('image')->nullable();
             $table->text('description')->nullable();
-            $table->string('banner');
-            $table->string('address');
+            $table->string('banner')->nullable();
+            $table->string('address')->nullable();
             $table->foreignId('status')->default(true);
             $table->timestamps();
         });
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('shopes');
+        Schema::dropIfExists('shops');
     }
 };

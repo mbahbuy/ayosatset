@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Shope;
+use App\Models\{Product,Shop};
 use Illuminate\Http\Request;
 
-class ShopeController extends Controller
+class ShopController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +14,12 @@ class ShopeController extends Controller
      */
     public function index()
     {
-        return view('shope.index');
+        if (auth()->user()->shop == false) {
+            return redirect('/profile');
+        }
+        return view('shop.index',[
+            'product' => Product::where('shop_hash', auth()->user()->shop->shop_hash)->orderBy('id', 'DESC')->get()
+        ]);
     }
 
     /**
@@ -35,16 +40,25 @@ class ShopeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'name' => 'required|max:255',
+            'description' => 'required'
+        ]);
+
+        $validatedData['user_hash'] = auth()->user()->user_hash;
+        $validatedData['shop_hash'] = substr(md5($validatedData['user_hash'].$validatedData['name'] ), 0, 12);
+        Shop::create($validatedData);
+
+        return redirect('/shop');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Shope  $shope
+     * @param  \App\Models\Shop  $shop
      * @return \Illuminate\Http\Response
      */
-    public function show(Shope $shope)
+    public function show(Shop $shop)
     {
         //
     }
@@ -52,10 +66,10 @@ class ShopeController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Shope  $shope
+     * @param  \App\Models\Shop  $shop
      * @return \Illuminate\Http\Response
      */
-    public function edit(Shope $shope)
+    public function edit(Shop $shop)
     {
         //
     }
@@ -64,10 +78,10 @@ class ShopeController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Shope  $shope
+     * @param  \App\Models\Shop  $shop
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Shope $shope)
+    public function update(Request $request, Shop $shop)
     {
         //
     }
@@ -75,10 +89,10 @@ class ShopeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Shope  $shope
+     * @param  \App\Models\Shop  $shop
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Shope $shope)
+    public function destroy(Shop $shop)
     {
         //
     }
