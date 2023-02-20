@@ -21,8 +21,6 @@ return new class extends Migration
             $table->string('password')->nullable();
             $table->string('user_hash')->unique();
             $table->string('image')->nullable();
-            $table->foreignId('admin_status')->default(false);
-            $table->foreignId('editor_status')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });

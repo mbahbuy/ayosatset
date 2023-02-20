@@ -16,7 +16,7 @@ class IsEditor
      */
     public function handle(Request $request, Closure $next)
     {
-        if(!auth()->check() || !auth()->user()->is_editor){
+        if(!auth()->check() || !auth()->user()->editor_status){
             abort(403);
         };
         return $next($request);
