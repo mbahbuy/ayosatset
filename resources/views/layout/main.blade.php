@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="{{ asset('css') }}/user-auth.css">
     <link rel="stylesheet" href="{{ asset('css') }}/error.css">
     <link rel="stylesheet" href="{{ asset('css') }}/index.css">
+    <link rel="stylesheet" href="{{ asset('css') }}/product-details.css">
     <link rel="stylesheet" href="{{ asset('css') }}/main.css">
   </head>
   <body>

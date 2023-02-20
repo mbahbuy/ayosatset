@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\{Product,Shop};
-use Illuminate\Http\Request;
+use Illuminate\Http\{Request};
 use Illuminate\Support\Facades\{Validator};
 
 class ShopController extends Controller
@@ -64,7 +64,10 @@ class ShopController extends Controller
      */
     public function show(Shop $shop)
     {
-        //
+        return view('home.shop',[
+            'products' => Product::where('shop_hash', $shop->shop_hash)->orderBy('id', 'DESC')->get(),
+            'shop' => $shop
+        ]);
     }
 
     /**

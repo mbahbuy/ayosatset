@@ -74,8 +74,8 @@
       <div class="row">
         <div class="col-sm-6 col-xl-3">
           <div class="footer-widget">
-            <a class="footer-logo" href="#">
-              <img src="images/logo.png" alt="logo">
+            <a href="{{ route('home') }}" class="footer-logo img-fluid">
+              <img src="{{ asset('images/logoipsum-221.svg') }}" alt="logo">
             </a>
             <p class="footer-desc">Adipisci asperiores ipsum ipsa repellat consequatur repudiandae quisquam assumenda dolor perspiciatis sit ipsum dolor amet.</p>
             <ul class="footer-social">
