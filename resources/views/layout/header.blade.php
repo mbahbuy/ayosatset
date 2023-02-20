@@ -320,11 +320,14 @@
       @else
         <div class="header-widget ml-3">
           <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
-            <img src="images/user.png" alt="user">
+            <img src="{{ (auth()->user()->image) ? asset( 'assets' . '/' . auth()->user()->image) : 'images/user.png' }}">
             <span>{{ auth()->user()->name }}</span>
           </button>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{{ route('profile.index') }}">Profile</a></li>
+            <li><a class="dropdown-item" href="{{ route('profile.index') }}">My profile</a></li>
+            @if (auth()->user()->shop == true)
+            <li><a class="dropdown-item" href="{{ route('shop.index') }}">My shop</a></li>
+            @endif
             <li>
               <form action="{{ route('logout') }}" method="POST">
                 @csrf

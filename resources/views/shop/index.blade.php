@@ -150,41 +150,54 @@
     </div>
     </div>
 </div>
+
 <div class="modal fade" id="add-product-card">
+    @php
+        $img_class_product_add = ($errors->product_store->has('image')) ? 'is-invalid' : '' ;
+        $img_value_product_add = ($errors->product_store->any()) ? old('image') : '';
+        $name_class_product_add = ($errors->product_store->has('name')) ? 'is-invalid' : '' ;
+        $name_value_product_add = ($errors->product_store->any()) ? old('name') : '';
+        $price_class_product_add = ($errors->product_store->has('price')) ? 'is-invalid' : '' ;
+        $price_value_product_add = ($errors->product_store->any()) ? old('price') : '';
+        $desc_class_product_add = ($errors->product_store->has('description')) ? 'is-invalid' : '' ;
+        $desc_value_product_add = ($errors->product_store->any()) ? old('description') : '';
+    @endphp
     <div class="modal-dialog modal-xl">
-        @if ($errors->any())
-            <div class="mt-n1 mb-3 text-center alert alert-danger alert-dismissible fade show" role="alert">
-            {{ implode('', $errors->all(':message')) }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
         <div class="modal-content">
             <button class="modal-close icofont-close" data-bs-dismiss="modal"></button>
             <form action="{{ route('product.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="product-view">
                     <div class="m-4 p-4">
+                        @if ($errors->product_store->any())
+                            <div class="mb-3 text-center alert alert-danger alert-dismissible fade show" role="alert">
+                                @foreach ($errors->product_store->all() as $item)
+                                    {{ $item }} <br>
+                                @endforeach
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
                         <div class="row clearfix">
                             <div class="col-lg-6 float-start">
                                 <div class="mb-3">
-                                    <input type="file" class="form-control" placeholder="image" name="image" id="image" onchange="imagePreview()">
+                                    <input type="file" class="form-control {{ $img_class_product_add }}" placeholder="image" name="image" id="product-img" onchange="productPreview()" value="{{ $img_value_product_add }}">
                                 </div>
-                                <img src="" class="img-preview img-fluid">
+                                <img src="" class="product-preview img-fluid">
                             </div>
                             <div class="col-lg-6 float-end">
                                 <div class="form-group">
                                     <label for="productName">Product Name</label>
-                                    <input type="text" class="form-control @error('name') is-invalid @enderror" id="productName" name="name" placeholder="Enter product name" value="{{ old('name') }}">
+                                    <input type="text" class="form-control {{ $name_class_product_add }}" id="productName" name="name" placeholder="Enter product name" value="{{ $name_value_product_add }}">
                                 </div>
                                 <!-- Input Field -->
                                 <div class="form-group">
                                     <label for="productPrice">Price</label>
-                                    <input type="number" class="form-control @error('price') is-invalid @enderror" id="productPrice" name="price" placeholder="Enter price" value="{{ old('price') }}">
+                                    <input type="number" class="form-control {{ $price_class_product_add }}" id="productPrice" name="price" placeholder="Enter price" value="{{ $price_value_product_add }}">
                                 </div>
                                 <!-- Input Field -->
                                 <div class="form-group">
                                     <label for="productDescription">Description</label>
-                                    <textarea class="form-control @error('description') is-invalid @enderror" id="productDescription" rows="3" name="description">{{ old('description') }}</textarea>
+                                    <textarea class="form-control {{ $desc_class_product_add }}" id="productDescription" rows="3" name="description">{{ $desc_value_product_add }}</textarea>
                                 </div>
                                 <div class="form-button">
                                     <button type="submit">Tambah</button>
@@ -197,36 +210,74 @@
         </div>
     </div>
 </div>
-<section class="single-banner" style="background: url(images/single-banner.jpg) no-repeat center;">
-    <div class="container">
-    <h2>Brand Single</h2>
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-        <a href="index.html">Home</a>
-        </li>
-        <li class="breadcrumb-item">
-        <a href="brand-list.html">brand-list</a>
-        </li>
-        <li class="breadcrumb-item active" aria-current="page">brand-single</li>
-    </ol>
+
+<div class="modal fade" id="settings">
+    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+        @php
+            $banner_class_shop = ($errors->shop_update->has('banner')) ? 'is-invalid' : '' ;
+            $banner_value_shop = ($errors->shop_update->any()) ? old('banner') : auth()->user()->shop->banner;
+            $name_class_shop = ($errors->shop_update->has('name')) ? 'is-invalid' : '' ;
+            $name_value_shop = ($errors->shop_update->any()) ? old('name') : auth()->user()->shop->name;
+            $img_class_shop = ($errors->shop_update->has('image')) ? 'is-invalid' : '';
+            $img_value_shop = ($errors->shop_update->any()) ? old('image') : ((auth()->user()->shop->image) ? auth()->user()->shop->image : '') ;
+            $desc_class_shop = ($errors->shop_update->has('description')) ? 'is-invalid' : '';
+            $desc_value_shop = ($errors->shop_update->any()) ? old('description') : ((auth()->user()->shop->description) ? auth()->user()->shop->description : '');
+            $des_class_shop = ($errors->shop_update->has('description')) ? 'is-invalid' : '';
+            $des_value_shop = ($errors->shop_update->any()) ? old('description') : auth()->user()->shop->description;
+        @endphp
+        <button class="modal-close" data-bs-dismiss="modal">
+            <i class="icofont-close"></i>
+        </button>
+        <form class="modal-form" method="POST" action="{{ route('shop.update', auth()->user()->shop->shop_hash) }}" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+            <div class="form-title mb-3">
+                <h3>Settings Shop</h3>
+            </div>
+            @if ($errors->shop_update->any())
+                <div class="mb-3 text-center alert alert-danger alert-dismissible fade show" role="alert">
+                    @foreach ($errors->shop_update->all() as $item)
+                        {{ $item }} <br>
+                    @endforeach
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+            <div class="form-group">
+                <label class="form-label" for="banner">Banner</label>
+                <input class="form-control {{ $banner_class_shop }}" type="file" name="banner" id="banner" value="{{ $banner_value_shop }}" onchange="bannerPreview()">
+                <img class="img-fluid banner-preview" src="{{ (auth()->user()->shop->banner) ? asset( 'assets' . '/' . auth()->user()->shop->banner ) : 'images/single-banner.jpg' }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="shop-img">shop image</label>
+                <input class="form-control {{ $img_class_shop }}" type="file" name="image" id="shop-img" value="{{ $img_value_shop }}" onchange="shopPreview()">
+                <img class="img-fluid shop-preview" src="{{ (auth()->user()->shop->image) ? asset('assets' . '/' . auth()->user()->shop->image ) : 'images/brand/02.jpg' }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="name">name</label>
+                <input class="form-control {{ $name_class_shop }}" name="name" id="name" type="text" value="{{ $name_value_shop }}">
+            </div>
+            <div class="form-group">
+                <label for="productDescription">Description</label>
+                <textarea class="form-control {{ $des_class_shop }}" id="productDescription" rows="3" name="description">{{ $des_value_shop }}</textarea>
+            </div>
+            <button class="form-btn" type="submit">save profile info</button>
+        </form>
     </div>
-</section>
+    </div>
+</div>
+
+<section class="single-banner" style="background: url({{ (auth()->user()->shop->banner) ? asset( 'assets' . '/' . auth()->user()->shop->banner ) : 'images/single-banner.jpg' }}) no-repeat center;"></section>
 <div class="brand-single">
-    <a href="#">
-    <img src="images/brand/02.jpg" alt="brand">
+    <a>
+        <img class="img-fluid" src="{{ (auth()->user()->shop->image) ? asset('assets' . '/' . auth()->user()->shop->image ) : 'images/brand/02.jpg' }}" alt="brand">
     </a>
-    <a href="#">
-    <h3>vegan lovers</h3>
+    <a>
+        <h3>{{ auth()->user()->shop->name }}</h3>
     </a>
-    <ul>
-    <li class="fas fa-star active"></li>
-    <li class="fas fa-star active"></li>
-    <li class="fas fa-star active"></li>
-    <li class="fas fa-star active"></li>
-    <li class="fas fa-star"></li>
-    <li class="total">(163 ratings)</li>
-    </ul>
-    <p>(45 items)</p>
+    <a href="#" data-bs-toggle="modal" data-bs-target="#settings">
+        Settings
+    </a>
 </div>
 <section class="inner-section shop-part">
     <div class="container">
@@ -352,39 +403,75 @@
     </div>
 </section>
 
-
-<script>
-
-function imagePreview()
-{
-  const image = document.querySelector('#image');
-  const imgPreview = document.querySelector('.img-preview');
-  
-  imgPreview.style.display = 'block';
-
-  const oFReader = new FileReader();
-  oFReader.readAsDataURL(image.files[0]);
-
-  oFReader.onload = function(oFREvent)
-  {
-    imgPreview.src = oFREvent.target.result;
-  }
-
-};
-
-</script>
-
 @endsection
 
 @section('script')
 
-@if ($errors->any())
-    <script>
-        var myModal = new bootstrap.Modal(document.getElementById("add-product-card"), {});
-        document.onreadystatechange = function () {
-            myModal.show();
-        };
-    </script>
-@endif
+<script>
+    // Produk input preview
+    const productImg = document.querySelector('#product-img');
+    const productImgPreview = document.querySelector('.product-preview');
+    function productPreview()
+    {
+      productImgPreview.style.display = 'block';
+    
+      const oFReader = new FileReader();
+      oFReader.readAsDataURL(productImg.files[0]);
+    
+      oFReader.onload = function(oFREvent)
+      {
+        productImgPreview.src = oFREvent.target.result;
+      }
+    };
+
+    // banner preview
+    const bannerImg = document.querySelector('#banner');
+    const bannerImgPreview = document.querySelector('.banner-preview');
+    function bannerPreview()
+    {
+      bannerImgPreview.style.display = 'block';
+    
+      const oFReader = new FileReader();
+      oFReader.readAsDataURL(bannerImg.files[0]);
+    
+      oFReader.onload = function(oFREvent)
+      {
+        bannerImgPreview.src = oFREvent.target.result;
+      }
+    };
+
+    // image shop preview
+    const shopImg = document.querySelector('#shop-img');
+    shopImg.defaultValue = "{{ asset( 'assets' . '/' . $img_value_shop) }}";
+    const shopImgPreview = document.querySelector('.shop-preview');
+    function shopPreview()
+    {
+      shopImgPreview.style.display = 'block';
+    
+      const oFReader = new FileReader();
+      oFReader.readAsDataURL(shopImg.files[0]);
+    
+      oFReader.onload = function(oFREvent)
+      {
+        shopImgPreview.src = oFREvent.target.result;
+      }
+    };
+
+    @if ($errors->shop_update->any())
+            var myModal = new bootstrap.Modal(document.getElementById("settings"), {});
+            document.onreadystatechange = function () {
+                myModal.show();
+            };
+    @endif
+    
+    @if ($errors->product_store->any())
+            var myModal = new bootstrap.Modal(document.getElementById("add-product-card"), {});
+            document.onreadystatechange = function () {
+                myModal.show();
+            };
+    @endif
+    
+</script>
+
 
 @endsection

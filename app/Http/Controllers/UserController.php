@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\{User,Product};
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\{Hash, Validator, Storage};
+
+
 class UserController extends Controller
 {
     /**
@@ -79,7 +80,50 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        $rules = Validator::make($request->all(), [
+            'name' => 'required|max:255',
+            'image' => 'required|image|file|max:2048'
+        ]);
+ 
+        if ($rules->fails()) {
+            return back()->withInput()->withErrors($rules, 'profile_update');
+        }
+        $validatedData = $rules->validated();
+        if($validatedData['name'] == '' || $validatedData['name'] == null || $validatedData['name'] == auth()->user()->name ){
+            $validatedData['name'] = auth()->user()->name;
+        }
+        $validatedData['image'] = $request->file('image')->store('profile');
+        if(auth()->user()->image !== null){
+            Storage::delete(auth()->user()->image);
+        }
+        $user->update($validatedData);
+        return back()->with('success', 'Profile has changed');
+    }
+
+    public function password(Request $request, User $user)
+    {
+        if($user->user_hash !== auth()->user()->user_hash){
+            abort(403);
+        }
+        $rules = Validator::make( $request->all() , [
+            'old_password' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if (!Hash::check($value, auth()->user()->password)) {
+                        return $fail('Kata sandi lama tidak benar');
+                    }
+                },
+            ],
+            'new_password' => 'required|string|different:old_password',
+            'password_confirmation' => 'required|string|same:new_password'
+        ]);
+        if($rules->fails()){
+            return back()->withInput()->withErrors($rules, 'profile_password');
+        }
+        $validatedData = $rules->validated();
+        $password = Hash::make($validatedData['new_password']);
+        $user->update(['password' => $password]);
+        return back()->with('success', 'Password has changed');
     }
 
     /**

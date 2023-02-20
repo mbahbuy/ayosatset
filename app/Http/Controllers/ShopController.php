@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\{Product,Shop};
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\{Validator};
 
 class ShopController extends Controller
 {
@@ -40,11 +41,14 @@ class ShopController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
+        $rules = Validator::make( $request->all(), [
             'name' => 'required|max:255',
             'description' => 'required'
         ]);
-
+        if($rules->fails()){
+            return back()->withInput()->withErrors($rules, 'create_shop');
+        }
+        $validatedData = $rules->validated();
         $validatedData['user_hash'] = auth()->user()->user_hash;
         $validatedData['shop_hash'] = substr(md5($validatedData['user_hash'].$validatedData['name'] ), 0, 12);
         Shop::create($validatedData);
@@ -83,7 +87,22 @@ class ShopController extends Controller
      */
     public function update(Request $request, Shop $shop)
     {
-        //
+        $rules = Validator::make( $request->all(), [
+            'banner' => 'required|image|file|max:2048',
+            'image' => 'required|image|file|max:2048',
+            'name' => 'required|max:255',
+            'description' => 'required'
+        ]);
+        if($rules->fails()){
+            return back()->withInput()->withErrors($rules, 'shop_update');
+        }
+        $validatedData = $rules->validated();
+        $validatedData['image'] = $request->file('image')->store('shop-image');
+        $validatedData['banner'] = $request->file('banner')->store('shop-image');
+
+        $shop->update($validatedData);
+        return back()->with('succes', 'Settings Shop has update');
+
     }
 
     /**
