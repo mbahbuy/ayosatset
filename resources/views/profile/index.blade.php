@@ -216,13 +216,13 @@
                             <div class="col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <label class="form-label">name</label>
-                                    <input class="form-control" type="text" value="Miron Mahmud" disabled readonly>
+                                    <input class="form-control" type="text" value="{{ auth()->user()->name }}" disabled readonly>
                                 </div>
                             </div>
                             <div class="col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <label class="form-label">Email</label>
-                                    <input class="form-control" type="email" value="mironcoder@gmail.com" disabled readonly>
+                                    <input class="form-control" type="email" value="{{ auth()->user()->email }}" disabled readonly>
                                 </div>
                             </div>
                             <div class="col-lg-2">

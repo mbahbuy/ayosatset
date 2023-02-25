@@ -2,10 +2,10 @@
 
 @section('container')
 
-<section class="single-banner" style="background: url({{ asset( 'assets' . '/' . $shop->banner ) }}) no-repeat center;"></section>
+<section class="single-banner" style="background: url({{ ($shop->banner) ? asset( 'assets' . '/' . $shop->banner ) : asset('images/single-banner.jpg') }}) no-repeat center;"></section>
 <div class="brand-single">
     <a>
-        <img class="img-fluid" src="{{ asset('assets' . '/' . $shop->image ) }}" alt="brand">
+        <img class="img-fluid" src="{{ ($shop->image) ? asset('assets' . '/' . $shop->image ) : asset('images/brand/02.jpg') }}" alt="brand">
     </a>
     <a>
         <h3>{{ $shop->name }}</h3>

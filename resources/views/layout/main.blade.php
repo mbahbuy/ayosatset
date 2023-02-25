@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="{{ asset('fonts') }}/flaticon/flaticon.css">
     <link rel="stylesheet" href="{{ asset('fonts') }}/icofont/icofont.min.css">
     <link rel="stylesheet" href="{{ asset('fonts') }}/fontawesome/fontawesome.min.css">
+    <link rel="stylesheet" href="{{ asset('vendor') }}/bootstrap-icons/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ asset('vendor') }}/venobox/venobox.min.css">
     <link rel="stylesheet" href="{{ asset('vendor') }}/slickslider/slick.min.css">
     <link rel="stylesheet" href="{{ asset('vendor') }}/niceselect/nice-select.min.css">

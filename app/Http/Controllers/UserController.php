@@ -159,4 +159,10 @@ class UserController extends Controller
 
         return redirect('profile')->with('success', 'Selamat datang di ayosatset, belanja tampa ribet');
     }
+
+    public function users(){
+        return view('dashboard.userslist',[
+            'users' => User::where('admin_status', false)->get()
+        ]);
+    }
 }

@@ -29,10 +29,10 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrap();
 
         Gate::define('admin', function(User $user){
-            return $user->is_admin;
+            return $user->admin_status;
         });
         Gate::define('editor', function(User $user){
-            return $user->is_editor;
+            return $user->editor_status;
         });
 
         $this->app->bind('path.public', function(){

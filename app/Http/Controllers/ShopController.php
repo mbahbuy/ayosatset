@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Product,Shop};
+use App\Models\{Category, Product,Shop};
 use Illuminate\Http\{Request};
 use Illuminate\Support\Facades\{Validator};
 
@@ -19,7 +19,8 @@ class ShopController extends Controller
             return redirect('/profile');
         }
         return view('shop.index',[
-            'product' => Product::where('shop_hash', auth()->user()->shop->shop_hash)->orderBy('id', 'DESC')->get()
+            'product' => Product::where('shop_hash', auth()->user()->shop->shop_hash)->orderBy('id', 'DESC')->get(),
+            'categories' => Category::all()
         ]);
     }
 
@@ -53,7 +54,7 @@ class ShopController extends Controller
         $validatedData['shop_hash'] = substr(md5($validatedData['user_hash'].$validatedData['name'] ), 0, 12);
         Shop::create($validatedData);
 
-        return redirect('/shop');
+        return redirect('/myshop');
     }
 
     /**

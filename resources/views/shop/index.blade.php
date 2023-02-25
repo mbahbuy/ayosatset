@@ -161,52 +161,75 @@
         $price_value_product_add = ($errors->product_store->any()) ? old('price') : '';
         $desc_class_product_add = ($errors->product_store->has('description')) ? 'is-invalid' : '' ;
         $desc_value_product_add = ($errors->product_store->any()) ? old('description') : '';
+        $ctg_class_product_add = ($errors->product_store->has('categories')) ? 'is-invalid' : '' ;
+        $ctg_value_product_add = ($errors->product_store->any()) ? old('categories') : '';
     @endphp
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <button class="modal-close icofont-close" data-bs-dismiss="modal"></button>
-            <form action="{{ route('product.store') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="product-view">
-                    <div class="m-4 p-4">
-                        @if ($errors->product_store->any())
-                            <div class="mb-3 text-center alert alert-danger alert-dismissible fade show" role="alert">
-                                @foreach ($errors->product_store->all() as $item)
-                                    {{ $item }} <br>
-                                @endforeach
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        @endif
-                        <div class="row clearfix">
-                            <div class="col-lg-6 float-start">
-                                <div class="mb-3">
-                                    <input type="file" class="form-control {{ $img_class_product_add }}" placeholder="image" name="image" id="product-img" onchange="productPreview()" value="{{ $img_value_product_add }}">
+            @if ($categories->count())                
+                <form action="{{ route('product.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="product-view">
+                        <div class="m-4 p-4">
+                            @if ($errors->product_store->any())
+                                <div class="mb-3 text-center alert alert-danger alert-dismissible fade show" role="alert">
+                                    @foreach ($errors->product_store->all() as $item)
+                                        {{ $item }} <br>
+                                    @endforeach
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
-                                <img src="" class="product-preview img-fluid">
-                            </div>
-                            <div class="col-lg-6 float-end">
-                                <div class="form-group">
-                                    <label for="productName">Product Name</label>
-                                    <input type="text" class="form-control {{ $name_class_product_add }}" id="productName" name="name" placeholder="Enter product name" value="{{ $name_value_product_add }}">
+                            @endif
+                            <div class="row clearfix">
+                                <div class="col-lg-6 float-start">
+                                    <div class="mb-3">
+                                        <input type="file" class="form-control {{ $img_class_product_add }}" placeholder="image" name="image" id="product-img" onchange="productPreview()" value="{{ $img_value_product_add }}">
+                                    </div>
+                                    <img src="" class="product-preview img-fluid">
                                 </div>
-                                <!-- Input Field -->
-                                <div class="form-group">
-                                    <label for="productPrice">Price</label>
-                                    <input type="number" class="form-control {{ $price_class_product_add }}" id="productPrice" name="price" placeholder="Enter price" value="{{ $price_value_product_add }}">
-                                </div>
-                                <!-- Input Field -->
-                                <div class="form-group">
-                                    <label for="productDescription">Description</label>
-                                    <textarea class="form-control {{ $desc_class_product_add }}" id="productDescription" rows="3" name="description">{{ $desc_value_product_add }}</textarea>
-                                </div>
-                                <div class="form-button">
-                                    <button type="submit">Tambah</button>
+                                <div class="col-lg-6 float-end">
+                                    <div class="form-group">
+                                        <label for="productName">Product Name</label>
+                                        <input type="text" class="form-control {{ $name_class_product_add }}" id="productName" name="name" placeholder="Enter product name" value="{{ $name_value_product_add }}">
+                                    </div>
+                                    @if (sizeof($categories))
+                                        <div class="form-group">
+                                            <label for="productCategory">Category</label>
+                                            <select class="form-select {{ $ctg_class_product_add }}" id="productCategory" name="categories">
+                                                @foreach ($categories as $category)
+                                                @if ($ctg_value_product_add == $category->slug)
+                                                    <option value="{{ $category->slug }}" selected>{{ $category->name }}</option>
+                                                @else
+                                                    <option value="{{ $category->slug }}">{{ $category->name }}</option>
+                                                @endif
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    @endif
+                                    <div class="form-group">
+                                        <label for="productPrice">Price</label>
+                                        <input type="number" class="form-control {{ $price_class_product_add }}" id="productPrice" name="price" placeholder="Enter price" value="{{ $price_value_product_add }}">
+                                    </div>
+                                    <!-- Input Field -->
+                                    <div class="form-group">
+                                        <label for="productDescription">Description</label>
+                                        <textarea class="form-control {{ $desc_class_product_add }}" id="productDescription" rows="3" name="description">{{ $desc_value_product_add }}</textarea>
+                                    </div>
+                                    <div class="form-button">
+                                        <button type="submit">Tambah</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </form>
+            @else
+                <div class="product-view">
+                    <h4 class="text-center m-4">
+                        Maaf, fiture tambah produk belum ada, karena admin belum menambahkan category
+                    </h4>
                 </div>
-            </form>
+            @endif
         </div>
     </div>
 </div>
@@ -267,10 +290,10 @@
     </div>
 </div>
 
-<section class="single-banner" style="background: url({{ (auth()->user()->shop->banner) ? asset( 'assets' . '/' . auth()->user()->shop->banner ) : 'images/single-banner.jpg' }}) no-repeat center;"></section>
+<section class="single-banner" style="background: url({{ (auth()->user()->shop->banner) ? asset( 'assets' . '/' . auth()->user()->shop->banner ) : asset('images/single-banner.jpg') }}) no-repeat center;"></section>
 <div class="brand-single">
     <a>
-        <img class="img-fluid" src="{{ (auth()->user()->shop->image) ? asset('assets' . '/' . auth()->user()->shop->image ) : 'images/brand/02.jpg' }}" alt="brand">
+        <img class="img-fluid" src="{{ (auth()->user()->shop->image) ? asset('assets' . '/' . auth()->user()->shop->image ) : asset('images/brand/02.jpg') }}" alt="brand">
     </a>
     <a>
         <h3>{{ auth()->user()->shop->name }}</h3>

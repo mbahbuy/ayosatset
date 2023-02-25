@@ -30,6 +30,8 @@ Route::group(['middleware' => ['auth','verified']], function ()
     Route::post('/product/store', ['as' => 'product.store', 'uses' => 'ProductController@store']);
     Route::put('/product/{product:product_hash}/update', ['as' => 'product.update', 'uses' => 'ProductController@update']);
 
+    Route::get('/dashboard', ['as' => 'dashboard.index', 'uses' => 'DashboardController@index']);
+
     // Editor
     Route::group(['middleware' => 'editor'], function()
     {
@@ -39,6 +41,11 @@ Route::group(['middleware' => ['auth','verified']], function ()
     // Admin
     Route::group(['middleware' => 'admin'], function()
     {
+        Route::get('/a/category', ['as' => 'category.index', 'uses' => 'CategoryController@index']);
+        Route::post('/a/category/store', ['as' => 'category.store', 'uses' => 'CategoryController@store']);
+        Route::put('/a/category/{category:slug}/update', ['as' => 'category.update', 'uses' => 'CategoryController@update']);
+        Route::delete('/a/category/{category:slug}', ['as' => 'category.destroy', 'uses' => 'CategoryController@destroy']);
         
+        Route::get('/a/userlist', ['as' => 'users.index', 'uses' => 'UserController@users']);
     });
 });

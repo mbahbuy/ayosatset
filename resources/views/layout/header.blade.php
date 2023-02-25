@@ -312,31 +312,52 @@
           </span>
         </button>
       </div>
-      @guest
-          <div class="header-widget px-3">
-            <a href="{{ route('login') }}" class="login">Masuk</a>
-            <a href="{{ route('register') }}" class="daftar">Daftar</a>
+      @auth
+          <div class="header-widget ml-3">
+            <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              <img src="{{ (auth()->user()->image) ? asset( 'assets' . '/' . auth()->user()->image) : asset('images/user.png') }}">
+              <span>{{ auth()->user()->name }}</span>
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item" href="{{ route('profile.index') }}">
+                  <i class="bi bi-person"></i>
+                  My profile
+                </a>
+              </li>
+              @if (auth()->user()->shop == true)
+                <li>
+                  <a class="dropdown-item" href="{{ route('shop.index') }}">
+                    <i class="bi bi-shop"></i>
+                    My shop
+                  </a>
+                </li>
+              @endif
+              @can('admin')
+                <li>
+                  <a class="dropdown-item" href="{{ route('dashboard.index') }}">
+                    <i class="bi bi-columns-gap"></i>
+                    My Dashboard
+                  </a>
+                </li>
+              @endcan
+              <li>
+                <form action="{{ route('logout') }}" method="POST">
+                  @csrf
+                  <button type="submit" class="dropdown-item">
+                    <i class="bi bi-box-arrow-right"></i>
+                    Logout
+                  </button>
+                </form>
+              </li>
+            </ul>   
           </div>
       @else
-        <div class="header-widget ml-3">
-          <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
-            <img src="{{ (auth()->user()->image) ? asset( 'assets' . '/' . auth()->user()->image) : 'images/user.png' }}">
-            <span>{{ auth()->user()->name }}</span>
-          </button>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{{ route('profile.index') }}">My profile</a></li>
-            @if (auth()->user()->shop == true)
-            <li><a class="dropdown-item" href="{{ route('shop.index') }}">My shop</a></li>
-            @endif
-            <li>
-              <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="dropdown-item">Logout</button>
-              </form>
-            </li>
-          </ul>      
+        <div class="header-widget px-3">
+          <a href="{{ route('login') }}" class="login">Masuk</a>
+          <a href="{{ route('register') }}" class="daftar">Daftar</a>
         </div>
-      @endguest
+      @endauth
     </div>
   </div>
 </header>
@@ -747,8 +768,28 @@
     </button>
   </div>
   <div class="nav-content">
-    <div class="nav-btn">
-      @guest
+    <div class="nav-btn align-items-center align-items-center flex-column">
+      @auth
+        <a href="{{ route('profile.index') }}" class="btn btn-inlane">
+          <span>My profile</span>
+        </a>
+        @if (auth()->user()->shop == true)
+          <a class="btn btn-inlane" href="{{ route('shop.index') }}">
+            <span>My shop</span> 
+          </a>
+        @endif
+        @can('admin')
+          <a class="btn btn-inlane" href="{{ route('dashboard.index') }}">
+            <span>My Dashboard</span> 
+          </a>
+        @endcan
+        <form action="{{ route('logout') }}" method="POST">
+          @csrf
+          <button type="submit" class="btn btn-outline-danger">
+            <span>Logout</span> 
+          </button>
+        </form>
+      @else
         <a href="{{ route('login') }}" class="login">
           <span>Log in</span>
         </a>
@@ -756,11 +797,7 @@
         <a href="{{ route('register') }}" class="daftar">
           <span>Daftar</span>
         </a>
-      @else
-        <a href="{{ route('profile.index') }}" class="btn btn-inlane">
-          <span>Profile</span>
-        </a>
-      @endguest
+      @endauth
     </div>
   </div>
 </aside>
