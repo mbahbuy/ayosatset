@@ -9,7 +9,7 @@
       <div class="modal-body">
         <form action="{{ route('category.store') }}" method="post">
           @csrf
-          <input class="form-control" type="text" name="name" placeholder="Enter Category....">
+          <input class="form-control" type="text" name="name" placeholder="Enter Category...." autofocus>
         </form>
       </div>
     </div>
@@ -32,7 +32,7 @@
           <tr>
             <th scope="col">#</th>
             <th scope="col">Name</th>
-            <th scope="col">Slug</th>
+            <th scope="col">Tag</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
@@ -57,7 +57,7 @@
                               <form action="{{ route('category.update', $item->slug) }}" method="post">
                                 @csrf
                                 @method('put')
-                                <input class="form-control" type="text" name="name" placeholder="Enter Category...." value="{{ $item->name }}">
+                                <input class="form-control" type="text" name="name" placeholder="Enter Category...." value="{{ $item->name }}" autofocus>
                               </form>
                             </div>
                           </div>
@@ -67,7 +67,7 @@
                       <form action="{{ route('category.destroy', $item->slug) }}" method="post">
                         @method('DELETE')
                         @csrf
-                        <button class="btn btn-outline-danger" onclick="return confirm('Anda mau menghapus category(`{{ $item->name }}`)?')"><i class="bi bi-trash"></i></button>
+                        <button class="btn btn-outline-danger" onclick="return confirm('Anda mau menghapus category(`{{ $item->name }}`) bersama semua produk didalamnya?')"><i class="bi bi-trash"></i></button>
                       </form>
                     </div>
                   </td>
@@ -89,7 +89,9 @@
 @section('script')
 <script>
 
-
+$('.modal').on('shown.bs.modal', function() {
+  $(this).find('[autofocus]').focus();
+});
 
 </script>
 @endsection

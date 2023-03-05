@@ -8,6 +8,13 @@ Route::get('/p/{product:product_hash}', ['as' => 'product.show', 'uses' => 'Prod
 Route::get('/s/{shop:shop_hash}', ['as' => 'shop.show', 'uses' => 'ShopController@show']);
 Route::view('/checkemail', 'profile.checkemail');
 
+Route::post('/cart',['as' => 'cart.store', 'uses' => 'CartController@store']);// Cart
+Route::post('/wish', ['as' => 'wish.store', 'uses' => 'CartController@wish']);// Wish
+Route::delete('/cart/{cart:cart_hash}', ['as' => 'cart.destroy', 'uses' => 'CartController@destroy']);
+
+// order
+Route::post('/order', ['as' => 'order.store', 'uses' => 'OrderController@store']);
+
 Auth::routes([
     'verify' => true,
     'resend' => false
@@ -29,6 +36,7 @@ Route::group(['middleware' => ['auth','verified']], function ()
     // Product
     Route::post('/product/store', ['as' => 'product.store', 'uses' => 'ProductController@store']);
     Route::put('/product/{product:product_hash}/update', ['as' => 'product.update', 'uses' => 'ProductController@update']);
+    Route::delete('/product/{product:product_hash}', ['as' => 'product.destroy', 'uses' => 'ProductController@destroy']);
 
     Route::get('/dashboard', ['as' => 'dashboard.index', 'uses' => 'DashboardController@index']);
 
@@ -47,5 +55,9 @@ Route::group(['middleware' => ['auth','verified']], function ()
         Route::delete('/a/category/{category:slug}', ['as' => 'category.destroy', 'uses' => 'CategoryController@destroy']);
         
         Route::get('/a/userlist', ['as' => 'users.index', 'uses' => 'UserController@users']);
+        Route::put('/a/userlist/{user:user_hash}/suspense', ['as' => 'user.suspense', 'uses' => 'UserController@suspense']);
+        Route::get('/a/blacklist', ['as' => 'users.black', 'uses' => 'UserController@black']);
+        Route::put('/a/blacklist/{user:user_hash}/calm', ['as' => 'user.calm', 'uses' => 'UserController@calm']);
+        Route::get('/a/orderlist',['as' => 'order.index', 'uses' => 'OrderController@index']);
     });
 });

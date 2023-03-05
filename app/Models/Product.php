@@ -23,4 +23,11 @@ class Product extends Model
         return $this->belongsTo('App\Models\Category', 'slug', 'categories');
     }
 
+    public function wish(){
+        if (!auth()->check()) {
+            return $this->belongsTo('App\Models\Cart', 'product_hash', 'product_hash')->where('parent_id', 2)->where('user_hash', false);
+        }
+        return $this->belongsTo('App\Models\Cart', 'product_hash', 'product_hash')->where('parent_id', 2)->where('user_hash', auth()->user()->user_hash);
+    }
+
 }

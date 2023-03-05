@@ -1624,7 +1624,7 @@ tbody tr td:last-child {
   -ms-transition: all linear 0.3s;
   -o-transition: all linear 0.3s;
 }
-.product-widget a {
+.product-widget a, .product-widget button {
   width: 40px;
   height: 40px;
   font-size: 15px;
@@ -3556,6 +3556,7 @@ tbody tr td:last-child {
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center;
+  margin-right: 20px;
 }
 .header-widget-group .header-widget {
   margin-left: 20px;
@@ -4410,6 +4411,213 @@ tbody tr td:last-child {
   -webkit-box-shadow: 0px -3px 7px 0px rgba(0, 0, 0, 0.08);
   box-shadow: 0px -3px 7px 0px rgba(0, 0, 0, 0.08);
 }
+.wish-sidebar {
+  position: fixed;
+  top: 0px;
+  right: -450px;
+  width: 400px;
+  height: 100vh;
+  z-index: 5;
+  background: var(--white);
+  -webkit-box-shadow: -15px 0px 25px 0px rgba(0, 0, 0, 0.15);
+  box-shadow: -15px 0px 25px 0px rgba(0, 0, 0, 0.15);
+  transition: all linear 0.3s;
+  -webkit-transition: all linear 0.3s;
+  -moz-transition: all linear 0.3s;
+  -ms-transition: all linear 0.3s;
+  -o-transition: all linear 0.3s;
+}
+.wish-sidebar.active {
+  right: 0px;
+}
+.wish-header {
+  padding: 18px 25px;
+  text-align: center;
+  position: relative;
+  border-bottom: 1px solid var(--border);
+}
+.wish-total {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+.wish-total i {
+  font-size: 20px;
+  margin-right: 8px;
+  color: var(--primary);
+}
+.wish-total span {
+  font-weight: 500;
+  color: var(--primary);
+  text-transform: capitalize;
+}
+.wish-close {
+  position: absolute;
+  top: 50%;
+  left: -18px;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+.wish-close i {
+  width: 35px;
+  height: 35px;
+  font-size: 18px;
+  line-height: 35px;
+  border-radius: 50%;
+  text-align: center;
+  display: inline-block;
+  color: var(--text);
+  background: var(--white);
+  text-shadow: var(--primary-tshadow);
+  transition: all linear 0.3s;
+  -webkit-transition: all linear 0.3s;
+  -moz-transition: all linear 0.3s;
+  -ms-transition: all linear 0.3s;
+  -o-transition: all linear 0.3s;
+}
+.wish-close i:hover {
+  color: var(--white);
+  background: var(--primary);
+}
+.wish-list {
+  height: 100%;
+  padding: 0px 15px;
+  max-height: calc(100vh - 210px);
+  overflow-y: scroll;
+}
+.wish-item {
+  padding: 15px 0px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--border);
+}
+.wish-item:hover .wish-media button {
+  -webkit-transform: scale(1);
+  transform: scale(1);
+}
+.wish-item:last-child {
+  border-bottom: none;
+}
+.wish-media {
+  position: relative;
+  margin-right: 25px;
+}
+.wish-media a img {
+  width: 100px;
+  border-radius: 8px;
+}
+.wish-media button {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  -webkit-transform: scale(0);
+  transform: scale(0);
+  transition: all linear 0.3s;
+  -webkit-transition: all linear 0.3s;
+  -moz-transition: all linear 0.3s;
+  -ms-transition: all linear 0.3s;
+  -o-transition: all linear 0.3s;
+}
+.wish-media button i {
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+  line-height: 32px;
+  text-align: center;
+  border-radius: 5px;
+  display: inline-block;
+  color: var(--red);
+  background: rgba(255, 255, 255, 0.9);
+  transition: all linear 0.3s;
+  -webkit-transition: all linear 0.3s;
+  -moz-transition: all linear 0.3s;
+  -ms-transition: all linear 0.3s;
+  -o-transition: all linear 0.3s;
+}
+.wish-media button i:hover {
+  color: var(--white);
+  background: var(--red);
+}
+.wish-info-group {
+  width: 100%;
+}
+.wish-info {
+  margin-bottom: 13px;
+}
+.wish-info h6 {
+  font-weight: 400;
+  text-transform: capitalize;
+}
+.wish-info h6 a {
+  color: var(--heading);
+}
+.wish-info p {
+  font-size: 14px;
+}
+.wish-action-group {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+.wish-action-group .product-action {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+.wish-action-group .product-action button i {
+  width: 30px;
+  height: 30px;
+  font-size: 12px;
+  line-height: 30px;
+  border-radius: 5px;
+}
+.wish-action-group .product-action input {
+  width: 45px;
+  height: 30px;
+  font-size: 14px;
+  border-radius: 5px;
+  color: var(--primary);
+  background: var(--chalk);
+}
+.wish-action-group h6 {
+  font-weight: 500;
+  color: var(--primary);
+}
+.wish-footer {
+  padding: 20px 15px 0px;
+  text-align: center;
+  -webkit-box-shadow: 0px -3px 7px 0px rgba(0, 0, 0, 0.08);
+  box-shadow: 0px -3px 7px 0px rgba(0, 0, 0, 0.08);
+}
 .coupon-btn {
   font-weight: 500;
   margin-bottom: 20px;
@@ -4535,6 +4743,42 @@ tbody tr td:last-child {
     max-height: calc(100vh - 290px);
   }
   .cart-media a img {
+    width: 80px;
+  }
+  .wish-sidebar {
+    right: 0px;
+    width: 100%;
+    height: 100vh;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    margin: 80px 0px 0px;
+    border-radius: 15px 15px 0px 0px;
+    transition: all linear 0.3s;
+    -webkit-transition: all linear 0.3s;
+    -moz-transition: all linear 0.3s;
+    -ms-transition: all linear 0.3s;
+    -o-transition: all linear 0.3s;
+  }
+  .wish-sidebar.active {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    -webkit-transform-origin: top;
+    transform-origin: top;
+  }
+  .wish-close {
+    left: 50%;
+    top: -45px;
+    bottom: inherit;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    border-radius: 50px 50px 0px 0px;
+    -webkit-box-shadow: 0px -8px 10px 0px rgba(0, 0, 0, 0.15);
+    box-shadow: 0px -8px 10px 0px rgba(0, 0, 0, 0.15);
+  }
+  .wish-list {
+    max-height: calc(100vh - 290px);
+  }
+  .wish-media a img {
     width: 80px;
   }
 }

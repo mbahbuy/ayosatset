@@ -8,29 +8,18 @@
         <div class="row align-items-center">
         <div class="col-md-6 col-lg-6">
             <div class="banner-content">
-            <h1>free home delivery within 24 hours now.</h1>
-            <p>Lorem ipsum dolor consectetur adipisicing elit modi consequatur eaque expedita porro necessitatibus eveniet voluptatum quis pariatur Laboriosam molestiae architecto excepturi</p>
-            <div class="banner-btn">
-                <a class="btn btn-inline" href="shop-4column.html">
-                <i class="fas fa-shopping-basket"></i>
-                <span>shop now</span>
-                </a>
-                <a class="btn btn-outline" href="offer.html">
-                <i class="icofont-sale-discount"></i>
-                <span>get offer</span>
-                </a>
-            </div>
+            <h1>Coming soon</h1>
             </div>
         </div>
         <div class="col-md-6 col-lg-6">
             <div class="banner-img">
-            <img src="images/home/index/01.png" alt="index">
+            <img src="images/coming-soon.png" alt="index">
             </div>
         </div>
         </div>
     </div>
     </div>
-    <div class="banner-part banner-2">
+    {{-- <div class="banner-part banner-2">
     <div class="container">
         <div class="row align-items-center">
         <div class="col-md-6 col-lg-6">
@@ -56,9 +45,9 @@
         </div>
         </div>
     </div>
-    </div>
+    </div> --}}
 </section>
-<section class="section suggest-part">
+{{-- <section class="section suggest-part">
     <div class="container">
     <ul class="suggest-slider slider-arrow">
         <li>
@@ -119,7 +108,7 @@
         </li>
     </ul>
     </div>
-</section>
+</section> --}}
 <section class="section recent-part">
     <div class="container">
         <div class="row">
@@ -138,7 +127,7 @@
                                 <div class="product-label">
                                     <label class="label-text sale">sale</label>
                                 </div>
-                                <button class="product-wish wish">
+                                <button class="product-wish wish {{ ($item->wish) ? 'active' : '' }}" target-wish="{{ $item->product_hash }}" onclick="wishToggle(this)">
                                     <i class="fas fa-heart"></i>
                                 </button>
                                 <a class="product-image" href="{{ route('product.show', $item->product_hash) }}">
@@ -146,6 +135,7 @@
                                 </a>
                                 <div class="product-widget">
                                     <a title="Product View" href="{{ route('product.show', $item->product_hash) }}" class="fas fa-eye"></a>
+                                    <button class="fas fa-shopping-basket" onclick="cartAdd('{{ $item->product_hash }}')"></button>
                                 </div>
                             </div>
                             <div class="product-content">
@@ -161,9 +151,8 @@
                                     <a href="{{ route('product.show', $item->product_hash) }}">{{ $item->name }}</a>
                                 </h6>
                                 <h6 class="product-price">
-                                    <del>$34</del>
-                                    <span>$28 <small>/piece</small>
-                                    </span>
+                                    {{-- <del>$34</del> --}}
+                                    <span>Rp. {{ number_format($item->price,0,',','.') }}</span>
                                 </h6>
                                 {{-- <button class="product-add" title="Add to Cart">
                                     <i class="fas fa-shopping-basket"></i>

@@ -22,7 +22,21 @@
                 <i class="bi bi-people"></i>
                 <span>Users list</span>
             </a>
-        </li><!-- End Dashboard Nav -->
+        </li><!-- End Dashboard Nav person-dash -->
+
+        <li class="nav-item">
+            <a class="nav-link {{ (Route::is('users.black'))? : 'collapsed' }}" href="{{ route('users.black') }}">
+                <i class="bi bi-person-x-fill"></i>
+                <span>Black users list</span>
+            </a>
+        </li><!-- End Dashboard Nav  -->
+
+        <li class="nav-item">
+            <a class="nav-link {{ (Route::is('order.index'))? : 'collapsed' }}" href="{{ route('order.index') }}">
+                <i class="bi bi-collection-fill"></i>
+                <span>Order list</span>
+            </a>
+        </li><!-- End Dashboard Nav  -->
 
         {{-- <li class="nav-item">
             <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">

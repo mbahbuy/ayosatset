@@ -23,6 +23,34 @@
 
         <!-- Template Main CSS File -->
         <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
+        <style>
+            .alert-pop-up {
+                position: fixed;
+                top: -100px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: black;
+                color: white;
+                padding: 10px;
+                border: 1px solid black;
+                border-radius: 15px;
+                animation: alert-pop-up 3s ease forwards;
+                z-index: 99999999999999999999999999999999;
+            }
+          
+            @keyframes alert-pop-up {
+                0% {
+                    top: -100px;
+                }
+                50% {
+                    top: 50%;
+                }
+                100% {
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                }
+            }
+        </style>
     </head>
 
     <body>
@@ -44,6 +72,25 @@
 
         <!-- Template Main JS File -->
         <script src="{{ asset('js/dashboard.js') }}"></script>
+        <script>
+            function showAlertPopUp(data) {
+                // Membuat element pop-up alert
+                var alertDiv = document.createElement("div");
+                alertDiv.className = "alert-pop-up";
+                alertDiv.innerHTML = data;
+
+                // Menambahkan element pop-up alert ke dalam body
+                document.body.appendChild(alertDiv);
+
+                // Mengatur waktu untuk menghapus element pop-up alert setelah 5 detik
+                setTimeout(function() {
+                document.body.removeChild(alertDiv);
+                }, 3000);
+            }
+            @if (session()->has('success'))
+                showAlertPopUp("{{ session('success') }}");
+            @endif
+        </script>
 
         @yield('script')
 

@@ -47,7 +47,7 @@
                 <p>{{ $produk->name }}</p>
             </h3>
             <div class="details-meta">
-              <p>SKU: <span>1234567</span></p>
+              {{-- <p>SKU: <span>1234567</span></p> --}}
               <p>Penjual: <a href="{{ route('shop.show', $produk->shop->shop_hash) }}">{{ $produk->shop->name }}</a></p>
             </div>
             <div class="details-rating">
@@ -59,9 +59,8 @@
               <a href="#">(3 reviews)</a>
             </div>
             <h3 class="details-price">
-              <del>$38.00</del>
-              <span>$24.00 <small>/per kilo</small>
-              </span>
+              {{-- <del>$38.00</del> --}}
+              <span>Rp. {{ number_format($produk->price,0,',','.'); }}</span>
             </h3>
             <p class="details-desc">{!! Str::limit(strip_tags($produk->description), 150) !!}</p>
             <div class="details-list-group">
@@ -96,28 +95,15 @@
               </ul>
             </div>
             <div class="details-add-group">
-              <button class="product-add" title="Add to Cart">
+              <button class="product-add" onclick="cartAdd('{{ $produk->product_hash }}')" title="Add to Cart">
                 <i class="fas fa-shopping-basket"></i>
                 <span>add to cart</span>
               </button>
-              <div class="product-action">
-                <button class="action-minus" title="Quantity Minus">
-                  <i class="icofont-minus"></i>
-                </button>
-                <input class="action-input" title="Quantity Number" type="text" name="quantity" value="1">
-                <button class="action-plus" title="Quantity Plus">
-                  <i class="icofont-plus"></i>
-                </button>
-              </div>
             </div>
             <div class="details-action-group">
-              <a class="details-wish wish" href="#" title="Add Your Wishlist">
+              <a class="details-wish wish" style="cursor: pointer" onclick="wishAdd('{{ $produk->product_hash }}')" title="Add Your Wishlist">
                 <i class="icofont-heart"></i>
                 <span>add to wish</span>
-              </a>
-              <a class="details-compare" href="compare.html" title="Compare This Item">
-                <i class="fas fa-random"></i>
-                <span>Compare This</span>
               </a>
             </div>
           </div>

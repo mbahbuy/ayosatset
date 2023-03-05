@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\{Product};
 use Illuminate\Http\{Request};
-use Illuminate\Support\Facades\{Validator};
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\{Storage, Validator};
+use Illuminate\Validation\{Rule};
 
 class ProductController extends Controller
 {
@@ -39,7 +39,7 @@ class ProductController extends Controller
     {
         $rules = Validator::make($request->all(),[
             'name' => 'required|max:255',
-            'price' => 'required|max:20',
+            'price' => 'required|numeric|max:99999999999999999999',
             'categories' => [
                 'required',
                 Rule::exists('categories', 'slug')
@@ -101,20 +101,17 @@ class ProductController extends Controller
                 'required',
                 Rule::exists('categories', 'slug')
             ],
-            'image' => 'required|image|file|max:2048',
+            'image' => 'nullable|image|file|max:2048',
             'description' => 'required'
         ]);
         if($rules->fails()){
             return back()->withInput()->withErrors($rules, 'product_store');
         }
         $validatedData = $rules->validated();
-        $validatedData['image'] = $request->file('image')->store('product-image');
+        $validatedData['image'] = $request->file('image') ? $request->file('image')->store('product-image') : $request['old_image'] ;
+        $product->update($validatedData);
 
-        $validatedData['shop_hash'] = auth()->user()->shop->shop_hash;
-        $validatedData['product_hash'] = substr(md5($validatedData['shop_hash'].$validatedData['name'] ), 0, 12);
-        Product::create($validatedData);
-
-        return back()->with('success', 'New product has been added!!!');
+        return back()->with('success', 'The product has been change!!!');
     }
 
     /**
@@ -125,6 +122,8 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        Storage::delete($product->image);
+        $product->delete();
+        return back()->with('success', $product->name . ' telah dihapus!');
     }
 }

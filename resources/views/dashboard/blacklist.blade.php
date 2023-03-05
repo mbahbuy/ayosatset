@@ -5,7 +5,7 @@
 <div class="card">
     <div class="card-body">
         <div class="card-title d-flex justify-content-between">
-            <h5 class="text-center">Users list</h5>
+            <h5 class="text-center">Black Users list</h5>
         </div>
 
       <!-- Table with hoverable rows -->
@@ -26,16 +26,16 @@
                         <td>{{ $item->name }}</td>
                         <td>{{ $item->email }}</td>
                         <td>
-                            <form action="{{ route('user.suspense', $item->user_hash) }}" method="post">
+                            <form action="{{ route('user.calm', $item->user_hash) }}" method="post">
                                 @csrf
                                 @method('put')
-                                <button type="submit" class="btn btn-outline-warning"><span>suspense</span></button>
+                                <button type="submit" class="btn btn-outline-warning"><span>calm</span></button>
                             </form>
                         </td>
                     </tr>
                 @endforeach
             @else
-                <tr><td colspan="4" class="text-center">No users except you</td></tr>
+                <tr><td colspan="4" class="text-center">No users damaged</td></tr>
             @endif
         </tbody>
       </table>

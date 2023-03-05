@@ -8,7 +8,7 @@
         <div class="col-12 col-sm-10 col-md-12 col-lg-12 col-xl-10">
           <div class="user-form-logo">
             <a href="{{ route('home') }}">
-              <img src="/images/logo.png" alt="logo">
+              <img src="{{ asset('images/logoipsum-221.svg') }}" alt="logo">
             </a>
           </div>
           <div class="user-form-card">

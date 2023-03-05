@@ -15,6 +15,10 @@ return new class extends Migration
     {
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('parent_id');
+            $table->string('cart_hash');
+            $table->string('user_hash');
+            $table->string('product_hash');
             $table->timestamps();
         });
     }

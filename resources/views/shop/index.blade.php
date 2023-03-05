@@ -2,155 +2,6 @@
 
 @section('container')
 
-<div class="modal fade" id="product-view">
-    <div class="modal-dialog">
-    <div class="modal-content">
-        <button class="modal-close icofont-close" data-bs-dismiss="modal"></button>
-        <div class="product-view">
-        <div class="row">
-            <div class="col-md-6 col-lg-6">
-            <div class="view-gallery">
-                <div class="view-label-group">
-                <label class="view-label new">new</label>
-                <label class="view-label off">-10%</label>
-                </div>
-                <ul class="preview-slider slider-arrow">
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                </ul>
-                <ul class="thumb-slider">
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                </ul>
-            </div>
-            </div>
-            <div class="col-md-6 col-lg-6">
-            <div class="view-details">
-                <h3 class="view-name">
-                <a href="product-video.html">existing product name</a>
-                </h3>
-                <div class="view-meta">
-                <p>SKU: <span>1234567</span>
-                </p>
-                <p>BRAND: <a href="#">radhuni</a>
-                </p>
-                </div>
-                <div class="view-rating">
-                <i class="active icofont-star"></i>
-                <i class="active icofont-star"></i>
-                <i class="active icofont-star"></i>
-                <i class="active icofont-star"></i>
-                <i class="icofont-star"></i>
-                <a href="product-video.html">(3 reviews)</a>
-                </div>
-                <h3 class="view-price">
-                <del>$38.00</del>
-                <span>$24.00 <small>/per kilo</small>
-                </span>
-                </h3>
-                <p class="view-desc">Lorem ipsum dolor sit amet consectetur adipisicing elit non tempora magni repudiandae sint suscipit tempore quis maxime explicabo veniam eos reprehenderit fuga</p>
-                <div class="view-list-group">
-                <label class="view-list-title">tags:</label>
-                <ul class="view-tag-list">
-                    <li>
-                    <a href="#">organic</a>
-                    </li>
-                    <li>
-                    <a href="#">vegetable</a>
-                    </li>
-                    <li>
-                    <a href="#">chilis</a>
-                    </li>
-                </ul>
-                </div>
-                <div class="view-list-group">
-                <label class="view-list-title">Share:</label>
-                <ul class="view-share-list">
-                    <li>
-                    <a href="#" class="icofont-facebook" title="Facebook"></a>
-                    </li>
-                    <li>
-                    <a href="#" class="icofont-twitter" title="Twitter"></a>
-                    </li>
-                    <li>
-                    <a href="#" class="icofont-linkedin" title="Linkedin"></a>
-                    </li>
-                    <li>
-                    <a href="#" class="icofont-instagram" title="Instagram"></a>
-                    </li>
-                </ul>
-                </div>
-                <div class="view-add-group">
-                <button class="product-add" title="Add to Cart">
-                    <i class="fas fa-shopping-basket"></i>
-                    <span>add to cart</span>
-                </button>
-                <div class="product-action">
-                    <button class="action-minus" title="Quantity Minus">
-                    <i class="icofont-minus"></i>
-                    </button>
-                    <input class="action-input" title="Quantity Number" type="text" name="quantity" value="1">
-                    <button class="action-plus" title="Quantity Plus">
-                    <i class="icofont-plus"></i>
-                    </button>
-                </div>
-                </div>
-                <div class="view-action-group">
-                <a class="view-wish wish" href="#" title="Add Your Wishlist">
-                    <i class="icofont-heart"></i>
-                    <span>add to wish</span>
-                </a>
-                <a class="view-compare" href="compare.html" title="Compare This Item">
-                    <i class="fas fa-random"></i>
-                    <span>Compare This</span>
-                </a>
-                </div>
-            </div>
-            </div>
-        </div>
-        </div>
-    </div>
-    </div>
-</div>
-
 <div class="modal fade" id="add-product-card">
     @php
         $img_class_product_add = ($errors->product_store->has('image')) ? 'is-invalid' : '' ;
@@ -333,19 +184,23 @@
                     <div class="col">
                         <div class="product-card">
                             <div class="product-media">
-                                <div class="product-label">
+                                {{-- <div class="product-label">
                                     <label class="label-text new">new</label>
                                 </div>
                                 <button class="product-wish wish">
                                     <i class="fas fa-heart"></i>
-                                </button>
-                                <a class="product-image" href="#">
+                                </button> --}}
+                                <div class="product-image">
                                     <img src="{{ asset('assets') . '/' . $item->image }}" alt="product">
-                                </a>
+                                </div>
                                 <div class="product-widget">
-                                    <a title="Product Compare" href="compare.html" class="fas fa-random"></a>
-                                    <a title="Product Video" href="https://youtu.be/9xzcVxSBbG8" class="venobox fas fa-play" data-autoplay="true" data-vbtype="video"></a>
-                                    <a title="Product View" href="#" class="fas fa-eye" data-bs-toggle="modal" data-bs-target="#product-view"></a>
+                                    <a title="Product View" href="{{ route('product.show', $item->product_hash) }}" class="fas fa-eye"></a>
+                                    <button title="Edit Product" class="bi bi-wrench"data-bs-toggle="modal" data-bs-target="#updateProduct-{{ $item->product_hash }}"></button>
+                                    <form action="{{ route('product.destroy', $item->product_hash) }}" method="post">
+                                        @method('DELETE')
+                                        @csrf
+                                        <button title="Hapus Product" class="bi bi-trash" onclick="return confirm('Anda mau menghapus product(`{{ $item->name }}`)?')"></button>
+                                    </form>
                                 </div>
                             </div>
                             <div class="product-content">
@@ -360,9 +215,9 @@
                                 <a href="#">{{ $item->name }}</a>
                             </h6>
                             <h6 class="product-price">
-                                <span>Rp {{ $item->price }}</span>
+                                <span>Rp {{ number_format($item->price,0,',','.') }}</span>
                             </h6>
-                            <button class="product-add" title="Add to Cart">
+                            {{-- <button class="product-add" title="Add to Cart">
                                 <i class="fas fa-shopping-basket"></i>
                                 <span>add</span>
                             </button>
@@ -374,7 +229,7 @@
                                 <button class="action-plus" title="Quantity Plus">
                                 <i class="icofont-plus"></i>
                                 </button>
-                            </div>
+                            </div> --}}
                             </div>
                         </div>
                     </div>
@@ -426,10 +281,92 @@
     </div>
 </section>
 
+@if (sizeof($product))
+    @foreach ($product as $item)
+        <div class="modal fade" id="updateProduct-{{ $item->product_hash }}">
+            @php
+                $keyerror[$item->product_hash] = 'product_update_' . $item->product_hash;
+                
+                $img_class_product[$item->product_hash] = $errors->first('image', $keyerror[$item->product_hash]) ? 'is-invalid' : '' ;
+                $img_value_product[$item->product_hash] = $errors->get($keyerror[$item->product_hash]) ? old('image') != '' ? old('image') : $item->image : $item->image;
+                $name_class_product[$item->product_hash] = $errors->first('name', $keyerror[$item->product_hash]) ? 'is-invalid' : '' ;
+                $name_value_product[$item->product_hash] = $errors->get($keyerror[$item->product_hash]) ? old('name') != '' ? old('image') : $item->name : $item->name;
+                $price_class_product[$item->product_hash] = $errors->first('price', $keyerror[$item->product_hash]) ? 'is-invalid' : '' ;
+                $price_value_product[$item->product_hash] = $errors->get($keyerror[$item->product_hash]) ? old('price') != '' ? old('price') : $item->price : $item->price;
+                $desc_class_product[$item->product_hash] = $errors->first('description', $keyerror[$item->product_hash]) ? 'is-invalid' : '' ;
+                $desc_value_product[$item->product_hash] = $errors->get($keyerror[$item->product_hash]) ? old('description') != '' ? old('description') : $item->description : $item->description;
+                $ctg_class_product[$item->product_hash] = $errors->first('categories', $keyerror[$item->product_hash]) ? 'is-invalid' : '' ;
+                $ctg_value_product[$item->product_hash] = $errors->get($keyerror[$item->product_hash]) ? old('categories') != '' ? old('categories') : $item->categories : $item->categories;
+            @endphp
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <button class="modal-close icofont-close" data-bs-dismiss="modal"></button>
+                    <form action="{{ route('product.update', $item->product_hash) }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        @method('put')
+                        <div class="product-view">
+                            <div class="m-4 p-4">
+                                @if ($errors->get($keyerror[$item->product_hash]))
+                                    <div class="mb-3 text-center alert alert-danger alert-dismissible fade show" role="alert">
+                                        @foreach ($errors->get($keyerror[$item->product_hash]) as $item)
+                                            {{ $item }} <br>
+                                        @endforeach
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                @endif
+                                <div class="row clearfix">
+                                    <div class="col-lg-6 float-start">
+                                        <div class="mb-3">
+                                            <input type="file" class="form-control {{ $img_class_product[$item->product_hash] }}" placeholder="image" name="image" id="product-img-update-{{ $item->product_hash }}" onchange="productUpdatePreview('{{ $item->product_hash }}')" value="">
+                                        </div>
+                                        <input type="hidden" name="old_image" value="{{ $img_value_product[$item->product_hash] }}">
+                                        <img src="{{ asset('assets') . '/' . $img_value_product[$item->product_hash] }}" class="product-preview-{{ $item->product_hash }} img-fluid">
+                                    </div>
+                                    <div class="col-lg-6 float-end">
+                                        <div class="form-group">
+                                            <label for="productName">Product Name</label>
+                                            <input type="text" class="form-control {{ $name_class_product[$item->product_hash] }}" id="productName" name="name" placeholder="Enter product name" value="{{ $name_value_product[$item->product_hash] }}">
+                                        </div>
+                                        @if (sizeof($categories))
+                                            <div class="form-group">
+                                                <label for="productCategory">Category</label>
+                                                <select class="form-select {{ $ctg_class_product[$item->product_hash] }}" id="productCategory" name="categories">
+                                                    @foreach ($categories as $category)
+                                                    @if ($ctg_value_product[$item->product_hash] == $category->slug)
+                                                        <option value="{{ $category->slug }}" selected>{{ $category->name }}</option>
+                                                    @else
+                                                        <option value="{{ $category->slug }}">{{ $category->name }}</option>
+                                                    @endif
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        @endif
+                                        <div class="form-group">
+                                            <label for="productPrice">Price</label>
+                                            <input type="number" class="form-control {{ $price_class_product[$item->product_hash] }}" id="productPrice" name="price" placeholder="Enter price" value="{{ $price_value_product[$item->product_hash] }}">
+                                        </div>
+                                        <!-- Input Field -->
+                                        <div class="form-group">
+                                            <label for="productDescription">Description</label>
+                                            <textarea class="form-control {{ $desc_class_product[$item->product_hash] }}" id="productDescription" rows="3" name="description">{{ $desc_value_product[$item->product_hash] }}</textarea>
+                                        </div>
+                                        <div class="form-button">
+                                            <button type="submit">Rubah</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endforeach
+@endif
+
 @endsection
 
 @section('script')
-
 <script>
     // Produk input preview
     const productImg = document.querySelector('#product-img');
@@ -493,8 +430,33 @@
                 myModal.show();
             };
     @endif
+
+    @if (sizeof($product))    
+        @foreach ($product as $item)
+            @if ($errors->has('product_update_' . $item->product_hash))
+                var myModal = new bootstrap.Modal(document.getElementById("productUpdate-{{ $item->product_hash }}"), {});
+                document.onreadystatechange = function () {
+                    myModal.show();
+                };
+            @endif
+        @endforeach
+    @endif
+
+
+    function productUpdatePreview(hash) {
+        const productImg = document.querySelector('#product-img-update-' + hash);
+        const productImgPreview = document.querySelector('.product-preview-' + hash);
+
+        productImgPreview.style.display = 'block';
+    
+        const oFReader = new FileReader();
+        oFReader.readAsDataURL(productImg.files[0]);
+    
+        oFReader.onload = function(oFREvent)
+        {
+        productImgPreview.src = oFREvent.target.result;
+        }
+    }
     
 </script>
-
-
 @endsection

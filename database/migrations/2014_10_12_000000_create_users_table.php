@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('user_hash')->unique();
             $table->string('image')->nullable();
             $table->rememberToken();
+            $table->integer('status')->default(false);
             $table->timestamps();
         });
     }

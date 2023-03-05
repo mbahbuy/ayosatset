@@ -155,6 +155,7 @@ class UserController extends Controller
         auth()->user()->update([
             'name' => $validatedData['name'],
             'password' => Hash::make($validatedData['password']),
+            'status' => true
         ]);
 
         return redirect('profile')->with('success', 'Selamat datang di ayosatset, belanja tampa ribet');
@@ -162,7 +163,25 @@ class UserController extends Controller
 
     public function users(){
         return view('dashboard.userslist',[
-            'users' => User::where('admin_status', false)->get()
+            'users' => User::where('admin_status', false)->where('status', true)->get()
         ]);
+    }
+
+    public function suspense(User $user)
+    {
+        $user->update(['status' => 3]);
+        return back()->with('success', 'User telah dimasukkan ke black user list');
+    }
+
+    public function black(){
+        return view('dashboard.blacklist',[
+            'users' => User::where('admin_status', false)->where('status', 3)->get()
+        ]);
+    }
+
+    public function calm(User $user)
+    {
+        $user->update(['status' => 1]);
+        return back()->with('success', 'User telah dibebaskan');
     }
 }

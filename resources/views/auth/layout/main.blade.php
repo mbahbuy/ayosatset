@@ -12,31 +12,31 @@
     <meta name="keywords" content="organic, food, shop, ecommerce, store, html, bootstrap, template, agriculture, vegetables, products, farm, grocery, natural, online">
     <title>Greeny - Register</title>
     <link rel="icon" href="/images/favicon.png">
-    <link rel="stylesheet" href="/fonts/flaticon/flaticon.css">
-    <link rel="stylesheet" href="/fonts/icofont/icofont.min.css">
-    <link rel="stylesheet" href="/fonts/fontawesome/fontawesome.min.css">
-    <link rel="stylesheet" href="/vendor/venobox/venobox.min.css">
-    <link rel="stylesheet" href="/vendor/slickslider/slick.min.css">
-    <link rel="stylesheet" href="/vendor/niceselect/nice-select.min.css">
-    <link rel="stylesheet" href="/vendor/bootstrap/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/user-auth.css">
+    <link rel="stylesheet" href="{{ asset('fonts') }}/flaticon/flaticon.css">
+    <link rel="stylesheet" href="{{ asset('fonts') }}/icofont/icofont.min.css">
+    <link rel="stylesheet" href="{{ asset('fonts') }}/fontawesome/fontawesome.min.css">
+    <link rel="stylesheet" href="{{ asset('vendor') }}/venobox/venobox.min.css">
+    <link rel="stylesheet" href="{{ asset('vendor') }}/slickslider/slick.min.css">
+    <link rel="stylesheet" href="{{ asset('vendor') }}/niceselect/nice-select.min.css">
+    <link rel="stylesheet" href="{{ asset('vendor') }}/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ asset('css') }}/main.css">
+    <link rel="stylesheet" href="{{ asset('css') }}/user-auth.css">
   </head>
   <body>
     @yield('auth')
-    <script src="/vendor/bootstrap/jquery-1.12.4.min.js"></script>
-    <script src="/vendor/bootstrap/popper.min.js"></script>
-    <script src="/vendor/bootstrap/bootstrap.min.js"></script>
-    <script src="/vendor/countdown/countdown.min.js"></script>
-    <script src="/vendor/niceselect/nice-select.min.js"></script>
-    <script src="/vendor/slickslider/slick.min.js"></script>
-    <script src="/vendor/venobox/venobox.min.js"></script>
-    <script src="/js/nice-select.js"></script>
-    <script src="/js/countdown.js"></script>
-    <script src="/js/accordion.js"></script>
-    <script src="/js/venobox.js"></script>
-    <script src="/js/slick.js"></script>
-    <script src="/js/main.js"></script>
+    <script src="{{ asset('vendor') }}/bootstrap/jquery-1.12.4.min.js"></script>
+    <script src="{{ asset('vendor') }}/bootstrap/popper.min.js"></script>
+    <script src="{{ asset('vendor') }}/bootstrap/bootstrap.min.js"></script>
+    <script src="{{ asset('vendor') }}/countdown/countdown.min.js"></script>
+    <script src="{{ asset('vendor') }}/niceselect/nice-select.min.js"></script>
+    <script src="{{ asset('vendor') }}/slickslider/slick.min.js"></script>
+    <script src="{{ asset('vendor') }}/venobox/venobox.min.js"></script>
+    <script src="{{ asset('js') }}/nice-select.js"></script>
+    <script src="{{ asset('js') }}/countdown.js"></script>
+    <script src="{{ asset('js') }}/accordion.js"></script>
+    <script src="{{ asset('js') }}/venobox.js"></script>
+    <script src="{{ asset('js') }}/slick.js"></script>
+    <script src="{{ asset('js') }}/main.js"></script>
   </body>
   <!-- Mirrored from mironmahmud.com/greeny/assets/ltr/register.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 21 Jul 2022 05:26:08 GMT -->
 </html>

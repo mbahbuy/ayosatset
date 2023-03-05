@@ -20,25 +20,18 @@ $(window).on("scroll", (function() {
 	$("body").css("overflow", "hidden"), $(".cart-sidebar").addClass("active"), $(".cart-close").on("click", (function() {
 		$("body").css("overflow", "inherit"), $(".cart-sidebar").removeClass("active"), $(".backdrop").fadeOut()
 	}))
-})), $(".header-user, .header-cart, .header-cate, .cart-btn, .cate-btn").on("click", (function() {
+})), $(".header-wish, .wish-btn").on("click", (function() {
+	$("body").css("overflow", "hidden"), $(".wish-sidebar").addClass("active"), $(".wish-close").on("click", (function() {
+		$("body").css("overflow", "inherit"), $(".wish-sidebar").removeClass("active"), $(".backdrop").fadeOut()
+	}))
+})), $(".header-user, .header-cart, .header-wish, .header-cate, .cart-btn, .wish-btn, .cate-btn").on("click", (function() {
 	$(".backdrop").fadeIn(), $(".backdrop").on("click", (function() {
-		$(this).fadeOut(), $("body").css("overflow", "inherit"), $(".nav-sidebar").removeClass("active"), $(".cart-sidebar").removeClass("active"), $(".category-sidebar").removeClass("active")
+		$(this).fadeOut(), $("body").css("overflow", "inherit"), $(".nav-sidebar").removeClass("active"), $(".cart-sidebar").removeClass("active"), $(".wish-sidebar").removeClass("active"), $(".category-sidebar").removeClass("active")
 	}))
 })), $(".coupon-btn").on("click", (function() {
 	$(this).hide(), $(".coupon-form").css("display", "flex")
 })), $(".header-src").on("click", (function() {
 	$(".header-form").toggleClass("active"), $(this).children(".fa-search").toggleClass("fa-times")
-})), $(".wish").on("click", (function() {
-	$(this).toggleClass("active")
-})), $(".product-add").on("click", (function() {
-	var e = $(this).next(".product-action");
-	$(this).hide(), e.css("display", "flex")
-})), $(".action-plus").on("click", (function() {
-	var e = $(this).closest(".product-action").children(".action-input").get(0).value++,
-		c = $(this).closest(".product-action").children(".action-minus");
-	e > 0 && c.removeAttr("disabled")
-})), $(".action-minus").on("click", (function() {
-	2 == $(this).closest(".product-action").children(".action-input").get(0).value-- && $(this).attr("disabled", "disabled")
 })), $(".review-widget-btn").on("click", (function() {
 	$(this).next(".review-widget-list").toggle()
 })), $(".offer-select").on("click", (function() {
