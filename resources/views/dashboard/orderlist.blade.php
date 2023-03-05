@@ -37,7 +37,7 @@
                             </button>
 
                             <div class="modal fade" id="order-{{ $loop->iteration }}" tabindex="-1">
-                                <div class="modal-dialog">
+                                <div class="modal-dialog modal-xl">
                                   <div class="modal-content">
                                     <div class="modal-body">
                                         <table class="table table-hover">
@@ -46,7 +46,7 @@
                                                     <th scope="col">Code payment</th>
                                                     <th scope="col">Bukti payment</th>
                                                     <th scope="col">No Resi</th>
-                                                    <th scope="col">Foto Resi</th>
+                                                    <th scope="col">Foto Kurir</th>
                                                     <th scope="col">Status</th>
                                                     <th scope="col">Time</th>
                                                     <th scope="col">Action</th>
@@ -56,13 +56,13 @@
                                                 <tr>
                                                     <td>{{ $item->code }}</td>
                                                     <td>
-                                                        image
+                                                        {!! $item->img_payment ? "<img src='" . asset('assets' . '/' . $item->img_payment) . "' class='img-fluid'>"  : '-' !!}
                                                     </td>
                                                     <td>
-                                                        number
+                                                        {{ $item->no_resi ? $item->no_resi : '-' }}
                                                     </td>
                                                     <td>
-                                                        image
+                                                        {!! $item->img_kurir ? "<img src='" . asset('assets' . '/' . $item->img_kurir) . "' class='img-fluid'>" : '-' !!}
                                                     </td>
                                                     <td>
                                                         @switch($item->status)
@@ -78,6 +78,9 @@
                                                             @case(5)
                                                                 <span>Barang sampai</span>
                                                                 @break
+                                                            @case(6)
+                                                                <span>-</span>
+                                                                @break
                                                             @default
                                                                 <span>Belum ada pembayaran</span>
                                                         @endswitch
@@ -87,8 +90,14 @@
                                                         @if ($item->status == 1 )
                                                             <span>menunggu pembayaran</span>
                                                         @elseif ($item->status == 2)
-                                                            <span>konfirmasi pembayaran</span>
-                                                        @elseif ($item->status == 6 )
+                                                            <form action="{{ route('payment.confirm', $item->order_hash) }}" method="post">
+                                                                @csrf
+                                                                @method('put')
+                                                                <button type="submit" class="btn btn-outline-info">
+                                                                    <span>konfirmasi pembayaran</span>
+                                                                </button>
+                                                            </form>
+                                                        @elseif ($item->status == 7 )
                                                             <span>konfirmasi pengembalian</span>
                                                         @else
                                                             <span>-</span>

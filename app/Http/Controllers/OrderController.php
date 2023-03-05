@@ -30,16 +30,63 @@ class OrderController extends Controller
         foreach ($data as $item) {
             $hash = Cart::select('product_hash')->where('cart_hash', $item['value'])->first();
             Cart::where('cart_hash', $item['value'])->delete();
-            $payment = Product::select('price')->where('product_hash', $hash['product_hash'])->first();
+            $payment = Product::select('price', 'shop_hash')->where('product_hash', $hash['product_hash'])->first();
             $makeorder = new Order;
             $makeorder->user_hash = auth()->user()->user_hash;
             $makeorder->product_hash = $hash['product_hash'];
+            $makeorder->shop_hash = $payment['shop_hash'];
             $makeorder->code = 'ASS-' . $makeorder->user_hash;
             $makeorder->pcs = $item['pcs'];
             $makeorder->payment = $payment['price']*$item['pcs'];
             $makeorder->status = true;
+            $makeorder->order_hash = substr(md5($makeorder->user_hash . $makeorder->product_hash . $makeorder->pcs . now() ), 0, 24);
             $makeorder->save();
         }
         return response()->json(['data' => 'Tolong lakukan pembayaran untuk mempercepat proses pengiriman!']);
+    }
+
+    public function payment(Request $request, Order $order)
+    {
+        $rules = Validator::make($request->all(),['payment' => 'required|image|file|max:2048']);
+        if($rules->fails()){
+            return back()->withErrors($rules, 'payment-' . $order->order_hash);
+        }
+        $image = $request->file('payment')->store('payment-image');
+
+        $order->update(['status' => 2, 'img_payment' => $image]);
+        return back()->with('success', 'Mohon tunggu konfirmasi pembayaran');
+    }
+
+    public function paymentConfirm(Order $order){
+        $order->update(['status' => 3]);
+        return back()->with('success', 'Berhasil menyetujui pembayaran');
+    }
+
+    public function resi(Request $request, Order $order)
+    {
+        $rules = Validator::make($request->all(),['resi' => 'required|min:3']);
+        if($rules->fails()){
+            return back()->withErrors($rules, 'resi-' . $order->order_hash);
+        }
+        $data = $rules->validated();
+        $order->update(['no_resi' => $data['resi'], 'status' => 4]);
+        return back()->with('success', 'Pengiriman akan dilakukan');
+    }
+
+    public function kurir(Request $request, Order $order)
+    {
+        $rules = Validator::make($request->all(),['kurir' => 'required|image|file|max:2048']);
+        if($rules->fails()){
+            return back()->withErrors($rules, 'kurir-' . $order->order_hash);
+        }
+        $image = $request->file('kurir')->store('kurir-image');
+
+        $order->update(['status' => 5, 'img_kurir' => $image]);
+        return back()->with('success', 'Barang sudah tiba');
+    }
+
+    public function productConfirm(Order $order){
+        $order->update(['status' => 6]);
+        return back()->with('success', 'Terimakasih telah belanja di market kami');
     }
 }

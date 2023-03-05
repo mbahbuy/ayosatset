@@ -23,6 +23,8 @@
     <link rel="stylesheet" href="{{ asset('css') }}/brand-single.css">
     <link rel="stylesheet" href="{{ asset('css') }}/user-auth.css">
     <link rel="stylesheet" href="{{ asset('css') }}/error.css">
+    <link rel="stylesheet" href="{{ asset('css') }}/profile.css">
+    <link rel="stylesheet" href="{{ asset('css') }}/checkout.css">
     <link rel="stylesheet" href="{{ asset('css') }}/index.css">
     <link rel="stylesheet" href="{{ asset('css') }}/product-details.css">
     <link rel="stylesheet" href="{{ asset('css') }}/main.css">

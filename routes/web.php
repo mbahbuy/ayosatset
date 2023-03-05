@@ -38,6 +38,12 @@ Route::group(['middleware' => ['auth','verified']], function ()
     Route::put('/product/{product:product_hash}/update', ['as' => 'product.update', 'uses' => 'ProductController@update']);
     Route::delete('/product/{product:product_hash}', ['as' => 'product.destroy', 'uses' => 'ProductController@destroy']);
 
+    // Order
+    Route::put('/order/{order:order_hash}/payment', ['as' => 'order.user.payment', 'uses' => 'OrderController@payment']);
+    Route::put('/order/{order:order_hash}/resi', ['as' => 'payment.resi', 'uses' => 'OrderController@resi']);
+    Route::put('/order/{order:order_hash}/kurir', ['as' => 'order.kurir', 'uses' => 'OrderController@kurir']);
+    Route::put('/order/{order:order_hash}/product_confirm', ['as' => 'product.confirm', 'uses' => 'OrderController@productConfirm']);
+
     Route::get('/dashboard', ['as' => 'dashboard.index', 'uses' => 'DashboardController@index']);
 
     // Editor
@@ -59,5 +65,7 @@ Route::group(['middleware' => ['auth','verified']], function ()
         Route::get('/a/blacklist', ['as' => 'users.black', 'uses' => 'UserController@black']);
         Route::put('/a/blacklist/{user:user_hash}/calm', ['as' => 'user.calm', 'uses' => 'UserController@calm']);
         Route::get('/a/orderlist',['as' => 'order.index', 'uses' => 'OrderController@index']);
+
+        Route::put('/a/orderlist/{order:order_hash}/confirm',['as' => 'payment.confirm', 'uses' => 'OrderController@paymentConfirm']);
     });
 });

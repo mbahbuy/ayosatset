@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{User,Product};
+use App\Models\{Order, User,Product};
 use Illuminate\Http\{Request};
 use Illuminate\Support\Facades\{Hash, Validator, Storage};
 
@@ -22,9 +22,10 @@ class UserController extends Controller
         if (auth()->user()->name == '' || auth()->user()->name == null) {
             return redirect('profile/data/user');
         }
-        $product = (auth()->user()->shop) ? Product::where('shop_hash', auth()->user()->shop->shop_hash)->orderBy('id', 'DESC')->get() : [];
+        $product = (auth()->user()->shop == true) ? Product::where('shop_hash', auth()->user()->shop->shop_hash)->orderBy('created_at', 'DESC')->get() : [];
         return view('profile.index',[
-            'product' => $product
+            'product' => $product,
+            'orders' => Order::where('user_hash', auth()->user()->user_hash)->orderBy('created_at', 'DESC')->get()
         ]);
     }
 

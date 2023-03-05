@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Category, Product,Shop};
+use App\Models\{Category, Order, Product,Shop};
 use Illuminate\Http\{Request};
 use Illuminate\Support\Facades\{Validator};
 
@@ -19,8 +19,9 @@ class ShopController extends Controller
             return redirect('/profile');
         }
         return view('shop.index',[
+            'categories' => Category::all(),
             'product' => Product::where('shop_hash', auth()->user()->shop->shop_hash)->orderBy('id', 'DESC')->get(),
-            'categories' => Category::all()
+            'orders' => Order::where('shop_hash', auth()->user()->shop->shop_hash)->orderBy('id', 'DESC')->get()
         ]);
     }
 

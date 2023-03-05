@@ -2,155 +2,6 @@
 
 @section('container')
 
-<div class="modal fade" id="product-view">
-    <div class="modal-dialog">
-    <div class="modal-content">
-        <button class="modal-close icofont-close" data-bs-dismiss="modal"></button>
-        <div class="product-view">
-        <div class="row">
-            <div class="col-md-6 col-lg-6">
-            <div class="view-gallery">
-                <div class="view-label-group">
-                <label class="view-label new">new</label>
-                <label class="view-label off">-10%</label>
-                </div>
-                <ul class="preview-slider slider-arrow">
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                </ul>
-                <ul class="thumb-slider">
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                <li>
-                    <img src="images/product/01.jpg" alt="product">
-                </li>
-                </ul>
-            </div>
-            </div>
-            <div class="col-md-6 col-lg-6">
-            <div class="view-details">
-                <h3 class="view-name">
-                <a href="product-video.html">existing product name</a>
-                </h3>
-                <div class="view-meta">
-                <p>SKU: <span>1234567</span>
-                </p>
-                <p>BRAND: <a href="#">radhuni</a>
-                </p>
-                </div>
-                <div class="view-rating">
-                <i class="active icofont-star"></i>
-                <i class="active icofont-star"></i>
-                <i class="active icofont-star"></i>
-                <i class="active icofont-star"></i>
-                <i class="icofont-star"></i>
-                <a href="product-video.html">(3 reviews)</a>
-                </div>
-                <h3 class="view-price">
-                <del>$38.00</del>
-                <span>$24.00 <small>/per kilo</small>
-                </span>
-                </h3>
-                <p class="view-desc">Lorem ipsum dolor sit amet consectetur adipisicing elit non tempora magni repudiandae sint suscipit tempore quis maxime explicabo veniam eos reprehenderit fuga</p>
-                <div class="view-list-group">
-                <label class="view-list-title">tags:</label>
-                <ul class="view-tag-list">
-                    <li>
-                    <a href="#">organic</a>
-                    </li>
-                    <li>
-                    <a href="#">vegetable</a>
-                    </li>
-                    <li>
-                    <a href="#">chilis</a>
-                    </li>
-                </ul>
-                </div>
-                <div class="view-list-group">
-                <label class="view-list-title">Share:</label>
-                <ul class="view-share-list">
-                    <li>
-                    <a href="#" class="icofont-facebook" title="Facebook"></a>
-                    </li>
-                    <li>
-                    <a href="#" class="icofont-twitter" title="Twitter"></a>
-                    </li>
-                    <li>
-                    <a href="#" class="icofont-linkedin" title="Linkedin"></a>
-                    </li>
-                    <li>
-                    <a href="#" class="icofont-instagram" title="Instagram"></a>
-                    </li>
-                </ul>
-                </div>
-                <div class="view-add-group">
-                <button class="product-add" title="Add to Cart">
-                    <i class="fas fa-shopping-basket"></i>
-                    <span>add to cart</span>
-                </button>
-                <div class="product-action">
-                    <button class="action-minus" title="Quantity Minus">
-                    <i class="icofont-minus"></i>
-                    </button>
-                    <input class="action-input" title="Quantity Number" type="text" name="quantity" value="1">
-                    <button class="action-plus" title="Quantity Plus">
-                    <i class="icofont-plus"></i>
-                    </button>
-                </div>
-                </div>
-                <div class="view-action-group">
-                <a class="view-wish wish" href="#" title="Add Your Wishlist">
-                    <i class="icofont-heart"></i>
-                    <span>add to wish</span>
-                </a>
-                <a class="view-compare" href="compare.html" title="Compare This Item">
-                    <i class="fas fa-random"></i>
-                    <span>Compare This</span>
-                </a>
-                </div>
-            </div>
-            </div>
-        </div>
-        </div>
-    </div>
-    </div>
-</div>
-
 @if (auth()->user()->shop == false)    
     <div class="modal fade" id="add-shop">
         @php
@@ -248,58 +99,26 @@
                     </div>
                     @if ( sizeof($product))
                         <div class="account-content">
-                            <div class="row">
-                                @foreach ($product as $item)
-                                    <div class="col-md-6 col-lg-4 alert fade show">
-                                        <div class="product-card">
-                                            <div class="product-media">
-                                                <div class="product-label">
-                                                    <label class="label-text new">new</label>
-                                                </div>
-                                                <button class="product-wish wish">
-                                                    <i class="fas fa-heart"></i>
-                                                </button>
-                                                <a class="product-image" href="#">
-                                                    <img src="{{ asset('assets') . '/' . $item->image }}" alt="product">
-                                                </a>
-                                                <div class="product-widget">
-                                                    <a title="Product Compare" href="compare.html" class="fas fa-random"></a>
-                                                    <a title="Product Video" href="https://youtu.be/9xzcVxSBbG8" class="venobox fas fa-play" data-autoplay="true" data-vbtype="video"></a>
-                                                    <a title="Product View" href="#" class="fas fa-eye" data-bs-toggle="modal" data-bs-target="#product-view"></a>
-                                                </div>
-                                            </div>
-                                            <div class="product-content">
-                                            <div class="product-rating">
-                                                <i class="active icofont-star"></i>
-                                                <i class="active icofont-star"></i>
-                                                <i class="active icofont-star"></i>
-                                                <i class="active icofont-star"></i>
-                                                <i class="icofont-star"></i>
-                                            </div>
-                                            <h6 class="product-name">
-                                                <a href="#">{{ $item->name }}</a>
-                                            </h6>
-                                            <h6 class="product-price">
-                                                <span>Rp {{ $item->price }}</span>
-                                            </h6>
-                                            <button class="product-add" title="Add to Cart">
-                                                <i class="fas fa-shopping-basket"></i>
-                                                <span>add</span>
-                                            </button>
-                                            <div class="product-action">
-                                                <button class="action-minus" title="Quantity Minus">
-                                                <i class="icofont-minus"></i>
-                                                </button>
-                                                <input class="action-input" title="Quantity Number" type="text" name="quantity" value="1">
-                                                <button class="action-plus" title="Quantity Plus">
-                                                <i class="icofont-plus"></i>
-                                                </button>
-                                            </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Nama barang</th>
+                                        <th scope="col">Categori produk</th>
+                                        <th scope="col">Harga</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($product as $item)
+                                        <tr>
+                                            <td scope="row">{{ $loop->iteration }}</td>
+                                            <td>{{ $item->name }}</td>
+                                            <td>{{ $item->category->name }}</td>
+                                            <td>Rp. {{ number_format($item->price,0,',','.') }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     @else
                         <div class="col-lg-12">
@@ -310,6 +129,99 @@
             </div>
 
             <div class="col-lg-12">
+                <div class="account-card">
+                    <div class="account-title">
+                        <h4>Pesanan anda</h4>
+                        {{-- <button data-bs-toggle="modal" data-bs-target="#contact-add">add contact</button> --}}
+                    </div>
+                    <div class="account-content">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Nama Barang</th>
+                                    <th scope="col">Harga Barang</th>
+                                    <th scope="col">Pcs</th>
+                                    <th scope="col">Total Harga</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (sizeof($orders))
+                                    @foreach ($orders as $item)
+                                        <tr>
+                                            <td scope="row">{{ $loop->iteration }}</td>
+                                            <td>{{ $item->product->name }}</td>
+                                            <td>Rp. {{ number_format($item->product->price,0,',','.') }}</td>
+                                            <td>{{ $item->pcs }}</td>
+                                            <td>Rp. {{ number_format($item->payment,0,',','.') }}</td>
+                                            <td>
+                                                @switch($item->status)
+                                                    @case(2)
+                                                        <span>Menunggu konfirmasi payment</span>
+                                                        @break
+                                                    @case(3)
+                                                        <span>Proses pengemasan</span>
+                                                        @break
+                                                    @case(4)
+                                                        <span>Proses Pengiriman</span>
+                                                        @break
+                                                    @case(5)
+                                                        <form action="{{ route('product.confirm', $item->order_hash) }}" method="post">
+                                                            @csrf
+                                                            @method('put')
+                                                            <button type="submit" class="btn btn-outline">
+                                                                <span>konfirmasi barang sampai</span>
+                                                            </button>
+                                                        </form>
+                                                        @break
+                                                    @case(6)
+                                                        <span>-</span>
+                                                        @break
+                                                    @default
+                                                        
+
+                                                        <button type="button" class="btn btn-outline" data-bs-toggle="modal" data-bs-target="#order-{{ $item->order_hash }}">
+                                                            <span>Upload bukti pembayaran</span>
+                                                        </button>
+
+                                                        <div class="modal fade" id="order-{{ $item->order_hash }}">
+                                                            <div class="modal-dialog modal-dialog-centered">
+                                                                <div class="modal-content">
+                                                                    <button class="modal-close" data-bs-dismiss="modal">
+                                                                        <i class="icofont-close"></i>
+                                                                    </button>
+                                                                    <form class="modal-form" action="{{ route('order.user.payment', $item->order_hash) }}" method="POST" enctype="multipart/form-data">
+                                                                        @csrf
+                                                                        @method('put')
+                                                                        <div class="form-title">
+                                                                            <h3>Upload bukti pembayaran</h3>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label class="form-label" for="payment">payment</label>
+                                                                            <input class="form-control " type="file" name="payment" id="payment" onchange="paymentPreview(this)">
+                                                                            <img src="" class="payment-show img-fluid">
+                                                                        </div>
+                                                                        <button class="form-btn" type="submit">upload</button>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                @endswitch
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            {{-- <div class="col-lg-12">
                 <div class="account-card">
                     <div class="account-title">
                         <h4>contact number</h4>
@@ -362,9 +274,9 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
-            <div class="col-lg-12">
+            {{-- <div class="col-lg-12">
                 <div class="account-card">
                     <div class="account-title">
                         <h4>delivery address</h4>
@@ -417,7 +329,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
             {{-- <div class="col-lg-12">
                 <div class="account-card mb-0">
                     <div class="account-title">
@@ -773,6 +685,20 @@
         } else {
             pass_conf_icon.className = 'fa fa-eye-slash';
             pass_conf.setAttribute('type', 'password');
+        }
+    }
+
+    function paymentPreview(par) {
+        const imgPreview = $(par).closest(".form-group").children(".payment-show");
+
+        imgPreview.css('display', 'block');
+        
+        const oFReader = new FileReader();
+        oFReader.readAsDataURL(par.files[0]);
+        
+        oFReader.onload = function(oFREvent)
+        {
+            imgPreview.attr('src', oFREvent.target.result);
         }
     }
     

@@ -217,19 +217,6 @@
                             <h6 class="product-price">
                                 <span>Rp {{ number_format($item->price,0,',','.') }}</span>
                             </h6>
-                            {{-- <button class="product-add" title="Add to Cart">
-                                <i class="fas fa-shopping-basket"></i>
-                                <span>add</span>
-                            </button>
-                            <div class="product-action">
-                                <button class="action-minus" title="Quantity Minus">
-                                <i class="icofont-minus"></i>
-                                </button>
-                                <input class="action-input" title="Quantity Number" type="text" name="quantity" value="1">
-                                <button class="action-plus" title="Quantity Plus">
-                                <i class="icofont-plus"></i>
-                                </button>
-                            </div> --}}
                             </div>
                         </div>
                     </div>
@@ -281,6 +268,115 @@
     </div>
 </section>
 
+<section class="inner-section checkout-part">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="account-card">
+                    <div class="account-title">
+                        <h4>Pesanan</h4>
+                    </div>
+                </div>
+                <div class="account-content">
+                    <div class="table-scroll">
+                        <table class="table-list">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Costumer</th>
+                                    <th scope="col">Nama barang</th>
+                                    <th scope="col">Harga barang</th>
+                                    <th scope="col">Pcs</th>
+                                    <th scope="col">Jumlah harga</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (sizeof($orders))
+                                    @foreach ($orders as $item)                    
+                                        <tr>
+                                            <td scope="row">{{ $loop->iteration }}</td>
+                                            <td>{{ $item->user->name }}</td>
+                                            <td>{{ $item->product->name }}</td>
+                                            <td>Rp. {{ number_format($item->product->price,0,',','.') }}</td>
+                                            <td>{{ $item->pcs }}</td>
+                                            <td>Rp. {{ number_format($item->payment,0,',','.') }}</td>
+                                            <td>
+                                                @switch($item->status)
+                                                    @case(2)
+                                                        <span>Menunggu konfirmasi payment</span>
+                                                        @break
+                                                    @case(3)
+                                                        <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#input-resi-{{ $item->order_hash }}">
+                                                            <span>Proses pengemasan</span>
+                                                        </button>
+                                      
+                                                        <div class="modal fade" id="input-resi-{{ $item->order_hash }}" tabindex="-1">
+                                                            <div class="modal-dialog">
+                                                              <div class="modal-content">
+                                                                <h5 class="modal-title text-center">input no resi</h5>
+                                                                <div class="modal-body">
+                                                                  <form action="{{ route('payment.resi', $item->order_hash) }}" method="post">
+                                                                    @csrf
+                                                                    @method('put')
+                                                                    <input class="form-control" type="text" name="resi" placeholder="Masukkan no resi...."  autofocus>
+                                                                  </form>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                        </div><!-- End Modal Dialog Scrollable-->
+                                                        @break
+                                                    @case(4)                             
+                                                        <button type="button" class="btn btn-outline" data-bs-toggle="modal" data-bs-target="#kurir-{{ $item->order_hash }}">
+                                                            <span>Foto kurir</span>
+                                                        </button>
+                    
+                                                        <div class="modal fade" id="kurir-{{ $item->order_hash }}">
+                                                            <div class="modal-dialog modal-dialog-centered">
+                                                                <div class="modal-content">
+                                                                    <button class="modal-close" data-bs-dismiss="modal">
+                                                                        <i class="icofont-close"></i>
+                                                                    </button>
+                                                                    <form class="modal-form" action="{{ route('order.kurir', $item->order_hash) }}" method="POST" enctype="multipart/form-data">
+                                                                        @csrf
+                                                                        @method('put')
+                                                                        <div class="form-title">
+                                                                            <h3>Upload bukti barang sampai</h3>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label class="form-label" for="success">foto</label>
+                                                                            <input class="form-control " type="file" name="kurir" id="success" onchange="successPreview(this)">
+                                                                            <img src="" class="success-show img-fluid">
+                                                                        </div>
+                                                                        <button class="form-btn" type="submit">upload</button>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                    
+                                                        @break
+                                                    @case(5)
+                                                        <span>konfirmasi barang sampai</span>
+                                                        @break
+                                                    @default
+                                                        
+                    
+                                                @endswitch
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr><td scope="row" colspan="7">Belum ada pesanan</td></tr>
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 @if (sizeof($product))
     @foreach ($product as $item)
         <div class="modal fade" id="updateProduct-{{ $item->product_hash }}">
@@ -317,10 +413,10 @@
                                 <div class="row clearfix">
                                     <div class="col-lg-6 float-start">
                                         <div class="mb-3">
-                                            <input type="file" class="form-control {{ $img_class_product[$item->product_hash] }}" placeholder="image" name="image" id="product-img-update-{{ $item->product_hash }}" onchange="productUpdatePreview('{{ $item->product_hash }}')" value="">
+                                            <input type="file" class="form-control {{ $img_class_product[$item->product_hash] }}" placeholder="image" name="image" id="product-img-update" onchange="productUpdatePreview(this)" value="">
                                         </div>
                                         <input type="hidden" name="old_image" value="{{ $img_value_product[$item->product_hash] }}">
-                                        <img src="{{ asset('assets') . '/' . $img_value_product[$item->product_hash] }}" class="product-preview-{{ $item->product_hash }} img-fluid">
+                                        <img src="{{ asset('assets') . '/' . $img_value_product[$item->product_hash] }}" class="product-preview img-fluid">
                                     </div>
                                     <div class="col-lg-6 float-end">
                                         <div class="form-group">
@@ -444,19 +540,36 @@
 
 
     function productUpdatePreview(hash) {
-        const productImg = document.querySelector('#product-img-update-' + hash);
-        const productImgPreview = document.querySelector('.product-preview-' + hash);
+        const productImgPreview = $(hash).closest(".col-lg-6").children(".product-preview");
 
-        productImgPreview.style.display = 'block';
+        productImgPreview.css( "display" , 'block');
     
         const oFReader = new FileReader();
-        oFReader.readAsDataURL(productImg.files[0]);
+        oFReader.readAsDataURL(hash.files[0]);
     
         oFReader.onload = function(oFREvent)
         {
-        productImgPreview.src = oFREvent.target.result;
+            productImgPreview.attr('src', oFREvent.target.result);
         }
     }
+
+    function successPreview(success) {
+        const imgPreview = $(success).closest(".form-group").children(".success-show");
+
+        imgPreview.css('display', 'block');
+        
+        const oFReader = new FileReader();
+        oFReader.readAsDataURL(success.files[0]);
+        
+        oFReader.onload = function(oFREvent)
+        {
+            imgPreview.attr('src', oFREvent.target.result);
+        }
+    }
+
+    $('.modal').on('shown.bs.modal', function() {
+        $(this).find('[autofocus]').focus();
+    });
     
 </script>
 @endsection
