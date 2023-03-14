@@ -81,6 +81,9 @@
                                                             @case(6)
                                                                 <span>-</span>
                                                                 @break
+                                                            @case(7)
+                                                                <span>Perngajuan Pengembalian(return)</span>
+                                                                @break
                                                             @default
                                                                 <span>Belum ada pembayaran</span>
                                                         @endswitch

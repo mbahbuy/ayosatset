@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('ratings', function (Blueprint $table) {
             $table->id();
             $table->string('product_hash');
-            $table->foreignId('rating');
+            $table->tinyInteger('rating')->default(true);
             $table->string('image')->nullable();
             $table->text('message')->nullable();
             $table->timestamps();

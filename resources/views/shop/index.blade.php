@@ -34,9 +34,9 @@
                             <div class="row clearfix">
                                 <div class="col-lg-6 float-start">
                                     <div class="mb-3">
-                                        <input type="file" class="form-control {{ $img_class_product_add }}" placeholder="image" name="image" id="product-img" onchange="productPreview()" value="{{ $img_value_product_add }}">
+                                        <input type="file" class="form-control {{ $img_class_product_add }}" placeholder="image" name="image" id="product-img" onchange="productPreview(this)" value="{{ $img_value_product_add }}">
                                     </div>
-                                    <img src="" class="product-preview img-fluid">
+                                    <img src="" class="img-fluid">
                                 </div>
                                 <div class="col-lg-6 float-end">
                                     <div class="form-group">
@@ -119,13 +119,13 @@
             @endif
             <div class="form-group">
                 <label class="form-label" for="banner">Banner</label>
-                <input class="form-control {{ $banner_class_shop }}" type="file" name="banner" id="banner" value="{{ $banner_value_shop }}" onchange="bannerPreview()">
-                <img class="img-fluid banner-preview" src="{{ (auth()->user()->shop->banner) ? asset( 'assets' . '/' . auth()->user()->shop->banner ) : 'images/single-banner.jpg' }}">
+                <input class="form-control {{ $banner_class_shop }}" type="file" name="banner" id="banner" value="{{ $banner_value_shop }}" onchange="imagePreview(this)">
+                <img class="img-fluid" src="{{ (auth()->user()->shop->banner) ? asset( 'assets' . '/' . auth()->user()->shop->banner ) : 'images/single-banner.jpg' }}">
             </div>
             <div class="form-group">
                 <label class="form-label" for="shop-img">shop image</label>
-                <input class="form-control {{ $img_class_shop }}" type="file" name="image" id="shop-img" value="{{ $img_value_shop }}" onchange="shopPreview()">
-                <img class="img-fluid shop-preview" src="{{ (auth()->user()->shop->image) ? asset('assets' . '/' . auth()->user()->shop->image ) : 'images/brand/02.jpg' }}">
+                <input class="form-control {{ $img_class_shop }}" type="file" name="image" id="shop-img" value="{{ $img_value_shop }}" onchange="imagePreview(this)">
+                <img class="img-fluid" src="{{ (auth()->user()->shop->image) ? asset('assets' . '/' . auth()->user()->shop->image ) : 'images/brand/02.jpg' }}">
             </div>
             <div class="form-group">
                 <label class="form-label" for="name">name</label>
@@ -413,10 +413,10 @@
                                 <div class="row clearfix">
                                     <div class="col-lg-6 float-start">
                                         <div class="mb-3">
-                                            <input type="file" class="form-control {{ $img_class_product[$item->product_hash] }}" placeholder="image" name="image" id="product-img-update" onchange="productUpdatePreview(this)" value="">
+                                            <input type="file" class="form-control {{ $img_class_product[$item->product_hash] }}" placeholder="image" name="image" id="product-img-update" onchange="productPreview(this)" value="">
                                         </div>
                                         <input type="hidden" name="old_image" value="{{ $img_value_product[$item->product_hash] }}">
-                                        <img src="{{ asset('assets') . '/' . $img_value_product[$item->product_hash] }}" class="product-preview img-fluid">
+                                        <img src="{{ asset('assets') . '/' . $img_value_product[$item->product_hash] }}" class="img-fluid">
                                     </div>
                                     <div class="col-lg-6 float-end">
                                         <div class="form-group">
@@ -464,54 +464,19 @@
 
 @section('script')
 <script>
-    // Produk input preview
-    const productImg = document.querySelector('#product-img');
-    const productImgPreview = document.querySelector('.product-preview');
-    function productPreview()
-    {
-      productImgPreview.style.display = 'block';
-    
-      const oFReader = new FileReader();
-      oFReader.readAsDataURL(productImg.files[0]);
-    
-      oFReader.onload = function(oFREvent)
-      {
-        productImgPreview.src = oFREvent.target.result;
-      }
-    };
+    function imagePreview(img) {
+        const imgPreview = $(img).closest(".form-group").children(".img-fluid");
 
-    // banner preview
-    const bannerImg = document.querySelector('#banner');
-    const bannerImgPreview = document.querySelector('.banner-preview');
-    function bannerPreview()
-    {
-      bannerImgPreview.style.display = 'block';
-    
-      const oFReader = new FileReader();
-      oFReader.readAsDataURL(bannerImg.files[0]);
-    
-      oFReader.onload = function(oFREvent)
-      {
-        bannerImgPreview.src = oFREvent.target.result;
-      }
-    };
+        imgPreview.css('display', 'block');
 
-    // image shop preview
-    const shopImg = document.querySelector('#shop-img');
-    shopImg.defaultValue = "{{ asset( 'assets' . '/' . $img_value_shop) }}";
-    const shopImgPreview = document.querySelector('.shop-preview');
-    function shopPreview()
-    {
-      shopImgPreview.style.display = 'block';
-    
-      const oFReader = new FileReader();
-      oFReader.readAsDataURL(shopImg.files[0]);
-    
-      oFReader.onload = function(oFREvent)
-      {
-        shopImgPreview.src = oFREvent.target.result;
-      }
-    };
+        const oFReader = new FileReader();
+        oFReader.readAsDataURL(img.files[0]);
+
+        oFReader.onload = function(oFREvent)
+        {
+            imgPreview.attr('src', oFREvent.target.result);
+        }
+    }
 
     @if ($errors->shop_update->any())
             var myModal = new bootstrap.Modal(document.getElementById("settings"), {});
@@ -539,8 +504,8 @@
     @endif
 
 
-    function productUpdatePreview(hash) {
-        const productImgPreview = $(hash).closest(".col-lg-6").children(".product-preview");
+    function productPreview(hash) {
+        const productImgPreview = $(hash).closest(".col-lg-6").children(".img-fluid");
 
         productImgPreview.css( "display" , 'block');
     

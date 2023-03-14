@@ -167,13 +167,59 @@
                                                         <span>Proses Pengiriman</span>
                                                         @break
                                                     @case(5)
-                                                        <form action="{{ route('product.confirm', $item->order_hash) }}" method="post">
-                                                            @csrf
-                                                            @method('put')
-                                                            <button type="submit" class="btn btn-outline">
-                                                                <span>konfirmasi barang sampai</span>
-                                                            </button>
-                                                        </form>
+                                                        <button type="button" class="btn btn-outline" data-bs-toggle="modal" data-bs-target="#rating-{{ $item->order_hash }}">
+                                                            <span>konfirmasi barang sampai</span>
+                                                        </button>
+                                                        <div class="modal fade" id="rating-{{ $item->order_hash }}">
+                                                            @php
+                                                                $keyerror[$item->order_hash] = 'rating_' . $item->order_hash;
+                                                                
+                                                                $img_class_rating[$item->order_hash] = $errors->first('image', $keyerror[$item->order_hash]) ? 'is-invalid' : '' ;
+                                                                $img_value_rating[$item->order_hash] = $errors->get($keyerror[$item->order_hash]) ? old('image') != '' ? old('image') : '' : '';
+                                                                $message_class_rating[$item->order_hash] = $errors->first('message', $keyerror[$item->order_hash]) ? 'is-invalid' : '';
+                                                                $message_value_rating[$item->order_hash] = $errors->get($keyerror[$item->order_hash]) ? old('message') != '' ? old('message') : '' : '';
+                                                            @endphp
+                                                            <div class="modal-dialog modal-xl">
+                                                                <div class="modal-content">
+                                                                    <button class="modal-close icofont-close" data-bs-dismiss="modal"></button>
+                                                                    <form action="{{ route('product.confirm', $item->order_hash) }}" method="POST" enctype="multipart/form-data">
+                                                                        @csrf
+                                                                        @method('put')
+                                                                        <div class="product-view">
+                                                                            <div class="m-4 p-4">
+                                                                                <div class="row clearfix">
+                                                                                    <div class="col-lg-6 float-start">
+                                                                                        <div class="mb-3">
+                                                                                            <input type="file" class="form-control " placeholder="image" name="image" onchange="reviewPreview(this)" value="">
+                                                                                        </div>
+                                                                                        <img src="{{ $img_value_rating[$item->order_hash] }}" class="img-fluid">
+                                                                                    </div>
+                                                                                    <div class="col-lg-6 float-end">
+                                                                                        <div class="form-group">
+                                                                                            <i class="bi bi-star-fill" style="color:yellow" data-rating="1" onclick="rating(this)" role="button" ></i>
+                                                                                            <i class="bi bi-star-fill" data-rating="2" onclick="rating(this)" role="button"></i>
+                                                                                            <i class="bi bi-star-fill" data-rating="3" onclick="rating(this)" role="button"></i>
+                                                                                            <i class="bi bi-star-fill" data-rating="4" onclick="rating(this)" role="button"></i>
+                                                                                            <i class="bi bi-star-fill" data-rating="5" onclick="rating(this)" role="button"></i>
+                                                                                            <input type="number" class="d-none" name="rating" min="1" max="5" value="1">
+                                                                                        </div>
+                                                                                        <!-- Input Field -->
+                                                                                        <div class="form-group">
+                                                                                            <textarea class="form-control {{ $message_class_rating[$item->order_hash] }}" placeholder="Pesan....." rows="3" name="message" required>{{ $message_value_rating[$item->order_hash] }}</textarea>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="row col-lg-12">
+                                                                                    <div class="form-button">
+                                                                                        <button type="submit">konfirmasi</button>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                         @break
                                                     @case(6)
                                                         <span>-</span>
@@ -199,8 +245,8 @@
                                                                         </div>
                                                                         <div class="form-group">
                                                                             <label class="form-label" for="payment">payment</label>
-                                                                            <input class="form-control " type="file" name="payment" id="payment" onchange="paymentPreview(this)">
-                                                                            <img src="" class="payment-show img-fluid">
+                                                                            <input class="form-control " type="file" name="payment" id="payment" onchange="imagePreview(this)">
+                                                                            <img src="" class="img-fluid">
                                                                         </div>
                                                                         <button class="form-btn" type="submit">upload</button>
                                                                     </form>
@@ -490,9 +536,9 @@
                 </div>
             @endif
             <div class="form-group">
-                <label class="form-label">profile image</label>
-                <input class="form-control {{ $img_class_profile }}" type="file" name="image" id="image" value="{{ $img_value_profile }}" onchange="imagePreview()">
-                <img class="img-fluid img-preview" src="">
+                <label class="form-label" for="profile-image">profile image</label>
+                <input class="form-control {{ $img_class_profile }}" type="file" name="image" id="profile-image" value="{{ $img_value_profile }}" onchange="imagePreview(this)">
+                <img class="img-fluid" src="">
             </div>
             <div class="form-group">
                 <label class="form-label" for="name">name</label>
@@ -534,21 +580,21 @@
                 <label class="form-label">Old Password</label>
                 <div class="input-group flex-nowrap">
                     <input class="form-control {{ $oldpass_class_profile }}" name="old_password" id="pass_old" type="password" value="{{ $oldpass_value_profile }}">
-                    <button type="button" onclick="password_old_show()" class="input-group-text" id="addon-wrapping"><i id="pass_old_icon" class="fa fa-eye-slash"></i></button>
+                    <button type="button" onclick="showPassword(this)" class="input-group-text" id="addon-wrapping"><i class="bi bi-eye-slash"></i></button>
                 </div>
             </div>
             <div class="form-group">
                 <label class="form-label" for="pass">New Password</label>
                 <div class="input-group flex-nowrap">
                     <input class="form-control {{ $newpass_class_profile }}" name="new_password" id="pass" type="password" value="{{ $newpass_value_profile }}">
-                    <button type="button" onclick="password_show()" class="input-group-text" id="addon-wrapping"><i id="pass_icon" class="fa fa-eye-slash"></i></button>
+                    <button type="button" onclick="showPassword(this)" class="input-group-text" id="addon-wrapping"><i class="bi bi-eye-slash"></i></button>
                 </div>
             </div>
             <div class="form-group">
                 <label class="form-label" for="pass_conf">Confirm Password</label>
                 <div class="input-group flex-nowrap">
                     <input type="password" class="form-control {{ $passconf_class_profile }}" id="pass_conf" name="password_confirmation" value="{{ $passconf_value_profile }}">
-                    <button type="button" onclick="password_confirm_show()" class="input-group-text" id="addon-wrapping"><i id="pass_conf_icon" class="fa fa-eye-slash"></i></button>
+                    <button type="button" onclick="showPassword(this)" class="input-group-text" id="addon-wrapping"><i class="bi bi-eye-slash"></i></button>
                 </div>
             </div>
             <button class="form-btn" type="submit">Change Password</button>
@@ -616,20 +662,19 @@
 @section('script')
 <script>
 
-    const image = document.querySelector('#image');
-    const imgPreview = document.querySelector('.img-preview');
-    function imagePreview()
-    {
-        imgPreview.style.display = 'block';
-        
+    function imagePreview(img) {
+        const imgPreview = $(img).closest(".form-group").children(".img-fluid");
+
+        imgPreview.css('display', 'block');
+
         const oFReader = new FileReader();
-        oFReader.readAsDataURL(image.files[0]);
-        
+        oFReader.readAsDataURL(img.files[0]);
+
         oFReader.onload = function(oFREvent)
         {
-            imgPreview.src = oFREvent.target.result;
+            imgPreview.attr('src', oFREvent.target.result);
         }
-    };
+    }
     @if ($errors->create_shop->any())
         var myModal = new bootstrap.Modal(document.getElementById("add-shop"), {});
         document.onreadystatechange = function () {
@@ -652,54 +697,52 @@
         };
     @endif
 
-    const pass_old = document.getElementById('pass_old');
-    const pass_old_icon = document.getElementById('pass_old_icon');
-    function password_old_show(){
-        if(pass_old_icon.classList.contains('fa-eye-slash')){
-            pass_old_icon.className = 'fa fa-eye';
-            pass_old.setAttribute('type', 'text');
+    @if (sizeof($orders))    
+        @foreach ($orders as $item)
+            @if ($errors->has('rating_' . $item->product_hash))
+                var myModal = new bootstrap.Modal(document.getElementById("rating-{{ $item->order_hash }}"), {});
+                document.onreadystatechange = function () {
+                    myModal.show();
+                };
+            @endif
+        @endforeach
+    @endif
+
+    function showPassword(pass) {
+        const target = $(pass).closest('.input-group').children('.form-control');
+        const target_icon = $(pass).children('.bi');
+        if (target_icon.hasClass('bi-eye-slash')) {
+        target.attr('type', 'text');
+        target_icon.attr('class', 'bi bi-eye');
         } else {
-            pass_old_icon.className = 'fa fa-eye-slash';
-            pass_old.setAttribute('type', 'password');
+        target.attr('type', 'password');
+        target_icon.attr('class', 'bi bi-eye-slash');
         }
     }
 
-    const pass = document.getElementById('pass');
-    const pass_icon = document.getElementById('pass_icon');
-    function password_show(){
-        if(pass_icon.classList.contains('fa-eye-slash')){
-            pass_icon.className = 'fa fa-eye';
-            pass.setAttribute('type', 'text');
-        } else {
-            pass_icon.className = 'fa fa-eye-slash';
-            pass.setAttribute('type', 'password');
-        }
-    }
+    function reviewPreview(hash) {
+        const productImgPreview = $(hash).closest(".col-lg-6").children(".img-fluid");
 
-    const pass_conf = document.getElementById('pass_conf');
-    const pass_conf_icon = document.getElementById('pass_conf_icon');
-    function password_confirm_show(){
-        if(pass_conf_icon.classList.contains('fa-eye-slash')){
-            pass_conf_icon.className = 'fa fa-eye';
-            pass_conf.setAttribute('type', 'text');
-        } else {
-            pass_conf_icon.className = 'fa fa-eye-slash';
-            pass_conf.setAttribute('type', 'password');
-        }
-    }
-
-    function paymentPreview(par) {
-        const imgPreview = $(par).closest(".form-group").children(".payment-show");
-
-        imgPreview.css('display', 'block');
-        
+        productImgPreview.css( "display" , 'block');
+    
         const oFReader = new FileReader();
-        oFReader.readAsDataURL(par.files[0]);
-        
+        oFReader.readAsDataURL(hash.files[0]);
+    
         oFReader.onload = function(oFREvent)
         {
-            imgPreview.attr('src', oFREvent.target.result);
+            productImgPreview.attr('src', oFREvent.target.result);
         }
+    }
+
+    function rating(star) {
+        const rating = $(star).attr('data-rating');
+        const input = $(star).closest('.form-group').children("input.d-none");
+        const pSibling = $(star).prevAll();
+        const nSibling = $(star).nextAll();
+        input.attr('value', rating);
+        pSibling.css('color', 'yellow');
+        $(star).css('color', 'yellow');
+        nSibling.css('color', '');
     }
     
 </script>

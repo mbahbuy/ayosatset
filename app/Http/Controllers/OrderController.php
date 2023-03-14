@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Cart, Order, Product};
+use App\Models\{Cart, Order, Product, Rating};
 use Illuminate\Http\{Request};
 use Illuminate\Support\Facades\{Validator};
 use Illuminate\Validation\{Rule};
+use PhpParser\Node\Expr\New_;
 
 class OrderController extends Controller
 {
@@ -85,7 +86,23 @@ class OrderController extends Controller
         return back()->with('success', 'Barang sudah tiba');
     }
 
-    public function productConfirm(Order $order){
+    public function productConfirm(Request $request, Order $order){
+        $rules = Validator::make($request->all(),[
+            'rating' => 'required|numeric|min:1|max:5',
+            'image' => 'nullable|image|file|max:2048',
+            'message' => 'required|min:5'
+        ]);
+        if($rules->fails()){
+            return back()->withErrors($rules, 'rating_' . $order->order_hash);
+        }
+        $data = $rules->validated();
+        $data['image'] = $request->file('image') ? $request->file('image')->store('ratings-image') : '' ;
+        $rating = new Rating;
+        $rating->product_hash = $order->product_hash;
+        $rating->rating = $data['rating'];
+        $rating->image = $data['image'];
+        $rating->message = $data['message'];
+        $rating->save();
         $order->update(['status' => 6]);
         return back()->with('success', 'Terimakasih telah belanja di market kami');
     }

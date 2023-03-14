@@ -105,7 +105,7 @@ class ProductController extends Controller
             'description' => 'required'
         ]);
         if($rules->fails()){
-            return back()->withInput()->withErrors($rules, 'product_store');
+            return back()->withInput()->withErrors($rules, 'product_update_' . $product->product_hash);
         }
         $validatedData = $rules->validated();
         $validatedData['image'] = $request->file('image') ? $request->file('image')->store('product-image') : $request['old_image'] ;
