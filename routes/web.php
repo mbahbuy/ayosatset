@@ -8,8 +8,8 @@ Route::get('/p/{product:product_hash}', ['as' => 'product.show', 'uses' => 'Prod
 Route::get('/s/{shop:shop_hash}', ['as' => 'shop.show', 'uses' => 'ShopController@show']);
 Route::view('/checkemail', 'profile.checkemail');
 
-Route::post('/cart',['as' => 'cart.store', 'uses' => 'CartController@store']);// Cart
-Route::post('/wish', ['as' => 'wish.store', 'uses' => 'CartController@wish']);// Wish
+Route::post('/cart', ['as' => 'cart.store', 'uses' => 'CartController@store']); // Cart
+Route::post('/wish', ['as' => 'wish.store', 'uses' => 'CartController@wish']); // Wish
 Route::delete('/cart/{cart:cart_hash}', ['as' => 'cart.destroy', 'uses' => 'CartController@destroy']);
 
 // order
@@ -19,8 +19,7 @@ Auth::routes([
     'verify' => true,
     'resend' => false
 ]);
-Route::group(['middleware' => ['auth','verified']], function ()
-{
+Route::group(['middleware' => ['auth', 'verified']], function () {
     // Profile
     Route::get('/profile', ['as' => 'profile.index', 'uses' => 'UserController@index']);
     Route::put('/profile/{user:user_hash}', ['as' => 'profile.update', 'uses' => 'UserController@update']);
@@ -47,25 +46,28 @@ Route::group(['middleware' => ['auth','verified']], function ()
     Route::get('/dashboard', ['as' => 'dashboard.index', 'uses' => 'DashboardController@index']);
 
     // Editor
-    Route::group(['middleware' => 'editor'], function()
-    {
-
+    Route::group(['middleware' => 'editor'], function () {
     });
 
     // Admin
-    Route::group(['middleware' => 'admin'], function()
-    {
+    Route::group(['middleware' => 'admin'], function () {
+        // Category Control
         Route::get('/a/category', ['as' => 'category.index', 'uses' => 'CategoryController@index']);
         Route::post('/a/category/store', ['as' => 'category.store', 'uses' => 'CategoryController@store']);
         Route::put('/a/category/{category:slug}/update', ['as' => 'category.update', 'uses' => 'CategoryController@update']);
         Route::delete('/a/category/{category:slug}', ['as' => 'category.destroy', 'uses' => 'CategoryController@destroy']);
-        
+
+        // User Control
         Route::get('/a/userlist', ['as' => 'users.index', 'uses' => 'UserController@users']);
         Route::put('/a/userlist/{user:user_hash}/suspense', ['as' => 'user.suspense', 'uses' => 'UserController@suspense']);
         Route::get('/a/blacklist', ['as' => 'users.black', 'uses' => 'UserController@black']);
         Route::put('/a/blacklist/{user:user_hash}/calm', ['as' => 'user.calm', 'uses' => 'UserController@calm']);
-        Route::get('/a/orderlist',['as' => 'order.index', 'uses' => 'OrderController@index']);
+        Route::get('/a/orderlist', ['as' => 'order.index', 'uses' => 'OrderController@index']);
 
-        Route::put('/a/orderlist/{order:order_hash}/confirm',['as' => 'payment.confirm', 'uses' => 'OrderController@paymentConfirm']);
+        // Payment Control
+        Route::put('/a/orderlist/{order:order_hash}/confirm', ['as' => 'payment.confirm', 'uses' => 'OrderController@paymentConfirm']);
+
+        // Shop Rating Controll
+        Route::get('/a/shoprating', ['as' => 'shop.rating', 'uses' => 'SettingController@shopRating']);
     });
 });

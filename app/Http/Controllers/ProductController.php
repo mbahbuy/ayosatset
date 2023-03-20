@@ -37,7 +37,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $rules = Validator::make($request->all(),[
+        $rules = Validator::make($request->all(), [
             'name' => 'required|max:255',
             'price' => 'required|numeric|max:99999999999999999999',
             'categories' => [
@@ -47,14 +47,14 @@ class ProductController extends Controller
             'image' => 'required|image|file|max:2048',
             'description' => 'required'
         ]);
-        if($rules->fails()){
+        if ($rules->fails()) {
             return back()->withInput()->withErrors($rules, 'product_store');
         }
         $validatedData = $rules->validated();
         $validatedData['image'] = $request->file('image')->store('product-image');
 
         $validatedData['shop_hash'] = auth()->user()->shop->shop_hash;
-        $validatedData['product_hash'] = substr(md5($validatedData['shop_hash'].$validatedData['name'] ), 0, 12);
+        $validatedData['product_hash'] = md5($validatedData['shop_hash'] . $validatedData['name']);
         Product::create($validatedData);
 
         return back()->with('success', 'New product has been added!!!');
@@ -68,7 +68,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        return view('home.single_product',[
+        return view('home.single_product', [
             'title' => $product->name,
             'produk' => $product
         ]);
@@ -94,7 +94,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        $rules = Validator::make($request->all(),[
+        $rules = Validator::make($request->all(), [
             'name' => 'required|max:255',
             'price' => 'required|max:20',
             'categories' => [
@@ -104,11 +104,12 @@ class ProductController extends Controller
             'image' => 'nullable|image|file|max:2048',
             'description' => 'required'
         ]);
-        if($rules->fails()){
+        if ($rules->fails()) {
             return back()->withInput()->withErrors($rules, 'product_update_' . $product->product_hash);
         }
         $validatedData = $rules->validated();
-        $validatedData['image'] = $request->file('image') ? $request->file('image')->store('product-image') : $request['old_image'] ;
+        $validatedData['image'] = $request->file('image') ? $request->file('image')->store('product-image') : $request['old_image'];
+        $validatedData['product_hash'] = $validatedData['name'] !== $product->name ? md5($product->shop_hash . $validatedData['name']) : $product->product_hash;
         $product->update($validatedData);
 
         return back()->with('success', 'The product has been change!!!');

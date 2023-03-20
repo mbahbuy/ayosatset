@@ -64,7 +64,7 @@ class RegisterController extends Controller
     {
         return User::create([
             'email' => $data['email'],
-            'user_hash' => substr(md5($data['email']), 0, 8),
+            'user_hash' => md5($data['email']),
         ]);
     }
 }

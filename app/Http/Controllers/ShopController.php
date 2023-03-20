@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Category, Order, Product,Shop};
+use App\Models\{Category, Order, Product, Shop};
 use Illuminate\Http\{Request};
 use Illuminate\Support\Facades\{Validator};
 
@@ -18,7 +18,7 @@ class ShopController extends Controller
         if (auth()->user()->shop == false) {
             return redirect('/profile');
         }
-        return view('shop.index',[
+        return view('shop.index', [
             'categories' => Category::all(),
             'product' => Product::where('shop_hash', auth()->user()->shop->shop_hash)->orderBy('id', 'DESC')->get(),
             'orders' => Order::where('shop_hash', auth()->user()->shop->shop_hash)->orderBy('id', 'DESC')->get()
@@ -43,16 +43,16 @@ class ShopController extends Controller
      */
     public function store(Request $request)
     {
-        $rules = Validator::make( $request->all(), [
+        $rules = Validator::make($request->all(), [
             'name' => 'required|max:255',
             'description' => 'required'
         ]);
-        if($rules->fails()){
+        if ($rules->fails()) {
             return back()->withInput()->withErrors($rules, 'create_shop');
         }
         $validatedData = $rules->validated();
         $validatedData['user_hash'] = auth()->user()->user_hash;
-        $validatedData['shop_hash'] = substr(md5($validatedData['user_hash'].$validatedData['name'] ), 0, 12);
+        $validatedData['shop_hash'] = md5($validatedData['user_hash'] . $validatedData['name']);
         Shop::create($validatedData);
 
         return redirect('/myshop');
@@ -66,7 +66,7 @@ class ShopController extends Controller
      */
     public function show(Shop $shop)
     {
-        return view('home.shop',[
+        return view('home.shop', [
             'products' => Product::where('shop_hash', $shop->shop_hash)->orderBy('id', 'DESC')->get(),
             'shop' => $shop
         ]);
@@ -92,13 +92,13 @@ class ShopController extends Controller
      */
     public function update(Request $request, Shop $shop)
     {
-        $rules = Validator::make( $request->all(), [
+        $rules = Validator::make($request->all(), [
             'banner' => 'required|image|file|max:2048',
             'image' => 'required|image|file|max:2048',
             'name' => 'required|max:255',
             'description' => 'required'
         ]);
-        if($rules->fails()){
+        if ($rules->fails()) {
             return back()->withInput()->withErrors($rules, 'shop_update');
         }
         $validatedData = $rules->validated();
@@ -107,7 +107,6 @@ class ShopController extends Controller
 
         $shop->update($validatedData);
         return back()->with('succes', 'Settings Shop has update');
-
     }
 
     /**

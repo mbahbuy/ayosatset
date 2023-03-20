@@ -105,10 +105,9 @@
       }
       // wish
       function wishToggle(wish) {
-        if (window.Laravel && window.Laravel.authenticated) {
-            // User is authenticated
-            $(wish).toggleClass("active");
-        }
+        @if (auth()->check())
+          $(wish).toggleClass("active");
+        @endif
         var target = $(wish).attr('target-wish');
         $.ajax({
           url:"{{ route('wish.store') }}",
@@ -233,6 +232,9 @@
                   $( ".cart-total" ).load(window.location.href + " .cart-total>" );
                   $( ".cart-list" ).load(window.location.href + " .cart-list>" );
                   showAlertPopUp(response.data);
+                  $(".cart-footer-submit").prop("disabled", true);
+                  $('.checkout-data').html(0);
+                  $('.checkout-price').html('Rp 0');
               },
               error: function(response) {
                   // Jika terjadi kesalahan, tampilkan pesan error

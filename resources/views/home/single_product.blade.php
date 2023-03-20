@@ -101,7 +101,7 @@
               </button>
             </div>
             <div class="details-action-group">
-              <a class="details-wish wish" style="cursor: pointer" onclick="wishAdd('{{ $produk->product_hash }}')" title="Add Your Wishlist">
+              <a class="details-wish wish" style="cursor: pointer" onclick="wishToggle(this)" target-wish="{{ $produk->product_hash }}" title="Add Your Wishlist">
                 <i class="icofont-heart"></i>
                 <span>add to wish</span>
               </a>
