@@ -62,7 +62,7 @@
         $cartData = [];
         if (auth()->check()) {
           $data = \App\Models\Cart::with(['product.shop' => function ($query) {
-              $query->select('shop_hash', 'name')->with('address');
+              $query->select('shop_hash', 'name')->with('alamat');
           }])->where([
               ['user_hash', '=', auth()->user()->user_hash],
               ['parent_id', '=', 1]
@@ -73,7 +73,7 @@
               return [
                   'shop_hash' => $shop_hash,
                   'name' => $items[0]->product->shop->name,
-                  'address' => $items[0]->product->shop->address->city_id,
+                  'address' => $items[0]->product->shop->alamat->city_id,
                   'products' => $items->map(function ($item) {
                       return [
                           'product_hash' => $item->product->product_hash,

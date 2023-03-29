@@ -44,11 +44,12 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
     // Address
     Route::post('/profile/address', ['as' => 'profile.address', 'uses' => 'AddressController@storeProfile']);
-    Route::put('/profile/address/{user:user_hash}/update', ['as' => 'profile.address.update', 'uses' => 'AddressController@updateProfile']);
-    Route::delete('/profile/address/{user:user_hash}', ['as' => 'profile.address.delete', 'uses' => 'AddressController@deleteProfile']);
+    Route::put('/profile/address/{address}/update', ['as' => 'profile.address.update', 'uses' => 'AddressController@updateProfile']);
+    Route::delete('/profile/address/{address}', ['as' => 'profile.address.delete', 'uses' => 'AddressController@deleteProfile']);
+    Route::put('/profile/address/{address}/default', ['as' => 'profile.address.default', 'uses' => 'AddressController@toggleUse']);
     Route::post('/shop/address', ['as' => 'shop.address', 'uses' => 'AddressController@storeShop']);
-    Route::put('/shop/address/{shop:shop_hash}/update', ['as' => 'shop.address.update', 'uses' => 'AddressController@updateShop']);
-    Route::delete('/shop/address/{shop:shop_hash}', ['as' => 'shop.address.delete', 'uses' => 'AddressController@deleteSHop']);
+    Route::put('/shop/address/{address}/update', ['as' => 'shop.address.update', 'uses' => 'AddressController@updateShop']);
+    // Route::delete('/shop/address/{address}', ['as' => 'shop.address.delete', 'uses' => 'AddressController@deleteShop']);
 
     // Product
     Route::post('/product/store', ['as' => 'product.store', 'uses' => 'ProductController@store']);

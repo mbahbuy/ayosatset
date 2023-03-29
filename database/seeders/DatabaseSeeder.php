@@ -8,13 +8,16 @@ use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     *
-     * @return void
-     */
+
     public function run()
     {
+        $adminHash = md5('Admin@ayosatset.com');
+        $buyungHash = md5('buyung@buyung.buyung');
+        $galuhHash = md5('galuh@galuh.galuh');
+        $wawanHash = md5('wawan@wawan.wawan');
+        $irfanHash = md5('irfan@irfan.irfan');
+        $faizulHash = md5('faizul@faizul.faizul');
+
         \App\Models\Category::create([
             'name' => 'Jasa',
             'slug' => 'jasa'
@@ -32,85 +35,81 @@ class DatabaseSeeder extends Seeder
             'email' => 'Admin@ayosatset.com',
             'email_verified_at' => now(),
             'password' => Hash::make('admin12345'),
-            'user_hash' => md5('Admin@ayosatset.com'),
+            'user_hash' => $adminHash,
             'status' => true,
             'admin_status' => true,
             'editor_status' => true,
-        ])->creating(function ($admin) {
-            \App\Models\Address::create([
-                'user_hash' => $admin->user_hash,
-                'province_id' => 11,
-                'city_id' => 444,
-                'address' => 'jalkuri, fatullah, narayanganj-1420. word no-09, road no-17/A',
-                'phone' => '081234567890',
-                'status' => true,
-                'use' => true
-            ]);
-        });
+        ]);
+        \App\Models\Address::create([
+            'user_hash' => md5('Admin@ayosatset.com'),
+            'province_id' => 11,
+            'city_id' => 444,
+            'address' => 'jalkuri, fatullah, narayanganj-1420. word no-09, road no-17/A',
+            'phone' => '081234567890',
+            'status' => true,
+            'use' => true
+        ]);
         \App\Models\User::create([
             'name' => 'Buyung',
             'email' => 'buyung@buyung.buyung',
             'email_verified_at' => now(),
             'password' => Hash::make('buyung'),
-            'user_hash' => md5('buyung@buyung.buyung'),
+            'user_hash' => $buyungHash,
             'status' => true,
             'admin_status' => false,
             'editor_status' => false,
-        ])->creating(function ($buyung) {
-            \App\Models\Address::create([
-                'user_hash' => $buyung->user_hash,
-                'province_id' => 11,
-                'city_id' => 444,
-                'address' => 'jalkuri, fatullah, narayanganj-1420. word no-09, road no-17/A',
-                'phone' => '081234567890',
-                'status' => true,
-                'use' => true
-            ]);
-        });
+        ]);
+        \App\Models\Address::create([
+            'user_hash' => $buyungHash,
+            'province_id' => 11,
+            'city_id' => 444,
+            'address' => 'jalkuri, fatullah, narayanganj-1420. word no-09, road no-17/A',
+            'phone' => '081234567890',
+            'status' => true,
+            'use' => true
+        ]);
         \App\Models\User::create([
             'name' => 'Galuh',
             'email' => 'galuh@galuh.galuh',
             'email_verified_at' => now(),
             'password' => Hash::make('galuh'),
-            'user_hash' => md5('galuh@galuh.galuh'),
+            'user_hash' => $galuhHash,
             'status' => true,
             'admin_status' => false,
             'editor_status' => false,
-        ])->creating(function ($galuh) {
-            \App\Models\Address::create([
-                'user_hash' => $galuh->user_hash,
-                'province_id' => 11,
-                'city_id' => 444,
-                'address' => 'jalkuri, fatullah, narayanganj-1420. word no-09, road no-17/A',
-                'phone' => '081234567890',
-                'status' => true,
-                'use' => true
-            ]);
-        });
+        ]);
+        \App\Models\Address::create([
+            'user_hash' => $galuhHash,
+            'province_id' => 11,
+            'city_id' => 444,
+            'address' => 'jalkuri, fatullah, narayanganj-1420. word no-09, road no-17/A',
+            'phone' => '081234567890',
+            'status' => true,
+            'use' => true
+        ]);
         \App\Models\User::create([
             'name' => 'Wawan',
             'email' => 'wawan@wawan.wawan',
             'email_verified_at' => now(),
             'password' => Hash::make('wawan'),
-            'user_hash' => md5('wawan@wawan.wawan'),
+            'user_hash' => $wawanHash,
             'status' => true,
             'admin_status' => false,
             'editor_status' => false,
-        ])->creating(function ($wawan) {
-            \App\Models\Address::create([
-                'user_hash' => $wawan->user_hash,
-                'province_id' => 11,
-                'city_id' => 444,
-                'address' => 'jalkuri, fatullah, narayanganj-1420. word no-09, road no-17/A',
-                'phone' => '081234567890',
-                'status' => true,
-                'use' => true
-            ]);
-        });
+        ]);
+        \App\Models\Address::create([
+            'user_hash' => $wawanHash,
+            'province_id' => 11,
+            'city_id' => 444,
+            'address' => 'jalkuri, fatullah, narayanganj-1420. word no-09, road no-17/A',
+            'phone' => '081234567890',
+            'status' => true,
+            'use' => true
+        ]);
         \App\Models\Shop::create([
-            'user_hash' => md5('wawan@wawan.wawan'),
+            'user_hash' => $wawanHash,
             'name' => 'Wawan Shop',
-            'shop_hash' => md5('wawan@wawan.wawan' . 'Wawan Shop'),
+            'shop_hash' => md5($wawanHash . 'Wawan Shop'),
         ])
             ->creating(function ($shop) {
                 \App\Models\Address::create([
@@ -143,25 +142,24 @@ class DatabaseSeeder extends Seeder
             'email' => 'irfan@irfan.irfan',
             'email_verified_at' => now(),
             'password' => Hash::make('irfan'),
-            'user_hash' => md5('irfan@irfan.irfan'),
+            'user_hash' => $irfanHash,
             'status' => true,
             'admin_status' => false,
             'editor_status' => false,
-        ])->creating(function ($irfan) {
-            \App\Models\Address::create([
-                'user_hash' => $irfan->user_hash,
-                'province_id' => 11,
-                'city_id' => 444,
-                'address' => 'jalkuri, fatullah, narayanganj-1420. word no-09, road no-17/A',
-                'phone' => '081234567890',
-                'status' => true,
-                'use' => true
-            ]);
-        });
+        ]);
+        \App\Models\Address::create([
+            'user_hash' => $wawanHash,
+            'province_id' => 11,
+            'city_id' => 444,
+            'address' => 'jalkuri, fatullah, narayanganj-1420. word no-09, road no-17/A',
+            'phone' => '081234567890',
+            'status' => true,
+            'use' => true
+        ]);
         \App\Models\Shop::create([
-            'user_hash' => md5('irfan@irfan.irfan'),
+            'user_hash' => $wawanHash,
             'name' => 'Irfan Shop',
-            'shop_hash' => md5('irfan@irfan.irfan' . 'Irfan Shop'),
+            'shop_hash' => md5($wawanHash . 'Irfan Shop'),
         ])
             ->creating(function ($shop) {
                 \App\Models\Address::create([
@@ -194,25 +192,24 @@ class DatabaseSeeder extends Seeder
             'email' => 'faizul@faizul.faizul',
             'email_verified_at' => now(),
             'password' => Hash::make('faizul'),
-            'user_hash' => md5('faizul@faizul.faizul'),
+            'user_hash' => $faizulHash,
             'status' => true,
             'admin_status' => false,
             'editor_status' => false,
-        ])->creating(function ($user) {
-            \App\Models\Address::create([
-                'user_hash' => $user->user_hash,
-                'province_id' => 11,
-                'city_id' => 444,
-                'address' => 'jalkuri, fatullah, narayanganj-1420. word no-09, road no-17/A',
-                'phone' => '081234567890',
-                'status' => true,
-                'use' => true
-            ]);
-        });
+        ]);
+        \App\Models\Address::create([
+            'user_hash' => $faizulHash,
+            'province_id' => 11,
+            'city_id' => 444,
+            'address' => 'jalkuri, fatullah, narayanganj-1420. word no-09, road no-17/A',
+            'phone' => '081234567890',
+            'status' => true,
+            'use' => true
+        ]);
         \App\Models\Shop::create([
-            'user_hash' => md5('faizul@faizul.faizul'),
+            'user_hash' => $faizulHash,
             'name' => 'Faizul Shop',
-            'shop_hash' => md5('faizul@faizul.faizul' . 'Faizul Shop'),
+            'shop_hash' => md5($faizulHash . 'Faizul Shop'),
         ])
             ->creating(function ($shop) {
                 \App\Models\Address::create([

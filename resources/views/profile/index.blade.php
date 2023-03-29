@@ -87,17 +87,17 @@
             </div>
 
             <div class="col-lg-12">
-                <div class="account-card">
+                <div class="account-card" id="address-refresh">
                     <div class="account-title">
                         <h4>Alamat</h4>
-                        <button data-bs-toggle="modal" data-bs-target="#address-add">add address</button>
+                        <button data-bs-toggle="modal" data-bs-target="#address-add" onclick="provinsi(this)" data-provinsi="0" data-modal="0">add address</button>
                     </div>
                     <div class="account-content">
-                        @if ( auth()->user()->address && sizeof(auth()->user()->address))
+                        @if ( auth()->user()->alamats && sizeof(auth()->user()->alamats))
                             <div class="row">
-                                @foreach (auth()->user()->address as $item)
+                                @foreach (auth()->user()->alamats as $item)
                                     <div class="col-md-6 col-lg-4 alert fade show">
-                                        <div class="profile-card address active">
+                                        <div class="profile-card address {{ $item->use == true ? 'active' : '' }}" onclick="toggleDefault(this)" data-toggle="{{ $item->id }}">
                                             <h6>
                                                 @switch($item->status)
                                                     @case(1)
@@ -120,10 +120,14 @@
                                             <p>{{ $item->phone }}</p>
                                             <ul class="user-action">
                                                 <li>
-                                                    <button class="edit icofont-edit" title="Edit This" data-bs-toggle="modal" data-bs-target="#address-edit-{{ $item->id }}"></button>
+                                                    <button class="edit icofont-edit" title="Edit This" data-bs-toggle="modal" data-bs-target="#address-edit-{{ $item->id }}" onclick="provinsi(this)" data-provinsi="{{ $item->province_id }}" data-modal="{{ $item->id }}"></button>
                                                 </li>
                                                 <li>
-                                                    <button class="trash icofont-ui-delete" title="Remove This" data-bs-dismiss="alert"></button>
+                                                    <form action="{{ route('profile.address.delete', $item->id) }}" method="post">
+                                                        @csrf
+                                                        @method('delete')
+                                                        <button type="submit" class="trash icofont-ui-delete" title="Remove This" onclick="confirm('Anda akan menghapus alamat ini?')"></button>
+                                                    </form>
                                                 </li>
                                             </ul>
                                         </div>
@@ -512,28 +516,44 @@
     <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
         <button class="modal-close" data-bs-dismiss="modal">
-        <i class="icofont-close"></i>
+            <i class="icofont-close"></i>
         </button>
-        <form class="modal-form">
-        <div class="form-title">
-            <h3>add new address</h3>
-        </div>
-        <div class="form-group">
-            <label class="form-label">title</label>
-            <select class="form-select">
-            <option selected>choose title</option>
-            <option value="home">home</option>
-            <option value="office">office</option>
-            <option value="Bussiness">Bussiness</option>
-            <option value="academy">academy</option>
-            <option value="others">others</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label class="form-label">address</label>
-            <textarea class="form-control" placeholder="Enter your address"></textarea>
-        </div>
-        <button class="form-btn" type="submit">save address info</button>
+        <form class="modal-form" action="{{ route('profile.address') }}" method="POST">
+            @csrf
+            <div class="form-title">
+                <h3>add new address</h3>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="add-status">title</label>
+                <select class="form-select" id="add-status" name="status">
+                    <option value="1">home</option>
+                    <option value="2">office</option>
+                    <option value="3">Bussiness</option>
+                    <option value="4">academy</option>
+                    <option value="5">others</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="add-provinsi">Provinsi</label>
+                <select class="form-select" id="add-provinsi" onchange="getCity(this)" name="province_id">
+                <option value="">Pilih Provinsi</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="add-kota">Kota</label>
+                <select class="form-select" id="add-kota" name="city_id" data-selected="0">
+                <option value="">Pilih Kota</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="add-address">address</label>
+                <textarea class="form-control" id="add-address" name="address" placeholder="Enter your address"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="add-phone">No HP</label>
+                <input type="text" class="form-control" id="add-phone" name="phone">
+            </div>
+            <button class="form-btn" type="submit">save address info</button>
         </form>
     </div>
     </div>
@@ -677,23 +697,23 @@
     </div>
 </div>
 
-@if ( auth()->user()->address && sizeof(auth()->user()->address) )
-    @foreach (auth()->user()->address as $item)
+@if ( auth()->user()->alamats && sizeof(auth()->user()->alamats) )
+    @foreach (auth()->user()->alamats as $item)
         <div class="modal fade" id="address-edit-{{ $item->id }}">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <button class="modal-close" data-bs-dismiss="modal">
                     <i class="icofont-close"></i>
                     </button>
-                    <form class="modal-form" action="" method="POST">
+                    <form class="modal-form" action="{{ route('profile.address.update', $item->id) }}" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="form-title">
                             <h3>edit address info</h3>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">title</label>
-                            <select class="form-select" name="status">
+                            <label class="form-label" for="status-{{ $item->id }}">title</label>
+                            <select class="form-select" name="status" id="status-{{ $item->id }}">
                                 <option value="1" {{ $item->status ==  1 ? 'selected' : '' }}>home</option>
                                 <option value="2" {{ $item->status ==  2 ? 'selected' : '' }}>office</option>
                                 <option value="3" {{ $item->status ==  3 ? 'selected' : '' }}>Bussiness</option>
@@ -702,14 +722,14 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="provinsi">Provinsi</label>
-                            <select class="form-select" id="provinsi" onchange="getCity(this)">
+                            <label for="provinsi-{{ $item->id }}">Provinsi</label>
+                            <select class="form-select" id="provinsi-{{ $item->id }}" name="province_id" onchange="getCity(this)">
                               <option value="">Pilih Provinsi</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="kota">Kota</label>
-                            <select class="form-select" id="kota">
+                            <label for="kota-{{ $item->id }}">Kota</label>
+                            <select class="form-select" id="kota-{{ $item->id }}" name="city_id" data-selected="{{ $item->city_id }}">
                               <option value="">Pilih Kota</option>
                             </select>
                         </div>
@@ -849,20 +869,33 @@
         })
     }
 
-    function provinsi() {
+    function provinsi(par) {
         $.ajax({
           type: "GET",
           url: "{{ route('data.provinsi') }}",
           data: null,
           dataType: "JSON",
-          success: function (response) { 
-            const provinsiSelect = $('#provinsi');
+          success: function (response) {
+            const modal = $(par).attr('data-modal');
+            const provinsiSelected = $(par).attr('data-provinsi');
             var data = '';
-            for (let i = 0; i < response.length; i++) {
-              data += "<option value=" + response[i].province_id  + ">" + response[i].province + "</option>";
-            };
-            provinsiSelect.html(data);
-            getCity(provinsiSelect);
+            if (modal == 0) {                
+                const provinsiSelect = $('#add-provinsi');
+                for (let i = 0; i < response.length; i++) {
+                  data += "<option value=" + response[i].province_id  + ">" + response[i].province + "</option>";
+                };
+                provinsiSelect.html(data);
+                getCity(provinsiSelect);
+            } else {
+                const provinsiSelect = $('#address-edit-' + modal).find('#provinsi-' + modal);
+                var data = '';
+                for (let i = 0; i < response.length; i++) {
+                    let selectedData = response[i].province_id == provinsiSelected ? 'selected' : '';
+                  data += "<option value='" + response[i].province_id  + "' " + selectedData + ">" + response[i].province + "</option>";
+                };
+                provinsiSelect.html(data);
+                getCity(provinsiSelect);
+            }
           },
           error: function (response) {
             console.log(response);
@@ -880,16 +913,40 @@
           },
           dataType: "JSON",
           success: function (response) { 
-            const kotaSelect = $('#kota');
+            const kotaSelect = $(prov).parent().next().children('select.form-select');
+            const kotaSelected = kotaSelect.attr('data-selected');
             var data = '';
-            for (let i = 0; i < response.length; i++) {
-              data += "<option value=" + response[i].city_id  + ">" + response[i].city_name + "</option>";
-            };
+            if (kotaSelected == 0) {
+                for (let i = 0; i < response.length; i++) {
+                    data += "<option value=" + response[i].city_id  + ">" + response[i].city_name + "</option>";
+                };
+            } else {               
+                for (let i = 0; i < response.length; i++) {
+                    let selectedData = response[i].city_id == kotaSelected ? 'Selected' : '';
+                  data += "<option value='" + response[i].city_id  + "' " + selectedData + ">" + response[i].city_name + "</option>";
+                };                
+            }
             kotaSelect.html(data);
           },
           error: function (response) {
             console.log(response);
           }
+        });
+      }
+
+      function toggleDefault(use) {
+        const target = $(use).attr('data-toggle');
+        $.ajax({
+            url:"{{ route('home') }}/profile/address/" + target + "/default",
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                '_token': '{{ csrf_token() }}',
+                '_method': 'PUT'
+            },
+            success: function (response) {
+                showAlertPopUp(response.data);
+            }
         });
       }
     

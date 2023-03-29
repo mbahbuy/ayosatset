@@ -86,7 +86,7 @@
 </div>
 
 <div class="modal fade" id="settings">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog">
     <div class="modal-content">
         @php
             $banner_class_shop = ($errors->shop_update->has('banner')) ? 'is-invalid' : '' ;
@@ -103,40 +103,128 @@
         <button class="modal-close" data-bs-dismiss="modal">
             <i class="icofont-close"></i>
         </button>
-        <form class="modal-form" method="POST" action="{{ route('shop.update', auth()->user()->shop->shop_hash) }}" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
-            <div class="form-title mb-3">
-                <h3>Settings Shop</h3>
-            </div>
-            @if ($errors->shop_update->any())
-                <div class="mb-3 text-center alert alert-danger alert-dismissible fade show" role="alert">
-                    @foreach ($errors->shop_update->all() as $item)
-                        {{ $item }} <br>
-                    @endforeach
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="product-view">
+            <div class="row">
+                <div class="col-lg-6">
+                    <form class="modal-form" method="POST" action="{{ route('shop.update', auth()->user()->shop->shop_hash) }}" enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
+                        <div class="form-title mb-3">
+                            <h3>Pengaturan Toko</h3>
+                        </div>
+                        @if ($errors->shop_update->any())
+                            <div class="mb-3 text-center alert alert-danger alert-dismissible fade show" role="alert">
+                                @foreach ($errors->shop_update->all() as $item)
+                                    {{ $item }} <br>
+                                @endforeach
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
+                        <div class="form-group">
+                            <label class="form-label" for="banner">Banner</label>
+                            <input class="form-control {{ $banner_class_shop }}" type="file" name="banner" id="banner" value="{{ $banner_value_shop }}" onchange="imagePreview(this)">
+                            <img class="img-fluid" src="{{ (auth()->user()->shop->banner) ? asset( 'assets' . '/' . auth()->user()->shop->banner ) : 'images/single-banner.jpg' }}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="shop-img">shop image</label>
+                            <input class="form-control {{ $img_class_shop }}" type="file" name="image" id="shop-img" value="{{ $img_value_shop }}" onchange="imagePreview(this)">
+                            <img class="img-fluid" src="{{ (auth()->user()->shop->image) ? asset('assets' . '/' . auth()->user()->shop->image ) : 'images/brand/02.jpg' }}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="name">name</label>
+                            <input class="form-control {{ $name_class_shop }}" name="name" id="name" type="text" value="{{ $name_value_shop }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="productDescription">Description</label>
+                            <textarea class="form-control {{ $des_class_shop }}" id="productDescription" rows="3" name="description">{{ $des_value_shop }}</textarea>
+                        </div>
+                        <button class="form-btn" type="submit">save profile info</button>
+                    </form>
                 </div>
-            @endif
-            <div class="form-group">
-                <label class="form-label" for="banner">Banner</label>
-                <input class="form-control {{ $banner_class_shop }}" type="file" name="banner" id="banner" value="{{ $banner_value_shop }}" onchange="imagePreview(this)">
-                <img class="img-fluid" src="{{ (auth()->user()->shop->banner) ? asset( 'assets' . '/' . auth()->user()->shop->banner ) : 'images/single-banner.jpg' }}">
+                <div class="col-lg-6">
+                    <div class="modal-form">
+                        <div class="form-title mb-3">
+                            <h3>Alamat Toko</h3>
+                        </div>
+                        @if ( auth()->user()->shop->alamat)
+                            <form action="{{ route('shop.address.update', auth()->user()->shop->alamat->id) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <div class="form-group">
+                                    <label class="form-label" for="status">title</label>
+                                    <select class="form-select" name="status" id="status">
+                                        <option value="1" {{ auth()->user()->shop->alamat->status ==  1 ? 'selected' : '' }}>home</option>
+                                        <option value="2" {{ auth()->user()->shop->alamat->status ==  2 ? 'selected' : '' }}>office</option>
+                                        <option value="3" {{ auth()->user()->shop->alamat->status ==  3 ? 'selected' : '' }}>Bussiness</option>
+                                        <option value="4" {{ auth()->user()->shop->alamat->status ==  4 ? 'selected' : '' }}>academy</option>
+                                        <option value="5" {{ auth()->user()->shop->alamat->status ==  5 ? 'selected' : '' }}>others</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="provinsi">Provinsi</label>
+                                    <select class="form-select" id="provinsi" name="province_id" onchange="getCity(this)" data-selected="{{ auth()->user()->shop->alamat->province_id }}">
+                                    <option value="">Pilih Provinsi</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="kota">Kota</label>
+                                    <select class="form-select" id="kota" name="city_id" data-selected="{{ auth()->user()->shop->alamat->city_id }}">
+                                    <option value="">Pilih Kota</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="address">address</label>
+                                    <textarea class="form-control" id="address" name="address">{{ auth()->user()->shop->alamat->address }}</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="phone">No HP</label>
+                                    <input type="text" class="form-control" id="phone" name="phone" value="{{ auth()->user()->shop->alamat->phone }}">
+                                </div>
+                                <button class="form-btn" type="submit">save address info</button>
+                            </form>
+                        @else
+                            <form class="modal-form" action="{{ route('shop.address') }}" method="POST">
+                                @csrf
+                                <div class="form-title">
+                                    <h3>add new address</h3>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="add-status">title</label>
+                                    <select class="form-select" id="add-status" name="status">
+                                        <option value="1">home</option>
+                                        <option value="2">office</option>
+                                        <option value="3">Bussiness</option>
+                                        <option value="4">academy</option>
+                                        <option value="5">others</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add-provinsi">Provinsi</label>
+                                    <select class="form-select" id="add-provinsi" onchange="getCity(this)" name="province_id">
+                                    <option value="">Pilih Provinsi</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add-kota">Kota</label>
+                                    <select class="form-select" id="add-kota" name="city_id" data-selected="0">
+                                    <option value="">Pilih Kota</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="add-address">address</label>
+                                    <textarea class="form-control" id="add-address" name="address" placeholder="Enter your address"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="add-phone">No HP</label>
+                                    <input type="text" class="form-control" id="add-phone" name="phone">
+                                </div>
+                                <button class="form-btn" type="submit">save address info</button>
+                            </form>
+                        @endif
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label class="form-label" for="shop-img">shop image</label>
-                <input class="form-control {{ $img_class_shop }}" type="file" name="image" id="shop-img" value="{{ $img_value_shop }}" onchange="imagePreview(this)">
-                <img class="img-fluid" src="{{ (auth()->user()->shop->image) ? asset('assets' . '/' . auth()->user()->shop->image ) : 'images/brand/02.jpg' }}">
-            </div>
-            <div class="form-group">
-                <label class="form-label" for="name">name</label>
-                <input class="form-control {{ $name_class_shop }}" name="name" id="name" type="text" value="{{ $name_value_shop }}">
-            </div>
-            <div class="form-group">
-                <label for="productDescription">Description</label>
-                <textarea class="form-control {{ $des_class_shop }}" id="productDescription" rows="3" name="description">{{ $des_value_shop }}</textarea>
-            </div>
-            <button class="form-btn" type="submit">save profile info</button>
-        </form>
+        </div>
     </div>
     </div>
 </div>
@@ -576,5 +664,102 @@
         $(this).find('[autofocus]').focus();
     });
     
+    @if (auth()->user()->shop->alamat)
+        function provinsi() {
+            $.ajax({
+            type: "GET",
+            url: "{{ route('data.provinsi') }}",
+            data: null,
+            dataType: "JSON",
+            success: function (response) {
+                const provinsiSelect = $('#provinsi');
+                const provinsiSelected = provinsiSelect.attr('data-selected');
+                var data = '';
+                for (let i = 0; i < response.length; i++) {
+                    let selectedData = response[i].province_id == provinsiSelected ? 'selected' : '';
+                    data += "<option value='" + response[i].province_id  + "' " + selectedData + ">" + response[i].province + "</option>";
+                };
+                provinsiSelect.html(data);
+                getCity(provinsiSelect);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+            });
+        }
+
+        function getCity(prov){
+            $.ajax({
+                type: "POST",
+                url: "{{ route('data.kota') }}",
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    'kota': $(prov).val()
+                },
+                dataType: "JSON",
+                success: function (response) { 
+                    const kotaSelect = $(prov).parent().next().children('select.form-select');
+                    const kotaSelected = kotaSelect.attr('data-selected');
+                    var data = '';
+                    for (let i = 0; i < response.length; i++) {
+                        let selectedData = response[i].city_id == kotaSelected ? 'Selected' : '';
+                        data += "<option value='" + response[i].city_id  + "' " + selectedData + ">" + response[i].city_name + "</option>";
+                    };                
+                    kotaSelect.html(data);
+                },
+                error: function (response) {
+                    console.log(response);
+                }
+            });
+        }
+
+        provinsi();
+    @else
+        function provinsi() {
+            $.ajax({
+            type: "GET",
+            url: "{{ route('data.provinsi') }}",
+            data: null,
+            dataType: "JSON",
+            success: function (response) {
+                const provinsiSelect = $('#provinsi');
+                var data = '';
+                for (let i = 0; i < response.length; i++) {
+                    data += "<option value='" + response[i].province_id  + "'>" + response[i].province + "</option>";
+                };
+                provinsiSelect.html(data);
+                getCity(provinsiSelect);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+            });
+        }
+
+        function getCity(prov){
+            $.ajax({
+                type: "POST",
+                url: "{{ route('data.kota') }}",
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    'kota': $(prov).val()
+                },
+                dataType: "JSON",
+                success: function (response) { 
+                    const kotaSelect = $(prov).parent().next().children('select.form-select');
+                    var data = '';
+                    for (let i = 0; i < response.length; i++) {
+                        data += "<option value='" + response[i].city_id  + "'>" + response[i].city_name + "</option>";
+                    };                
+                    kotaSelect.html(data);
+                },
+                error: function (response) {
+                    console.log(response);
+                }
+            });
+        }
+
+        provinsi();
+    @endif
 </script>
 @endsection

@@ -691,9 +691,9 @@
             <div class="form-check">Alamat Pengiriman</div>
           </div>
           @auth              
-            @if ( auth()->user()->address == true && sizeof(auth()->user()->address))
+            @if ( auth()->user()->alamats == true && sizeof(auth()->user()->alamats))
               <div class="cart-item">
-                @foreach (auth()->user()->address as $item)                  
+                @foreach (auth()->user()->alamats as $item)                  
                   <div class='form-check'>
                     <input class='visually-hidden alamat-pengiriman' id='pilihan-alamat-{{ $item->id }}' type='checkbox' onchange='pilihAlamat(this)' value="{{ $item->city_id }}" {{ $item->use == 1 ? 'checked' : '' }}>
                     <label class='form-check-label' for='pilihan-alamat-{{ $item->id }}'>
@@ -727,7 +727,9 @@
               </div>
             @else
               <div class="cart-item">
-                <button data-bs-toggle="modal" data-bs-target="#add-alamat" data-bs-backdrop="false">tambah alamat</button>
+                <a href="{{ route('profile.index') }}">
+                  <span>Tolong tambahkan alamat pengiriman sebelum melanjutkan pembelian</span>
+                </a>
               </div>
             @endif
           @endauth
@@ -737,7 +739,11 @@
         </div>
         <div class="cart-footer">
           <button class="btn btn-secondary" onclick="$('#cart-to-order').carousel('prev');">Kembali</button>
-          <button class="btn btn-outline cart-footer-pemilihan-alamat" onclick="cariOngkir();$('#cart-to-order').carousel('next');">Lihat Pilihan Ongkir</button>
+          @auth              
+            @if (auth()->user()->alamat)
+              <button class="btn btn-outline cart-footer-pemilihan-alamat" onclick="cariOngkir();$('#cart-to-order').carousel('next');">Lihat Pilihan Ongkir</button>
+            @endif
+          @endauth
         </div>
 
       </div>
@@ -887,7 +893,7 @@
   <button class="cart-btn" title="Cartlist">
     <i class="fas fa-shopping-basket"></i>
     <span>cartlist</span>
-    <sup>{{ (sizeof($carts)) ? $carts->count() : 0 }}</sup>
+    <sup>({{ (sizeof($cart_products)) ? $cart_products->count() : 0 }})</sup>
   </button>
   <button class="wish-btn" title="Wishlist">
     <i class="fas fa-heart"></i>
