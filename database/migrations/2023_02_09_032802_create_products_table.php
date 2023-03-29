@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('video')->nullable();
             $table->string('image')->nullable();
             $table->text('description')->nullable();
-            $table->bigInteger('stock')->default(true);
+            $table->bigInteger('quantity')->default(true);
             $table->bigInteger('price');
             $table->timestamps();
         });

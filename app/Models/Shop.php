@@ -15,11 +15,18 @@ class Shop extends Model
         return 'shop_hash';
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo('App\Models\User', 'user_hash', 'user_hash');
     }
 
-    public function product(){
+    public function product()
+    {
         return $this->hasMany('App\Models\Product', 'shop_hash', 'shop_hash');
+    }
+
+    public function alamat()
+    {
+        return $this->belongsTo('\App\Models\Address', 'shop_hash', 'shop_hash');
     }
 }

@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('shops', function (Blueprint $table) {
             $table->id();
             $table->string('user_hash');
-            $table->string('name')->unique();
+            $table->string('name');
             $table->string('shop_hash')->unique();
             $table->string('image')->nullable();
             $table->text('description')->nullable();

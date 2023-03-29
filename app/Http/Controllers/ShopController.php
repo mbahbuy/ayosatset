@@ -20,8 +20,8 @@ class ShopController extends Controller
         }
         return view('shop.index', [
             'categories' => Category::all(),
-            'product' => Product::where('shop_hash', auth()->user()->shop->shop_hash)->orderBy('id', 'DESC')->get(),
-            'orders' => Order::where('shop_hash', auth()->user()->shop->shop_hash)->orderBy('id', 'DESC')->get()
+            'product' => Product::where('shop_hash', auth()->user()->shop->shop_hash)->latest()->get(),
+            'orders' => Order::where('shop_hash', auth()->user()->shop->shop_hash)->with('user')->latest()->get()
         ]);
     }
 
@@ -67,7 +67,7 @@ class ShopController extends Controller
     public function show(Shop $shop)
     {
         return view('home.shop', [
-            'products' => Product::where('shop_hash', $shop->shop_hash)->orderBy('id', 'DESC')->get(),
+            'products' => Product::where('shop_hash', $shop->shop_hash)->latest()->get(),
             'shop' => $shop
         ]);
     }

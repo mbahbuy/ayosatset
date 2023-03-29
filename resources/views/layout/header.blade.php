@@ -306,10 +306,6 @@
         </button>
       </form>
       <div class="header-widget-group">
-        {{-- <a href="compare.html" class="header-widget" title="Compare List">
-          <i class="fas fa-random"></i>
-          <sup>0</sup>
-        </a> --}}
         <button class="header-widget header-wish" title="Wishlist">
           <i class="fas fa-heart"></i>
           <div id="wish-value-reload">
@@ -319,7 +315,7 @@
         <button class="header-widget header-cart" title="Cartlist">
           <i class="fas fa-shopping-basket"></i>
           <div id="cart-value-reload">
-            <sup>{{ (sizeof($carts)) ? $carts->count() : 0 }}</sup>
+            <sup>{{ (sizeof($cart_products)) ? $cart_products->count() : 0 }}</sup>
           </div>
           </span>
         </button>
@@ -603,69 +599,187 @@
   <div class="cart-header">
     <div class="cart-total">
       <i class="fas fa-shopping-basket"></i>
-      <span>Keranjang ({{ (sizeof($carts)) ? $carts->count() : 0 }})</span>
+      <span>Keranjang ({{ (sizeof($cart_products)) ? $cart_products->count() : 0 }})</span>
     </div>
     <button class="cart-close">
       <i class="icofont-close"></i>
     </button>
   </div>
-  @if (sizeof($carts))
-    <ul class="cart-list">
-      <li>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="pilih-semua" onchange="pilihSemua(this)">
-          <label class="form-check-label" for="pilih-semua">
-            Pilih semua
-          </label>
-        </div>
-      </li>
-      @foreach ($carts as $item)          
-        <li class="cart-item">
-          <div class="form-check">
-            <input type="checkbox" class="cart-checkbox form-check-input" onchange="cartCheck()" name="checkbox_order[]" value="{{ $item->cart_hash }}" harga="{{ $item->product->price }}" data-pcs="1">
-          </div>
-          <div class="cart-media">
-            <a href="#" onclick="cartDelete('{{ $item->cart_hash }}')">
-              <img src="{{ asset('assets') . '/' . $item->product->image }}" alt="product" class="img-fluid">
-            </a>
-            <button class="cart-delete" onclick="cartDelete('{{ $item->cart_hash }}')">
-              <i class="far fa-trash-alt"></i>
-            </button>
-          </div>
-          <div class="cart-info-group">
-            <div class="cart-info">
-              <h6>
-                <a href="{{ route('product.show', $item->product->product_hash) }}">{{ $item->product->name }}</a>
-              </h6>
-              <p>Rp. {{ number_format($item->product->price,0,',','.') }}</p>
-            </div>
-            <div class="cart-action-group">
-              <div class="product-action">
-                <button class="action-minus" title="Quantity Minus" onclick="pcsMinus(this)">
-                  <i class="icofont-minus"></i>
-                </button>
-                <input class="action-input" title="Quantity Number" type="text" name="quantity" value="1">
-                <button class="action-plus" title="Quantity Plus" onclick="pcsPlus(this)">
-                  <i class="icofont-plus"></i>
-                </button>
+  <div id="cart-to-order" class="carousel" data-bs-touch="false" data-bs-interval="false">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        
+        
+        @if (sizeof($carts))
+          <div class="cart-list">
+            <div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="pilih-semua" onchange="pilihSemua(this)">
+                <label class="form-check-label" for="pilih-semua">
+                  Pilih semua
+                </label>
               </div>
             </div>
           </div>
-        </li>
-      @endforeach
-    </ul>
-    <div class="cart-footer">
-      <button class="btn btn-success cart-footer-submit" onclick="submitCartToOrder()" disabled>
-        <span class="checkout-label">Beli (<span class="checkout-data">0</span>)</span>
-        <span class="checkout-price">Rp 0</span>
-        
-      </button>
-    </div>
-  @else
-      <div class="cart-list">
-        Wah, Keranjang belanjaanmu kosong!
+          <ul class="cart-list">
+            @foreach ($carts as $item)
+              <li>
+                <div class="form-check">
+                  <input class="form-check-input cart-shop" type="checkbox" id="pilih-shop-{{ $item['shop_hash'] }}" onchange="pilihShop(this)" data-name="{{ $item['name'] }}" value="{{ $item['shop_hash'] }}" data-address="{{ $item['address'] }}">
+                  <label class="form-check-label" for="pilih-shop-{{ $item['shop_hash'] }}">
+                    {{ $item['name'] }}
+                  </label>
+                </div>
+                <ul>
+                  @foreach ($item['products'] as $p)           
+                    <li class="cart-item">
+                      <div class="form-check">
+                        <input type="checkbox" class="cart-checkbox form-check-input" onchange="cartCheck(this)" name="checkbox_order[]" value="{{ $p['product_hash'] }}" harga="{{ $p['price'] }}" data-pcs="1">
+                      </div>
+                      <div class="cart-media">
+                        <a href="#" onclick="cartDelete('{{ $p['product_hash'] }}')">
+                          <img src="{{ asset('assets') . '/' . $p['image'] }}" alt="product" class="img-fluid">
+                        </a>
+                        <button class="cart-delete" onclick="cartDelete('{{ $p['product_hash'] }}')">
+                          <i class="far fa-trash-alt"></i>
+                        </button>
+                      </div>
+                      <div class="cart-info-group">
+                        <div class="cart-info">
+                          <h6>
+                            <a href="{{ route('product.show', $p['product_hash']) }}">{{ $p['name'] }}</a>
+                          </h6>
+                          <p>Rp. {{ number_format($p['price'],0,',','.') }}</p>
+                        </div>
+                        <div class="cart-action-group">
+                          <div class="product-action">
+                            <button class="action-minus" title="Quantity Minus" onclick="pcsMinus(this)">
+                              <i class="icofont-minus"></i>
+                            </button>
+                            <input class="action-input" title="Quantity Number" type="text" name="quantity" value="1">
+                            <button class="action-plus" title="Quantity Plus" onclick="pcsPlus(this)">
+                              <i class="icofont-plus"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  @endforeach
+
+                </ul>
+              </li>
+              <li class="border border-primary border-3 opacity-75 mb-3 mt-5"></li>
+            @endforeach
+          </ul>
+          <div class="cart-footer">
+            <button class="btn btn-success cart-footer-submit"  type="button" onclick="$('#cart-to-order').carousel('next');" disabled>
+              <span class="checkout-label">Beli (<span class="checkout-data">0</span>)</span>
+              <span class="checkout-price sub-total">Rp 0</span>
+            </button>
+          </div>
+        @else
+            <div class="cart-list">
+              Wah, Keranjang belanjaanmu kosong!
+            </div>
+        @endif
+
       </div>
-  @endif
+      <div class="carousel-item">
+        
+        <div class="cart-list">
+          <div>
+            <div class="form-check">Alamat Pengiriman</div>
+          </div>
+          @auth              
+            @if ( auth()->user()->address == true && sizeof(auth()->user()->address))
+              <div class="cart-item">
+                @foreach (auth()->user()->address as $item)                  
+                  <div class='form-check'>
+                    <input class='visually-hidden alamat-pengiriman' id='pilihan-alamat-{{ $item->id }}' type='checkbox' onchange='pilihAlamat(this)' value="{{ $item->city_id }}" {{ $item->use == 1 ? 'checked' : '' }}>
+                    <label class='form-check-label' for='pilihan-alamat-{{ $item->id }}'>
+                      <div class='card'>
+                        <div class='card-body'>
+                          <h5 class='card-title'>
+                            @switch($item->status)
+                                @case(1)
+                                    Home
+                                    @break
+                                @case(2)
+                                    Office
+                                    @break
+                                @case(3)
+                                    Bussiness
+                                    @break
+                                @case(4)
+                                    Academy
+                                    @break
+                                @default
+                                    Others
+                            @endswitch
+                          </h5>
+                          <p class='card-text'>{{ $item->address }}</p>
+                          <p class="card-text">{{ $item->phone }}</p>
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+                @endforeach
+              </div>
+            @else
+              <div class="cart-item">
+                <button data-bs-toggle="modal" data-bs-target="#add-alamat" data-bs-backdrop="false">tambah alamat</button>
+              </div>
+            @endif
+          @endauth
+
+          <div id="pemilihan-jasa"></div>
+
+        </div>
+        <div class="cart-footer">
+          <button class="btn btn-secondary" onclick="$('#cart-to-order').carousel('prev');">Kembali</button>
+          <button class="btn btn-outline cart-footer-pemilihan-alamat" onclick="cariOngkir();$('#cart-to-order').carousel('next');">Lihat Pilihan Ongkir</button>
+        </div>
+
+      </div>
+      <div class="carousel-item">
+
+        <div class="cart-list">
+          <div id="jasa-ongkir"></div>
+        </div>
+        <div class="cart-footer">
+          <button class="btn btn-secondary" onclick="$('#cart-to-order').carousel('prev');">Kembali</button>
+          <button class="btn btn-outline cart-footer-check-out" onclick="totalCost();$('#cart-to-order').carousel('next');" disabled>Proses</button>
+        </div>
+
+      </div>
+
+      <div class="carousel-item">
+
+        <div>
+          <ul class="cart-list">
+            <li style="clear: both">
+              <span style="float: left">Sub total(<span class="checkout-data">0</span>):</span>
+              <span class="sub-total" style="float: right">Rp 0</span>
+            </li>
+            <li style="clear: both">
+              <span style="float: left">Ongkir:</span>
+              <span class="biaya-ongkir" style="float:right">Rp 0</span>
+            </li>
+            <li style="clear: both">
+              <span style="float: left">Total:</span>
+              <span class="total-check-out" style="float: right">Rp 0</span>
+            </li>
+          </ul>
+        </div>
+        <div class="cart-footer">
+          <button class="btn btn-secondary" onclick="$('#cart-to-order').carousel('prev');">Kembali</button>
+          <button class="btn btn-outline" onclick="submitCartToOrder()">Check out</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  
 </aside>
 <aside class="wish-sidebar">
   <div class="wish-header">
@@ -786,3 +900,37 @@
     <sup>0</sup>
   </a> --}}
 </div>
+@auth    
+  @if (auth()->user()->address == false)    
+    <div class="modal fade" id="add-alamat">
+      <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+          <button class="modal-close" data-bs-dismiss="modal">
+          <i class="icofont-close"></i>
+          </button>
+          <form class="modal-form">
+          <div class="form-title">
+              <h3>add new address</h3>
+          </div>
+          <div class="form-group">
+              <label class="form-label">title</label>
+              <select class="form-select">
+              <option selected>choose title</option>
+              <option value="home">home</option>
+              <option value="office">office</option>
+              <option value="Bussiness">Bussiness</option>
+              <option value="academy">academy</option>
+              <option value="others">others</option>
+              </select>
+          </div>
+          <div class="form-group">
+              <label class="form-label">address</label>
+              <textarea class="form-control" placeholder="Enter your address"></textarea>
+          </div>
+          <button class="form-btn" type="submit">save address info</button>
+          </form>
+      </div>
+      </div>
+    </div>
+  @endif
+@endauth

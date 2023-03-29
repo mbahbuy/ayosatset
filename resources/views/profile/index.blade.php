@@ -89,6 +89,59 @@
             <div class="col-lg-12">
                 <div class="account-card">
                     <div class="account-title">
+                        <h4>Alamat</h4>
+                        <button data-bs-toggle="modal" data-bs-target="#address-add">add address</button>
+                    </div>
+                    <div class="account-content">
+                        @if ( auth()->user()->address && sizeof(auth()->user()->address))
+                            <div class="row">
+                                @foreach (auth()->user()->address as $item)
+                                    <div class="col-md-6 col-lg-4 alert fade show">
+                                        <div class="profile-card address active">
+                                            <h6>
+                                                @switch($item->status)
+                                                    @case(1)
+                                                        Home
+                                                        @break
+                                                    @case(2)
+                                                        Office
+                                                        @break
+                                                    @case(3)
+                                                        Bussiness
+                                                        @break
+                                                    @case(4)
+                                                        Academy
+                                                        @break
+                                                    @default
+                                                        Others
+                                                @endswitch
+                                            </h6>
+                                            <p>{{ $item->address }}</p>
+                                            <p>{{ $item->phone }}</p>
+                                            <ul class="user-action">
+                                                <li>
+                                                    <button class="edit icofont-edit" title="Edit This" data-bs-toggle="modal" data-bs-target="#address-edit-{{ $item->id }}"></button>
+                                                </li>
+                                                <li>
+                                                    <button class="trash icofont-ui-delete" title="Remove This" data-bs-dismiss="alert"></button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="row col-lg-12">
+                                <p>Anda belum menambahkan alamat pengiriman</p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="account-card">
+                    <div class="account-title">
                         @if (auth()->user()->shop == true)
                             <h4>Toko</h4>
                             <a href="{{ route('shop.index') }}">kunjungi</a>
@@ -139,10 +192,11 @@
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">Nama Barang</th>
-                                    <th scope="col">Harga Barang</th>
-                                    <th scope="col">Pcs</th>
-                                    <th scope="col">Total Harga</th>
+                                    <th scope="col">Nama Toko</th>
+                                    <th scope="col">Produk</th>
+                                    <th scope="col">Sub total</th>
+                                    <th scope="col">Ongkir</th>
+                                    <th scope="col">Total</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
@@ -151,9 +205,54 @@
                                     @foreach ($orders as $item)
                                         <tr>
                                             <td scope="row">{{ $loop->iteration }}</td>
-                                            <td>{{ $item->product->name }}</td>
-                                            <td>Rp. {{ number_format($item->product->price,0,',','.') }}</td>
-                                            <td>{{ $item->pcs }}</td>
+                                            <td>{{ $item->shop->name }}</td>
+                                            <td>
+                                                
+                                                <button type="button" class="btn btn-outline" data-bs-toggle="modal" data-bs-target="#detail-{{ $item->order_hash }}">
+                                                    <span>Detail produk</span>
+                                                </button>
+                                                <div class="modal fade" id="detail-{{ $item->order_hash }}">
+                                                    <div class="modal-dialog modal-xl">
+                                                        <div class="modal-content">
+                                                            <button class="modal-close icofont-close" data-bs-dismiss="modal"></button>
+                                                            <div class="product-view">
+                                                                <table>
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th scope="col">#</th>
+                                                                            <th scope="col">Nama produk</th>
+                                                                            <th scope="col">Harga produk</th>
+                                                                            <th scope="col">Pcs</th>
+                                                                            <th scope="col">Total Harga</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @forelse (json_decode($item->products) as $produk)
+                                                                            @php
+                                                                                $product = \App\Models\Product::where('product_hash', $produk->product_hash)->first();
+                                                                            @endphp
+                                                                            <tr>
+                                                                                <td>{{ $loop->iteration }}</td>
+                                                                                <td>{{ $product->name }}</td>
+                                                                                <td>Rp. {{ number_format($product->price,0,',','.') }}</td>
+                                                                                <td>{{ $produk->pcs }}</td>
+                                                                                <td>Rp. {{ number_format($product->price * $produk->pcs,0,',','.') }}</td>
+                                                                            </tr>
+                                                                        @empty
+                                                                            <tr>
+                                                                                <td>G ada produk</td>
+                                                                            </tr>
+                                                                        @endforelse
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </td>
+                                            <td>Rp. {{ number_format($item->sub_total,0,',','.') }}</td>
+                                            <td>Rp. {{ number_format($item->ongkir,0,',','.') }}</td>
                                             <td>Rp. {{ number_format($item->payment,0,',','.') }}</td>
                                             <td>
                                                 @switch($item->status)
@@ -227,7 +326,9 @@
                                                     @default
                                                         
 
-                                                        <button type="button" class="btn btn-outline" data-bs-toggle="modal" data-bs-target="#order-{{ $item->order_hash }}">
+                                                        <button type="button" class="btn btn-outline" onclick="payment(this)" data-code-payment="{{ $item->code }}">Pilih pembayaran</button>
+
+                                                        {{-- <button type="button" class="btn btn-outline" data-bs-toggle="modal" data-bs-target="#order-{{ $item->order_hash }}">
                                                             <span>Upload bukti pembayaran</span>
                                                         </button>
 
@@ -252,7 +353,7 @@
                                                                     </form>
                                                                 </div>
                                                             </div>
-                                                        </div>
+                                                        </div> --}}
 
                                                 @endswitch
                                             </td>
@@ -323,60 +424,6 @@
             </div> --}}
 
             {{-- <div class="col-lg-12">
-                <div class="account-card">
-                    <div class="account-title">
-                        <h4>delivery address</h4>
-                        <button data-bs-toggle="modal" data-bs-target="#address-add">add address</button>
-                    </div>
-                    <div class="account-content">
-                        <div class="row">
-                            <div class="col-md-6 col-lg-4 alert fade show">
-                                <div class="profile-card address active">
-                                    <h6>Home</h6>
-                                    <p>jalkuri, fatullah, narayanganj-1420. word no-09, road no-17/A</p>
-                                    <ul class="user-action">
-                                        <li>
-                                            <button class="edit icofont-edit" title="Edit This" data-bs-toggle="modal" data-bs-target="#address-edit"></button>
-                                        </li>
-                                        <li>
-                                            <button class="trash icofont-ui-delete" title="Remove This" data-bs-dismiss="alert"></button>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-lg-4 alert fade show">
-                                <div class="profile-card address">
-                                    <h6>Office</h6>
-                                    <p>east tejturi bazar, dhaka-1200. word no-04, road no-13/c, house no-4/b</p>
-                                    <ul class="user-action">
-                                        <li>
-                                            <button class="edit icofont-edit" title="Edit This" data-bs-toggle="modal" data-bs-target="#address-edit"></button>
-                                        </li>
-                                        <li>
-                                            <button class="trash icofont-ui-delete" title="Remove This" data-bs-dismiss="alert"></button>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-lg-4 alert fade show">
-                                <div class="profile-card address">
-                                    <h6>Bussiness</h6>
-                                    <p>kawran bazar, dhaka-1100. word no-02, road no-13/d, house no-7/m</p>
-                                    <ul class="user-action">
-                                        <li>
-                                            <button class="edit icofont-edit" title="Edit This" data-bs-toggle="modal" data-bs-target="#address-edit"></button>
-                                        </li>
-                                        <li>
-                                            <button class="trash icofont-ui-delete" title="Remove This" data-bs-dismiss="alert"></button>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> --}}
-            {{-- <div class="col-lg-12">
                 <div class="account-card mb-0">
                     <div class="account-title">
                         <h4>payment option</h4>
@@ -430,6 +477,7 @@
                     </div>
                 </div>
             </div> --}}
+
         </div>
     </div>
 </section>
@@ -628,35 +676,58 @@
     </div>
     </div>
 </div>
-<div class="modal fade" id="address-edit">
-    <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-        <button class="modal-close" data-bs-dismiss="modal">
-        <i class="icofont-close"></i>
-        </button>
-        <form class="modal-form">
-        <div class="form-title">
-            <h3>edit address info</h3>
+
+@if ( auth()->user()->address && sizeof(auth()->user()->address) )
+    @foreach (auth()->user()->address as $item)
+        <div class="modal fade" id="address-edit-{{ $item->id }}">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <button class="modal-close" data-bs-dismiss="modal">
+                    <i class="icofont-close"></i>
+                    </button>
+                    <form class="modal-form" action="" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div class="form-title">
+                            <h3>edit address info</h3>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">title</label>
+                            <select class="form-select" name="status">
+                                <option value="1" {{ $item->status ==  1 ? 'selected' : '' }}>home</option>
+                                <option value="2" {{ $item->status ==  2 ? 'selected' : '' }}>office</option>
+                                <option value="3" {{ $item->status ==  3 ? 'selected' : '' }}>Bussiness</option>
+                                <option value="4" {{ $item->status ==  4 ? 'selected' : '' }}>academy</option>
+                                <option value="5" {{ $item->status ==  5 ? 'selected' : '' }}>others</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="provinsi">Provinsi</label>
+                            <select class="form-select" id="provinsi" onchange="getCity(this)">
+                              <option value="">Pilih Provinsi</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="kota">Kota</label>
+                            <select class="form-select" id="kota">
+                              <option value="">Pilih Kota</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="address-{{ $item->id }}">address</label>
+                            <textarea class="form-control" id="address-{{ $item->id }}" name="address">{{ $item->address }}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="phone-{{ $item->id }}">No HP</label>
+                            <input type="text" class="form-control" id="phone-{{ $item->id }}" name="phone" value="{{ $item->phone }}">
+                        </div>
+                        <button class="form-btn" type="submit">save address info</button>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            <label class="form-label">title</label>
-            <select class="form-select">
-            <option value="home" selected>home</option>
-            <option value="office">office</option>
-            <option value="Bussiness">Bussiness</option>
-            <option value="academy">academy</option>
-            <option value="others">others</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label class="form-label">address</label>
-            <textarea class="form-control" placeholder="jalkuri, fatullah, narayanganj-1420. word no-09, road no-17/A"></textarea>
-        </div>
-        <button class="form-btn" type="submit">save address info</button>
-        </form>
-    </div>
-    </div>
-</div>
+    @endforeach
+@endif
 
 @endsection
 @section('script')
@@ -744,6 +815,83 @@
         $(star).css('color', 'yellow');
         nSibling.css('color', '');
     }
+
+    function payment(key){
+
+        window.snap.pay($(key).attr('data-code-payment'), {
+          onSuccess: function(result){
+            /* You may add your own implementation here */
+            showAlertPopUp("payment success!");
+            $.ajax({
+                url:"{{ route('home') }}/order/" + result.order_id + "/midtrans",
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    '_token': '{{ csrf_token() }}'
+                },
+                success: function (response) {
+                    showAlertPopUp(response.data);
+                }
+            });
+          },
+          onPending: function(result){
+            /* You may add your own implementation here */
+            showAlertPopUp("wating your payment!"); console.log(result);
+          },
+          onError: function(result){
+            /* You may add your own implementation here */
+            showAlertPopUp("payment failed!"); console.log(result);
+          },
+          onClose: function(){
+            /* You may add your own implementation here */
+            showAlertPopUp('you closed the popup without finishing the payment');
+          }
+        })
+    }
+
+    function provinsi() {
+        $.ajax({
+          type: "GET",
+          url: "{{ route('data.provinsi') }}",
+          data: null,
+          dataType: "JSON",
+          success: function (response) { 
+            const provinsiSelect = $('#provinsi');
+            var data = '';
+            for (let i = 0; i < response.length; i++) {
+              data += "<option value=" + response[i].province_id  + ">" + response[i].province + "</option>";
+            };
+            provinsiSelect.html(data);
+            getCity(provinsiSelect);
+          },
+          error: function (response) {
+            console.log(response);
+          }
+        });
+      }
+
+      function getCity(prov){
+        $.ajax({
+          type: "POST",
+          url: "{{ route('data.kota') }}",
+          data: {
+            '_token': '{{ csrf_token() }}',
+            'kota': $(prov).val()
+          },
+          dataType: "JSON",
+          success: function (response) { 
+            const kotaSelect = $('#kota');
+            var data = '';
+            for (let i = 0; i < response.length; i++) {
+              data += "<option value=" + response[i].city_id  + ">" + response[i].city_name + "</option>";
+            };
+            kotaSelect.html(data);
+          },
+          error: function (response) {
+            console.log(response);
+          }
+        });
+      }
     
 </script>
 @endsection

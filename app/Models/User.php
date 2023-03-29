@@ -43,7 +43,18 @@ class User extends Authenticatable implements MustVerifyEmail
         return 'user_hash';
     }
 
-    public function shop(){
+    public function shop()
+    {
         return $this->belongsTo('App\Models\Shop', 'user_hash', 'user_hash');
+    }
+
+    public function alamats()
+    {
+        return $this->hasMany('\App\Models\Address', 'user_hash', 'user_hash');
+    }
+
+    public function alamat()
+    {
+        return $this->belongsTo('\App\Models\Address', 'user_hash', 'user_hash')->where('use', true);
     }
 }

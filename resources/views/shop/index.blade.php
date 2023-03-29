@@ -284,10 +284,8 @@
                                 <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">Costumer</th>
-                                    <th scope="col">Nama barang</th>
-                                    <th scope="col">Harga barang</th>
-                                    <th scope="col">Pcs</th>
-                                    <th scope="col">Jumlah harga</th>
+                                    <th scope="col">Produk</th>
+                                    <th scope="col">Alamat</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
@@ -297,10 +295,52 @@
                                         <tr>
                                             <td scope="row">{{ $loop->iteration }}</td>
                                             <td>{{ $item->user->name }}</td>
-                                            <td>{{ $item->product->name }}</td>
-                                            <td>Rp. {{ number_format($item->product->price,0,',','.') }}</td>
-                                            <td>{{ $item->pcs }}</td>
-                                            <td>Rp. {{ number_format($item->payment,0,',','.') }}</td>
+                                            <td>
+
+                                                <button type="button" class="btn btn-outline" data-bs-toggle="modal" data-bs-target="#detail-{{ $item->order_hash }}">
+                                                    <span>Detail produk</span>
+                                                </button>
+                                                <div class="modal fade" id="detail-{{ $item->order_hash }}">
+                                                    <div class="modal-dialog modal-xl">
+                                                        <div class="modal-content">
+                                                            <button class="modal-close icofont-close" data-bs-dismiss="modal"></button>
+                                                            <div class="product-view">
+                                                                <table>
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th scope="col">#</th>
+                                                                            <th scope="col">Nama produk</th>
+                                                                            <th scope="col">Harga produk</th>
+                                                                            <th scope="col">Pcs</th>
+                                                                            <th scope="col">Total Harga</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @forelse (json_decode($item->products) as $produk)
+                                                                            @php
+                                                                                $productData = \App\Models\Product::where('product_hash', $produk->product_hash)->first();
+                                                                            @endphp
+                                                                            <tr>
+                                                                                <td>{{ $loop->iteration }}</td>
+                                                                                <td>{{ $productData->name }}</td>
+                                                                                <td>Rp. {{ number_format($productData->price,0,',','.') }}</td>
+                                                                                <td>{{ $produk->pcs }}</td>
+                                                                                <td>Rp. {{ number_format($productData->price * $produk->pcs,0,',','.') }}</td>
+                                                                            </tr>
+                                                                        @empty
+                                                                            <tr>
+                                                                                <td>G ada produk</td>
+                                                                            </tr>
+                                                                        @endforelse
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </td>
+                                            <td>{{ $item->user->alamat->address }}</td>
                                             <td>
                                                 @switch($item->status)
                                                     @case(2)
@@ -359,7 +399,7 @@
                                                         <span>konfirmasi barang sampai</span>
                                                         @break
                                                     @default
-                                                        
+                                                        <span>-</span>
                     
                                                 @endswitch
                                             </td>

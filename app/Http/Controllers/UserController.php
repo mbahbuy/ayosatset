@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Order, User,Product};
+use App\Models\{Order, User, Product};
 use Illuminate\Http\{Request};
 use Illuminate\Support\Facades\{Hash, Validator, Storage};
 
@@ -16,16 +16,17 @@ class UserController extends Controller
      */
     public function index()
     {
-        if(!$this->middleware('verify')){
+        if (!$this->middleware('verify')) {
             return redirect('checkemail');
         }
         if (auth()->user()->name == '' || auth()->user()->name == null) {
             return redirect('profile/data/user');
         }
-        $product = (auth()->user()->shop == true) ? Product::where('shop_hash', auth()->user()->shop->shop_hash)->orderBy('created_at', 'DESC')->get() : [];
-        return view('profile.index',[
+        $product = (auth()->user()->shop == true) ? Product::where('shop_hash', auth()->user()->shop->shop_hash)->latest()->get() : [];
+        $order = Order::where('user_hash', auth()->user()->user_hash)->with('shop')->latest()->get();
+        return view('profile.index', [
             'product' => $product,
-            'orders' => Order::where('user_hash', auth()->user()->user_hash)->orderBy('created_at', 'DESC')->get()
+            'orders' => $order
         ]);
     }
 
@@ -85,16 +86,16 @@ class UserController extends Controller
             'name' => 'required|max:255',
             'image' => 'required|image|file|max:2048'
         ]);
- 
+
         if ($rules->fails()) {
             return back()->withInput()->withErrors($rules, 'profile_update');
         }
         $validatedData = $rules->validated();
-        if($validatedData['name'] == '' || $validatedData['name'] == null || $validatedData['name'] == auth()->user()->name ){
+        if ($validatedData['name'] == '' || $validatedData['name'] == null || $validatedData['name'] == auth()->user()->name) {
             $validatedData['name'] = auth()->user()->name;
         }
         $validatedData['image'] = $request->file('image')->store('profile');
-        if(auth()->user()->image !== null){
+        if (auth()->user()->image !== null) {
             Storage::delete(auth()->user()->image);
         }
         $user->update($validatedData);
@@ -103,10 +104,10 @@ class UserController extends Controller
 
     public function password(Request $request, User $user)
     {
-        if($user->user_hash !== auth()->user()->user_hash){
+        if ($user->user_hash !== auth()->user()->user_hash) {
             abort(403);
         }
-        $rules = Validator::make( $request->all() , [
+        $rules = Validator::make($request->all(), [
             'old_password' => [
                 'required',
                 function ($attribute, $value, $fail) {
@@ -118,7 +119,7 @@ class UserController extends Controller
             'new_password' => 'required|string|different:old_password',
             'password_confirmation' => 'required|string|same:new_password'
         ]);
-        if($rules->fails()){
+        if ($rules->fails()) {
             return back()->withInput()->withErrors($rules, 'profile_password');
         }
         $validatedData = $rules->validated();
@@ -140,7 +141,7 @@ class UserController extends Controller
 
     public function afterVerifyForm()
     {
-        if(auth()->user()->name == '' || auth()->user()->name == null){
+        if (auth()->user()->name == '' || auth()->user()->name == null) {
             return view('auth.after_verify');
         }
         return redirect('profile');
@@ -162,8 +163,9 @@ class UserController extends Controller
         return redirect('profile')->with('success', 'Selamat datang di ayosatset, belanja tampa ribet');
     }
 
-    public function users(){
-        return view('dashboard.userslist',[
+    public function users()
+    {
+        return view('dashboard.userslist', [
             'users' => User::where('admin_status', false)->where('status', true)->get()
         ]);
     }
@@ -174,8 +176,9 @@ class UserController extends Controller
         return back()->with('success', 'User telah dimasukkan ke black user list');
     }
 
-    public function black(){
-        return view('dashboard.blacklist',[
+    public function black()
+    {
+        return view('dashboard.blacklist', [
             'users' => User::where('admin_status', false)->where('status', 3)->get()
         ]);
     }

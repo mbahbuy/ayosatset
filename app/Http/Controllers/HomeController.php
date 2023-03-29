@@ -9,14 +9,14 @@ class HomeController extends Controller
 {
     public function index()
     {
-        return view('home.index',[
-            'products' => Product::orderBy('id', 'DESC')->get()
+        return view('home.index', [
+            'products' => Product::with(['cart', 'wish'])->latest()->paginate(10)
         ]);
     }
 
     public function product()
     {
-        return view('home.product',[
+        return view('home.product', [
             'products' => Product::orderBy('id', 'DESC')->get()
         ]);
     }

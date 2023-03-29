@@ -14,9 +14,10 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function productJson()
     {
-        //
+        $products = Product::latest()->with(['cart', 'wish'])->paginate(25);
+        return response()->json($products);
     }
 
     /**

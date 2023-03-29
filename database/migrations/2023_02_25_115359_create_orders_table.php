@@ -17,13 +17,13 @@ return new class extends Migration
             $table->id();
             $table->string('user_hash');
             $table->string('shop_hash');
-            $table->string('product_hash');
             $table->string('order_hash')->unique();
+            $table->text('products');
             $table->string('code');
-            $table->bigInteger('pcs');
+            $table->bigInteger('sub_total');
+            $table->bigInteger('ongkir');
             $table->bigInteger('payment');
             $table->bigInteger('status');
-            $table->string('img_payment')->nullable();
             $table->string('no_resi')->nullable();
             $table->string('img_kurir')->nullable();
             $table->timestamps();

@@ -22,7 +22,7 @@ class ProductFactory extends Factory
                 ->map(fn ($p) => "<p>$p</p>")
                 ->implode(''),
             'price' => $this->faker->randomFloat('2', 5000, 50000),
-            'stock' => $this->faker->randomDigitNotNull()
+            'quantity' => $this->faker->randomDigitNotNull()
         ];
     }
 }

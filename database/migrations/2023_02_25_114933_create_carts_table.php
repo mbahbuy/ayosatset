@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('parent_id');
             $table->string('cart_hash');
             $table->string('user_hash');
+            $table->string('shop_hash');
             $table->string('product_hash');
             $table->timestamps();
         });

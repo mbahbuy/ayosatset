@@ -58,16 +58,45 @@
     </style>
   </head>
   <body>
+      @php
+        $cartData = [];
+        if (auth()->check()) {
+          $data = \App\Models\Cart::with(['product.shop' => function ($query) {
+              $query->select('shop_hash', 'name')->with('address');
+          }])->where([
+              ['user_hash', '=', auth()->user()->user_hash],
+              ['parent_id', '=', 1]
+          ])->get();
+          $cartData = $data->groupBy(function ($item) {
+              return $item->product->shop->shop_hash;
+          })->map(function ($items, $shop_hash) {
+              return [
+                  'shop_hash' => $shop_hash,
+                  'name' => $items[0]->product->shop->name,
+                  'address' => $items[0]->product->shop->address->city_id,
+                  'products' => $items->map(function ($item) {
+                      return [
+                          'product_hash' => $item->product->product_hash,
+                          'name' => $item->product->name,
+                          'image' => $item->product->image,
+                          'price' => $item->product->price,
+                      ];
+                  })
+              ];
+          })->values();
+        }
+      @endphp
       @include('layout.header',[
         'categories' => \App\Models\Category::all(),
-        'carts' => auth()->check() ? \App\Models\Cart::where([
+        'carts' => $cartData,
+        'cart_products' => auth()->check() ? \App\Models\Cart::where([
           ['user_hash', '=', auth()->user()->user_hash],
           ['parent_id', '=', 1]
-        ])->get() : [],
+        ])->with('product')->get() : [],
         'wishs' => auth()->check() ? \App\Models\Cart::where([
           ['user_hash', '=', auth()->user()->user_hash],
           ['parent_id', '=', 2]
-        ])->get() : []
+        ])->with('product')->get() : []
       ])
     
     @yield('container')
@@ -87,6 +116,7 @@
     <script src="{{ asset('js') }}/venobox.js"></script>
     <script src="{{ asset('js') }}/slick.js"></script>
     <script src="{{ asset('js') }}/main.js"></script>
+    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-_2oyz8XTlPKSmPBt"></script>
     <script>
       // alert pop up
       function showAlertPopUp(data) {
@@ -158,26 +188,28 @@
         });
       }
       function pilihSemua(ph) {
-        var totalHarga = 0;
         if ($(ph).is(':checked')) {
           // Set semua checkbox menjadi checked
           $("input.cart-checkbox:checkbox").prop("checked", true);
-          $('.checkout-data').html($("input.cart-checkbox:checkbox:checked").length);
-          // Aktifkan tombol Submit
-          $(".cart-footer-submit").prop("disabled", false);
-          $("input.cart-checkbox:checkbox:checked").each(function() {
-            totalHarga += parseInt($(this).attr('harga')) * parseInt($(this).attr('data-pcs'));
-          });
+          // $("input.cart-shop:checkbox").prop("checked", true);
         } else {
           // Set semua checkbox menjadi checked
           $("input.cart-checkbox:checkbox").prop("checked", false);
-          $('.checkout-data').html(0);
-          // Aktifkan tombol Submit
-          $(".cart-footer-submit").prop("disabled", true);
+          // $("input.cart-shop:checkbox").prop("checked", false);
         }
-        $('.checkout-price').html('Rp ' + totalHarga.toLocaleString('id-ID'));
+        cartCheck();
       }
-      function cartCheck() {        
+      function pilihShop(sh) {
+        if ($(sh).is(':checked')) {
+          // Set semua checkbox menjadi checked
+          $(sh).parent().next('ul').find("input.cart-checkbox:checkbox").prop("checked", true);
+        } else {
+          // Set semua checkbox menjadi checked
+          $(sh).parent().next('ul').find("input.cart-checkbox:checkbox").prop("checked", false);
+        }
+        cartCheck();
+      }
+      function cartCheck() {
         var totalHarga = 0;
         var checkboxChecked = $("input.cart-checkbox:checkbox:checked");
         // Cek apakah setidaknya satu checkbox telah dicentang
@@ -198,51 +230,159 @@
         } else {
           $("#pilih-semua").prop("checked", false);
         }
-        $('.checkout-price').html('Rp ' + totalHarga.toLocaleString('id-ID'));
+        $('.sub-total').html('Rp ' + totalHarga.toLocaleString('id-ID'));
+
+        const shop = $("#pilih-semua").closest('.cart-list').parent().find('input.cart-shop:checkbox');
+        const targetOngkir = $('#pemilihan-jasa');
+        shop.each(function(){
+          let checkboxChildren = $(this).parent().next('ul').find("input.cart-checkbox:checkbox");
+          let checkboxChildrenChecked = $(this).parent().next('ul').find("input.cart-checkbox:checkbox:checked");
+          if (checkboxChildren.length == checkboxChildrenChecked.length) {
+            $(this).prop("checked", true);
+          } else {
+            $(this).prop("checked", false);
+          }
+          if (checkboxChildrenChecked.length > 0) {
+            let targetPemilihan = targetOngkir.find('#jasa-' + $(this).val());
+            if (targetPemilihan.length == 0) {
+              targetOngkir.append("<div class='cart-item'><div class='form-group'><label for='jasa-" + $(this).val() + "'>" + $(this).attr('data-name') + "</label><select class='form-select jasa-pilihan-ongkir' id='jasa-" + $(this).val() + "' data-shop='" + $(this).val() + "' data-address='" + $(this).attr('data-address') + "' data-name='" + $(this).attr('data-name') + "' ><option value='jne'>JNE</option><option value='tiki'>TIKI</option><option value='pos'>POS Indonesia</option></select></div></div>");
+            }
+          }
+          
+        });
       }
       if ($("input.cart-checkbox:checkbox:checked").length > 0) {
         cartCheck();
       }
+
+      function cariOngkir(){
+        const kota = $('input.alamat-pengiriman:checkbox:checked');
+        const jasa = $('#pemilihan-jasa').find('.jasa-pilihan-ongkir');
+        jasa.each(function() {
+          let nameShop = $(this).attr('data-name');
+          let shopHash = $(this).attr('data-shop');
+          $.ajax({
+            type: "POST",
+            url: "{{ route('data.ongkir') }}",
+            data: {
+              '_token': '{{ csrf_token() }}',
+              'origin': $(this).attr('data-address'),
+              'tujuan': kota.val(),
+              'jasa': $(this).val()
+            },
+            dataType: "JSON",
+            success: function (response) {
+              var ongkir = response[0].costs;
+              var detail = '';
+              for (let i = 0; i < ongkir.length; i++) {
+                detail += "<div class='cart-item'><div class='form-check'><input class='visually-hidden harga-ongkir' id='pilihan-ongkir-" + shopHash + "-" + ongkir[i].service + "' type='checkbox' onchange='pilihOngkir(this)' data-shop='" + shopHash + "' value='" + ongkir[i].cost[0].value + "' ><label class='form-check-label' for='pilihan-ongkir-" + shopHash + "-" + ongkir[i].service + "'><div class='card'><div class='card-body'><h5 class='card-title'>" + ongkir[i].description + "</h5><p class='card-text'>Rp " + ongkir[i].cost[0].value.toLocaleString('id-ID') + "</p></div></div></label></div></div>";
+              }
+              $('#jasa-ongkir').append( "<div><div class='form-check'>Pilih ongkir untuk: " + nameShop + "</div>" + detail + "</div>");
+              // console.log(ongkir);
+            },
+            error: function (response) {
+              console.log(response);
+            }
+          });
+        });
+      }
+
+      if ($('.alamat-pengiriman').is(':checked')) {
+        pilihAlamat($('.alamat-pengiriman:checkbox:checked'));
+      }
+
+      function pilihAlamat(pa) {
+        $(pa).closest('cart-list').find('input:checkbox').prop("checked", false);
+        $(pa).closest('cart-list').find('.form-check-label').children('.card').removeClass("border border-success");
+        $(pa).prop("checked", true);
+        $(pa).next().children(".card").addClass("border border-success");
+        $('.cart-footer-pemilihan-alamat').prop("disabled", false);
+      }
+
+      function pilihOngkir(hayu) {
+        let totalOngkir = 0;
+        const shopParent = $(hayu).closest('.cart-item').parent();
+        shopParent.find('input:checkbox').prop("checked", false);
+        shopParent.find('.form-check-label').children('.card').removeClass("border border-success");
+        $(hayu).prop("checked", true);
+        $(hayu).next().children(".card").addClass("border border-success");
+        $('#jasa-ongkir').find('input.harga-ongkir:checkbox:checked').each(function () { 
+          totalOngkir += parseInt($(this).val());
+        });
+        let toggle = true;
+        $('#jasa-ongkir').children().each(function(){
+          let prm = $(this).find('input.harga-ongkir:checkbox:checked');
+          if (prm.length > 0) {
+            toggle = false;
+          } else {
+            toggle = true;
+          }
+          $('.cart-footer-check-out').prop("disabled", toggle);
+        });
+        $('.biaya-ongkir').html('Rp ' + parseInt(totalOngkir).toLocaleString('id-ID'));
+      }
+
+      function totalCost(){
+        var totalHarga = 0;
+        $("input.cart-checkbox:checkbox:checked").each(function() {
+            totalHarga += parseInt($(this).attr('harga')) * parseInt($(this).attr('data-pcs'));
+        });
+        $('#jasa-ongkir').find('input.harga-ongkir:checkbox:checked').each(function () { 
+            totalHarga += parseInt($(this).val());
+        });
+        $('.total-check-out').html('Rp ' + parseInt( parseInt(totalHarga)).toLocaleString('id-ID'));
+      }
+
       function submitCartToOrder() {
         // Ambil nilai checkbox yang dicek
         var checkedValues = $("input.cart-checkbox:checkbox:checked");
         var data = [];
         checkedValues.each(function() {
-            var value = $(this).val();
-            var pcs = parseInt($(this).data('pcs'));
-            if (!isNaN(pcs)) {
-              data.push({ 'value': value, 'pcs': pcs });
-            } else {
-              showAlertPopUp('Jangan aneh-aneh');
-            }
+          var shopHash = $(this).closest('.cart-item').parent().prev('.form-check').children('input.cart-shop:checkbox').attr('value');
+          var value = $(this).val();
+          var pcs = parseInt($(this).data('pcs'));
+          var ongkirShop = $("#jasa-ongkir").find("input.harga-ongkir[type='checkbox'][data-shop='" + shopHash + "']:checked");
+
+          // Cek apakah toko sudah ada dalam array
+          var checkIndex = data.findIndex(function(check) {
+              return check.shop_hash === shopHash;
+          });
+
+          // Jika toko belum ada, tambahkan ke array
+          if (checkIndex === -1) {
+              data.push({
+                  shop_hash: shopHash,
+                  products: [{ 'product_hash': value, 'pcs': pcs }],
+                  ongkir: ongkirShop.val()
+              });
+          } else {
+              // Jika toko sudah ada, tambahkan ID produk ke array products
+              data[checkIndex].products.push({ 'product_hash': value, 'pcs': pcs });
+          }
         });
 
-        if (checkedValues.length > 0) {
-          // Kirim data ke server menggunakan AJAX
-          $.ajax({
-              type: 'POST',
-              url: "{{ route('order.store') }}",
-              data: {
-                  '_token': '{{ csrf_token() }}',
-                  'data': data
-              },
-              success: function(response) {
-                  // Jika berhasil, tampilkan pesan sukses
-                  $( "#cart-value-reload" ).load(window.location.href + " #cart-value-reload>" );
-                  $( ".cart-total" ).load(window.location.href + " .cart-total>" );
-                  $( ".cart-list" ).load(window.location.href + " .cart-list>" );
-                  showAlertPopUp(response.data);
-                  $(".cart-footer-submit").prop("disabled", true);
-                  $('.checkout-data').html(0);
-                  $('.checkout-price').html('Rp 0');
-              },
-              error: function(response) {
-                  // Jika terjadi kesalahan, tampilkan pesan error
-                  showAlertPopUp(response.responseText);
-              }
-          });
-        }
+        // Kirim data ke server menggunakan AJAX
+        $.ajax({
+            type: 'POST',
+            url: "{{ route('order.store') }}",
+            data: {
+                '_token': '{{ csrf_token() }}',
+                'data': data,
+            },
+            success: function(response) {
+                // Jika berhasil, tampilkan pesan sukses
+                $( "#cart-value-reload" ).load(window.location.href + " #cart-value-reload>" );
+                $( ".cart-total" ).load(window.location.href + " .cart-total>" );
+                $('#cart-to-order').load(window.location.href + " #cart-to-order>" );
+                showAlertPopUp(response.data);
+            },
+            error: function(response) {
+                // Jika terjadi kesalahan, tampilkan pesan error
+                showAlertPopUp(response.responseText);
+            }
+        });
       }
+
       function pcsPlus(plus) {
         var totalHarga = 0;
         var checkboxChecked = $("input.cart-checkbox:checkbox:checked");
@@ -255,7 +395,7 @@
         checkboxChecked.each(function() {
             totalHarga += parseInt($(this).attr('harga')) * parseInt($(this).attr('data-pcs'));
         });
-        $('.checkout-price').html('Rp ' + totalHarga.toLocaleString('id-ID'));
+        $('.sub-total').html('Rp ' + totalHarga.toLocaleString('id-ID'));
       }
       function pcsMinus(minus) {
         var totalHarga = 0;
@@ -273,7 +413,7 @@
         checkboxChecked.each(function() {
             totalHarga += parseInt($(this).attr('harga')) * parseInt($(this).attr('data-pcs'));
         });
-        $('.checkout-price').html('Rp ' + totalHarga.toLocaleString('id-ID'));
+        $('.sub-total').html('Rp ' + totalHarga.toLocaleString('id-ID'));
       }
       @if (session()->has('success'))
         showAlertPopUp("{{ session('success') }}");

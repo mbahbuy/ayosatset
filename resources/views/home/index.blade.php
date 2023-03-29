@@ -172,6 +172,17 @@
                     </div>
                 @endforeach
             </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-btn-25">
+                        {{-- <a href="#" class="btn btn-outline">
+                            <i class="fas fa-eye"></i>
+                            <span>show more</span>
+                        </a> --}}
+                        {{ $products->links() }}
+                    </div>
+                </div>
+            </div>
         @else
             <div class="row">
                 <div class="col-lg-12">
@@ -181,16 +192,7 @@
                 </div>
             </div>            
         @endif
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="section-btn-25">
-                    <a href="#" class="btn btn-outline">
-                    <i class="fas fa-eye"></i>
-                    <span>show more</span>
-                    </a>
-                </div>
-            </div>
-        </div>
+
     </div>
 </section>
 {{-- <div class="section promo-part">
