@@ -46,4 +46,19 @@ class Product extends Model
     {
         return $this->belongsToMany('\App\Models\Order')->withPivot('pcs');
     }
+
+    public function ratings()
+    {
+        return $this->hasMany('\App\Models\Rating', 'product_hash', 'product_hash');
+    }
+
+    public function averageRating()
+    {
+        $ratings = $this->ratings()->pluck('rating');
+        if ($ratings->count() > 0) {
+            return $ratings->sum() / $ratings->count();
+        } else {
+            return 0;
+        }
+    }
 }

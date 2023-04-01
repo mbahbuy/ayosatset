@@ -10,7 +10,7 @@ class HomeController extends Controller
     public function index()
     {
         return view('home.index', [
-            'products' => Product::with(['cart', 'wish'])->latest()->paginate(10)
+            'products' => Product::with('cart', 'wish')->withCount('ratings')->latest()->paginate(10)
         ]);
     }
 

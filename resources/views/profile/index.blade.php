@@ -185,11 +185,10 @@
                 </div>
             </div>
 
-            <div class="col-lg-12">
+            <div class="col-lg-12" id="order-pesanan">
                 <div class="account-card">
                     <div class="account-title">
                         <h4>Pesanan anda</h4>
-                        {{-- <button data-bs-toggle="modal" data-bs-target="#contact-add">add contact</button> --}}
                     </div>
                     <div class="account-content">
                         <table class="table">
@@ -274,52 +273,49 @@
                                                             <span>konfirmasi barang sampai</span>
                                                         </button>
                                                         <div class="modal fade" id="rating-{{ $item->order_hash }}">
-                                                            @php
-                                                                $keyerror[$item->order_hash] = 'rating_' . $item->order_hash;
-                                                                
-                                                                $img_class_rating[$item->order_hash] = $errors->first('image', $keyerror[$item->order_hash]) ? 'is-invalid' : '' ;
-                                                                $img_value_rating[$item->order_hash] = $errors->get($keyerror[$item->order_hash]) ? old('image') != '' ? old('image') : '' : '';
-                                                                $message_class_rating[$item->order_hash] = $errors->first('message', $keyerror[$item->order_hash]) ? 'is-invalid' : '';
-                                                                $message_value_rating[$item->order_hash] = $errors->get($keyerror[$item->order_hash]) ? old('message') != '' ? old('message') : '' : '';
-                                                            @endphp
                                                             <div class="modal-dialog modal-xl">
                                                                 <div class="modal-content">
                                                                     <button class="modal-close icofont-close" data-bs-dismiss="modal"></button>
-                                                                    <form action="{{ route('product.confirm', $item->order_hash) }}" method="POST" enctype="multipart/form-data">
-                                                                        @csrf
-                                                                        @method('put')
-                                                                        <div class="product-view">
-                                                                            <div class="m-4 p-4">
-                                                                                <div class="row clearfix">
-                                                                                    <div class="col-lg-6 float-start">
-                                                                                        <div class="mb-3">
-                                                                                            <input type="file" class="form-control " placeholder="image" name="image" onchange="reviewPreview(this)" value="">
-                                                                                        </div>
-                                                                                        <img src="{{ $img_value_rating[$item->order_hash] }}" class="img-fluid">
+                                                                    <div class="product-view">
+                                                                        <div class="container p-3">
+                                                                            @php
+                                                                                $products = json_decode($item->products);
+                                                                            @endphp
+                                                                            @foreach ($products as $p)
+                                                                                @php
+                                                                                    $img = \App\Models\Product::select('image')->where('product_hash', $p->product_hash)->first();
+                                                                                @endphp
+                                                                                <div class="row m-3 border border-black form-rating" data-product="{{ $p->product_hash }}">
+                                                                                    <div class="col-lg-3">
+                                                                                        <img src="{{ asset('assets') . '/' . $img['image'] }}" class="img-fluid">
                                                                                     </div>
-                                                                                    <div class="col-lg-6 float-end">
+                                                                                    <div class="col-lg-9">
+                                                                                        <div class="form-group">
+                                                                                            <input type="file" class="form-control image" placeholder="image" name="image" onchange="reviewPreview(this)" value="">
+                                                                                        </div>
+                                                                                        <img src="" class="img-fluid">
                                                                                         <div class="form-group">
                                                                                             <i class="bi bi-star-fill" style="color:yellow" data-rating="1" onclick="rating(this)" role="button" ></i>
                                                                                             <i class="bi bi-star-fill" data-rating="2" onclick="rating(this)" role="button"></i>
                                                                                             <i class="bi bi-star-fill" data-rating="3" onclick="rating(this)" role="button"></i>
                                                                                             <i class="bi bi-star-fill" data-rating="4" onclick="rating(this)" role="button"></i>
                                                                                             <i class="bi bi-star-fill" data-rating="5" onclick="rating(this)" role="button"></i>
-                                                                                            <input type="number" class="d-none" name="rating" min="1" max="5" value="1">
+                                                                                            <input type="number" class="visually-hidden rating" name="rating" min="1" max="5" value="1">
                                                                                         </div>
                                                                                         <!-- Input Field -->
                                                                                         <div class="form-group">
-                                                                                            <textarea class="form-control {{ $message_class_rating[$item->order_hash] }}" placeholder="Pesan....." rows="3" name="message" required>{{ $message_value_rating[$item->order_hash] }}</textarea>
+                                                                                            <textarea class="form-control message" placeholder="Pesan....." rows="3" name="message"></textarea>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
-                                                                                <div class="row col-lg-12">
-                                                                                    <div class="form-button">
-                                                                                        <button type="submit">konfirmasi</button>
-                                                                                    </div>
+                                                                            @endforeach
+                                                                            <div class="row col-md-12">
+                                                                                <div class="form-button">
+                                                                                    <button type="button" onclick="ratingProduct(this)" data-order="{{ $item->order_hash }}" data-bs-dismiss="modal">konfirmasi</button>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                    </form>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -812,7 +808,7 @@
     }
 
     function reviewPreview(hash) {
-        const productImgPreview = $(hash).closest(".col-lg-6").children(".img-fluid");
+        const productImgPreview = $(hash).parent().next(".img-fluid");
 
         productImgPreview.css( "display" , 'block');
     
@@ -827,7 +823,7 @@
 
     function rating(star) {
         const rating = $(star).attr('data-rating');
-        const input = $(star).closest('.form-group').children("input.d-none");
+        const input = $(star).parent().children("input");
         const pSibling = $(star).prevAll();
         const nSibling = $(star).nextAll();
         input.attr('value', rating);
@@ -847,10 +843,13 @@
                 method: 'POST',
                 dataType: 'json',
                 data: {
-                    '_token': '{{ csrf_token() }}'
+                    '_token': '{{ csrf_token() }}',
+                    '_method': 'PUT'
                 },
                 success: function (response) {
+                    $( "#order-pesanan" ).load(window.location.href + " #order-pesanan>" );
                     showAlertPopUp(response.data);
+
                 }
             });
           },
@@ -879,7 +878,7 @@
             const modal = $(par).attr('data-modal');
             const provinsiSelected = $(par).attr('data-provinsi');
             var data = '';
-            if (modal == 0) {                
+            if (modal == 0) {
                 const provinsiSelect = $('#add-provinsi');
                 for (let i = 0; i < response.length; i++) {
                   data += "<option value=" + response[i].province_id  + ">" + response[i].province + "</option>";
@@ -945,6 +944,40 @@
                 '_method': 'PUT'
             },
             success: function (response) {
+                showAlertPopUp(response.data);
+            }
+        });
+      }
+
+      function ratingProduct(rp) {
+        const formData = $(rp).closest('.container').find('.form-rating');
+        const target = $(rp).attr('data-order');
+        var data = [];
+        formData.each(function () {
+            const product = $(this).attr('data-product');
+            const image = $(this).find('input.image:file');
+            const rating = $(this).find('input.rating').val();
+            const message = $(this).find('textarea.message').val();
+            // Check if a file has been selected
+            const hasFile = image[0].files.length > 0;
+            data.push({
+                product: product,
+                image: hasFile ? image[0].files[0] : null,
+                rating: rating,
+                message: message
+            });
+        });
+        $.ajax({
+            url:"{{ route('home') }}/order/" + target + "/product_confirm",
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                '_token': '{{ csrf_token() }}',
+                '_method': 'PUT',
+                data: data
+            },
+            success: function (response) {
+                $( "#order-pesanan" ).load(window.location.href + " #order-pesanan>" );
                 showAlertPopUp(response.data);
             }
         });

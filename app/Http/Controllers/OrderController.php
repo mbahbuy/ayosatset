@@ -7,7 +7,6 @@ use Illuminate\Http\{Request};
 use Illuminate\Support\Facades\{Validator, Response};
 use Illuminate\Validation\{Rule};
 use PhpParser\Node\Expr\New_;
-use Kavist\RajaOngkir\Facades\RajaOngkir;
 
 class OrderController extends Controller
 {
@@ -118,69 +117,33 @@ class OrderController extends Controller
     public function productConfirm(Request $request, Order $order)
     {
         $rules = Validator::make($request->all(), [
-            'rating' => 'required|numeric|min:1|max:5',
-            'image' => 'nullable|image|file|max:2048',
-            'message' => 'required|min:5'
+            'data.*.product' => [
+                'required',
+                Rule::exists('products', 'product_hash')
+            ],
+            'data.*.rating' => 'required|numeric|min:1|max:5',
+            'data.*.image' => 'nullable|image|file|max:2048',
+            'data.*.message' => 'nullable'
         ]);
         if ($rules->fails()) {
-            return back()->withErrors($rules, 'rating_' . $order->order_hash);
+            return Response::json(array(
+                'success' => false,
+                'errors' => $rules->getMessageBag()->toArray()
+            ), 400);
         }
-        $data = $rules->validated();
-        $data['image'] = $request->file('image') ? $request->file('image')->store('ratings-image') : '';
-        $rating = new Rating;
-        $rating->product_hash = $order->product_hash;
-        $rating->rating = $data['rating'];
-        $rating->image = $data['image'];
-        $rating->message = $data['message'];
-        $rating->save();
+        $data = $request->input('data');
+        foreach ($data as $item) {
+            if (!is_null($item['image'])) {
+                $item['image'] = $request->file('image') ? $request->file('image')->store('ratings-image') : '';
+            }
+            $rating = new Rating;
+            $rating->product_hash = $item['product'];
+            $rating->rating = (int)$item['rating'];
+            $rating->image = $item['image'];
+            $rating->message = $item['message'];
+            $rating->save();
+        }
         $order->update(['status' => 6]);
-        return back()->with('success', 'Terimakasih telah belanja di market kami');
-    }
-
-    public function provinsi()
-    {
-        $daftarProvinsi = RajaOngkir::provinsi()->all();
-        return response()->json($daftarProvinsi);
-    }
-
-    public function kota(Request $request)
-    {
-        $rules = Validator::make($request->all(), [
-            'kota' => 'required|numeric'
-        ]);
-
-        if ($rules->fails()) {
-            return Response::json(array(
-                'success' => false,
-                'errors' => $rules->getMessageBag()->toArray()
-            ), 400);
-        }
-        $data = $rules->validated();
-        $daftarKota = RajaOngkir::kota()->dariProvinsi($data['kota'])->get();
-        return response()->json($daftarKota);
-    }
-
-    public function ongkir(Request $request)
-    {
-        $rules = Validator::make($request->all(), [
-            'origin' => 'required|numeric',
-            'tujuan' => 'required|numeric',
-            'jasa' => 'required|in:jne,tiki,pos'
-        ]);
-
-        if ($rules->fails()) {
-            return Response::json(array(
-                'success' => false,
-                'errors' => $rules->getMessageBag()->toArray()
-            ), 400);
-        }
-        $data = $rules->validated();
-        $ongkir = RajaOngkir::ongkir([
-            'origin'        => $data['origin'],     // ID kota/kabupaten asal
-            'destination'   => $data['tujuan'],      // ID kota/kabupaten tujuan
-            'weight'        => 1300,    // berat barang dalam gram
-            'courier'       => $data['jasa']    // kode kurir pengiriman: ['jne', 'tiki', 'pos'] untuk starter
-        ])->get();
-        return response()->json($ongkir);
+        return response()->json(['data' => 'Terimakasih telah belanja di market kami']);
     }
 }

@@ -21,9 +21,9 @@ Route::get('/data_produk', ['as' => 'produk.json', 'uses' => 'ProductController@
 
 // order
 Route::post('/order', ['as' => 'order.store', 'uses' => 'OrderController@store']);
-Route::get('/data/provinsi', ['as' => 'data.provinsi', 'uses' => 'OrderController@provinsi']);
-Route::post('/data/kota', ['as' => 'data.kota', 'uses' => 'OrderController@kota']);
-Route::post('/data/ongkir', ['as' => 'data.ongkir', 'uses' => 'OrderController@ongkir']);
+Route::get('/data/provinsi', ['as' => 'data.provinsi', 'uses' => 'RajaOngkirController@provinsi']);
+Route::post('/data/kota', ['as' => 'data.kota', 'uses' => 'RajaOngkirController@kota']);
+Route::post('/data/ongkir', ['as' => 'data.ongkir', 'uses' => 'RajaOngkirController@ongkir']);
 
 Auth::routes([
     'verify' => true,

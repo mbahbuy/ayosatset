@@ -631,7 +631,7 @@
                   </label>
                 </div>
                 <ul>
-                  @foreach ($item['products'] as $p)           
+                  @foreach ($item['products'] as $p)
                     <li class="cart-item">
                       <div class="form-check">
                         <input type="checkbox" class="cart-checkbox form-check-input" onchange="cartCheck(this)" name="checkbox_order[]" value="{{ $p['product_hash'] }}" harga="{{ $p['price'] }}" data-pcs="1">
@@ -691,39 +691,37 @@
             <div class="form-check">Alamat Pengiriman</div>
           </div>
           @auth              
-            @if ( auth()->user()->alamats == true && sizeof(auth()->user()->alamats))
+            @if (auth()->user()->alamat)
               <div class="cart-item">
-                @foreach (auth()->user()->alamats as $item)                  
-                  <div class='form-check'>
-                    <input class='visually-hidden alamat-pengiriman' id='pilihan-alamat-{{ $item->id }}' type='checkbox' onchange='pilihAlamat(this)' value="{{ $item->city_id }}" {{ $item->use == 1 ? 'checked' : '' }}>
-                    <label class='form-check-label' for='pilihan-alamat-{{ $item->id }}'>
-                      <div class='card'>
-                        <div class='card-body'>
-                          <h5 class='card-title'>
-                            @switch($item->status)
-                                @case(1)
-                                    Home
-                                    @break
-                                @case(2)
-                                    Office
-                                    @break
-                                @case(3)
-                                    Bussiness
-                                    @break
-                                @case(4)
-                                    Academy
-                                    @break
-                                @default
-                                    Others
-                            @endswitch
-                          </h5>
-                          <p class='card-text'>{{ $item->address }}</p>
-                          <p class="card-text">{{ $item->phone }}</p>
-                        </div>
+                <div class='form-check'>
+                  <input class='visually-hidden alamat-pengiriman' id='pilihan-alamat-{{ auth()->user()->alamat->id }}' type='checkbox' onchange='pilihAlamat(this)' value="{{ auth()->user()->alamat->city_id }}" checked>
+                  <label class='form-check-label' for='pilihan-alamat-{{ auth()->user()->alamat->id }}'>
+                    <div class='card'>
+                      <div class='card-body'>
+                        <h5 class='card-title'>
+                          @switch(auth()->user()->alamat->status)
+                              @case(1)
+                                  Home
+                                  @break
+                              @case(2)
+                                  Office
+                                  @break
+                              @case(3)
+                                  Bussiness
+                                  @break
+                              @case(4)
+                                  Academy
+                                  @break
+                              @default
+                                  Others
+                          @endswitch
+                        </h5>
+                        <p class='card-text'>{{ auth()->user()->alamat->address }}</p>
+                        <p class="card-text">{{ auth()->user()->alamat->phone }}</p>
                       </div>
-                    </label>
-                  </div>
-                @endforeach
+                    </div>
+                  </label>
+                </div>
               </div>
             @else
               <div class="cart-item">

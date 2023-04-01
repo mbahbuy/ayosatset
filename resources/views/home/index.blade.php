@@ -140,12 +140,15 @@
                             </div>
                             <div class="product-content">
                                 <div class="product-rating">
-                                    <i class="active icofont-star"></i>
-                                    <i class="active icofont-star"></i>
-                                    <i class="active icofont-star"></i>
-                                    <i class="active icofont-star"></i>
-                                    <i class="icofont-star"></i>
-                                    <a href="#">(3)</a>
+                                    @php
+                                        $rating = $item->ratings ? $item->ratings->average('rating') : 0;
+                                    @endphp
+                                    <i class="{{ $rating >= 1 ? 'active' : '' }} icofont-star"></i>
+                                    <i class="{{ $rating >= 2 ? 'active' : ''  }} icofont-star"></i>
+                                    <i class="{{ $rating >= 3 ? 'active' : ''  }} icofont-star"></i>
+                                    <i class="{{ $rating >= 4 ? 'active' : ''  }} icofont-star"></i>
+                                    <i class="{{ $rating >= 5 ? 'active' : ''  }} icofont-star"></i>
+                                    <a href="#">({{ $item->ratings ? $item->ratings->count() : 0 }})</a>
                                 </div>
                                 <h6 class="product-name">
                                     <a href="{{ route('product.show', $item->product_hash) }}">{{ $item->name }}</a>

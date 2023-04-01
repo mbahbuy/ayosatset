@@ -278,7 +278,6 @@
                 detail += "<div class='cart-item'><div class='form-check'><input class='visually-hidden harga-ongkir' id='pilihan-ongkir-" + shopHash + "-" + ongkir[i].service + "' type='checkbox' onchange='pilihOngkir(this)' data-shop='" + shopHash + "' value='" + ongkir[i].cost[0].value + "' ><label class='form-check-label' for='pilihan-ongkir-" + shopHash + "-" + ongkir[i].service + "'><div class='card'><div class='card-body'><h5 class='card-title'>" + ongkir[i].description + "</h5><p class='card-text'>Rp " + ongkir[i].cost[0].value.toLocaleString('id-ID') + "</p></div></div></label></div></div>";
               }
               $('#jasa-ongkir').append( "<div><div class='form-check'>Pilih ongkir untuk: " + nameShop + "</div>" + detail + "</div>");
-              // console.log(ongkir);
             },
             error: function (response) {
               console.log(response);
@@ -375,6 +374,7 @@
                 $( ".cart-total" ).load(window.location.href + " .cart-total>" );
                 $('#cart-to-order').load(window.location.href + " #cart-to-order>" );
                 showAlertPopUp(response.data);
+                window.location.href = "{{ route('profile.index') }}#order-pesanan";
             },
             error: function(response) {
                 // Jika terjadi kesalahan, tampilkan pesan error
