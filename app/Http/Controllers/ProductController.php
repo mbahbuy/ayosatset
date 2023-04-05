@@ -16,7 +16,7 @@ class ProductController extends Controller
      */
     public function productJson()
     {
-        $products = Product::latest()->with(['cart', 'wish'])->paginate(25);
+        $products = Product::with('wish')->withCount('ratings')->latest()->paginate(10);
         return response()->json($products);
     }
 

@@ -138,6 +138,7 @@ class OrderController extends Controller
             }
             $rating = new Rating;
             $rating->product_hash = $item['product'];
+            $rating->user_hash = auth()->user()->user_hash;
             $rating->rating = (int)$item['rating'];
             $rating->image = $item['image'];
             $rating->message = $item['message'];

@@ -10,6 +10,7 @@ class Product extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
+    protected $with = ['shop', 'category', 'wish', 'cart', 'ratings'];
 
     public function getRouteKeyName()
     {
@@ -60,5 +61,28 @@ class Product extends Model
         } else {
             return 0;
         }
+    }
+
+    public function scopeFilter($query, array $filters)
+    {
+        $query->when($filters['search'] ?? false, function ($query, $search) {
+            return $query->where('name', 'like', '%' . $search . '%')
+                ->orWhere('description', 'like', '%' . $search . '%');
+        });
+
+        $query->when($filters['category'] ?? false, function ($query, $category) {
+            return $query->whereHas('category', function ($query) use ($category) {
+                $query->where('slug', $category);
+            });
+        });
+
+        // $query->when(
+        //     $filters['author'] ?? false,
+        //     fn ($query, $author) => $query->whereHas(
+        //         'author',
+        //         fn ($query) =>
+        //         $query->where('username', $author)
+        //     )
+        // );
     }
 }

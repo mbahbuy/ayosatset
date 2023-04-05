@@ -17,7 +17,7 @@ class HomeController extends Controller
     public function product()
     {
         return view('home.product', [
-            'products' => Product::orderBy('id', 'DESC')->get()
+            'products' => Product::latest()->filter(request(['search', 'category']))->paginate(10)->withQueryString()
         ]);
     }
 }

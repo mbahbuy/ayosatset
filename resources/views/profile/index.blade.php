@@ -191,7 +191,7 @@
                         <h4>Pesanan anda</h4>
                     </div>
                     <div class="account-content">
-                        <table class="table">
+                        <table class="table order-table-profile">
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
@@ -327,33 +327,6 @@
                                                         
 
                                                         <button type="button" class="btn btn-outline" onclick="payment(this)" data-code-payment="{{ $item->code }}">Pilih pembayaran</button>
-
-                                                        {{-- <button type="button" class="btn btn-outline" data-bs-toggle="modal" data-bs-target="#order-{{ $item->order_hash }}">
-                                                            <span>Upload bukti pembayaran</span>
-                                                        </button>
-
-                                                        <div class="modal fade" id="order-{{ $item->order_hash }}">
-                                                            <div class="modal-dialog modal-dialog-centered">
-                                                                <div class="modal-content">
-                                                                    <button class="modal-close" data-bs-dismiss="modal">
-                                                                        <i class="icofont-close"></i>
-                                                                    </button>
-                                                                    <form class="modal-form" action="{{ route('order.user.payment', $item->order_hash) }}" method="POST" enctype="multipart/form-data">
-                                                                        @csrf
-                                                                        @method('put')
-                                                                        <div class="form-title">
-                                                                            <h3>Upload bukti pembayaran</h3>
-                                                                        </div>
-                                                                        <div class="form-group">
-                                                                            <label class="form-label" for="payment">payment</label>
-                                                                            <input class="form-control " type="file" name="payment" id="payment" onchange="imagePreview(this)">
-                                                                            <img src="" class="img-fluid">
-                                                                        </div>
-                                                                        <button class="form-btn" type="submit">upload</button>
-                                                                    </form>
-                                                                </div>
-                                                            </div>
-                                                        </div> --}}
 
                                                 @endswitch
                                             </td>
@@ -847,7 +820,7 @@
                     '_method': 'PUT'
                 },
                 success: function (response) {
-                    $( "#order-pesanan" ).load(window.location.href + " #order-pesanan>" );
+                    $( ".order-table-profile" ).load(window.location.href + " .order-table-profile>" );
                     showAlertPopUp(response.data);
 
                 }
@@ -977,7 +950,7 @@
                 data: data
             },
             success: function (response) {
-                $( "#order-pesanan" ).load(window.location.href + " #order-pesanan>" );
+                $( ".order-table-profile" ).load(window.location.href + " .order-table-profile>" );
                 showAlertPopUp(response.data);
             }
         });

@@ -1,4 +1,4 @@
-<section class="news-part" style="background: url(images/newsletter.jpg) no-repeat center;">
+<section class="news-part" style="background: url({{ asset('images/newsletter.jpg') }}) no-repeat center;">
     <div class="container">
       <div class="row align-items-center">
         <div class="col-md-5 col-lg-6 col-xl-7">
@@ -169,10 +169,10 @@
             <p class="footer-desc">Lorem ipsum dolor sit amet tenetur dignissimos ipsum eligendi autem obcaecati minus ducimus totam reprehenderit exercitationem!</p>
             <div class="footer-app">
               <a href="#">
-                <img src="images/google-store.png" alt="google">
+                <img src="{{ asset('images/google-store.png') }}" alt="google">
               </a>
               <a href="#">
-                <img src="images/app-store.png" alt="app">
+                <img src="{{ asset('images/app-store.png') }}" alt="app">
               </a>
             </div>
           </div>
@@ -185,16 +185,16 @@
             </p>
             <div class="footer-card">
               <a href="#">
-                <img src="images/payment/jpg/01.jpg" alt="payment">
+                <img src="{{ asset('images/payment/jpg/01.jpg') }}" alt="payment">
               </a>
               <a href="#">
-                <img src="images/payment/jpg/02.jpg" alt="payment">
+                <img src="{{ asset('images/payment/jpg/02.jpg') }}" alt="payment">
               </a>
               <a href="#">
-                <img src="images/payment/jpg/03.jpg" alt="payment">
+                <img src="{{ asset('images/payment/jpg/03.jpg') }}" alt="payment">
               </a>
               <a href="#">
-                <img src="images/payment/jpg/04.jpg" alt="payment">
+                <img src="{{ asset('images/payment/jpg/04.jpg') }}" alt="payment">
               </a>
             </div>
           </div>

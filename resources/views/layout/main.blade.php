@@ -11,7 +11,7 @@
     <meta name="title" content="greeny - Ecommerce Food Store HTML Template">
     <meta name="keywords" content="organic, food, shop, ecommerce, store, html, bootstrap, template, agriculture, vegetables, products, farm, grocery, natural, online">
     <title>Index Home - Greeny</title>
-    <link rel="icon" href="images/favicon.png">
+    <link rel="icon" href="{{ asset('images/favicon.png') }}">
     <link rel="stylesheet" href="{{ asset('fonts') }}/flaticon/flaticon.css">
     <link rel="stylesheet" href="{{ asset('fonts') }}/icofont/icofont.min.css">
     <link rel="stylesheet" href="{{ asset('fonts') }}/fontawesome/fontawesome.min.css">
@@ -80,6 +80,7 @@
                           'name' => $item->product->name,
                           'image' => $item->product->image,
                           'price' => $item->product->price,
+                          'cart_hash' => $item->cart_hash
                       ];
                   })
               ];
@@ -166,7 +167,8 @@
           },
           success: function (response) {
             $( "#cart-value-reload" ).load(window.location.href + " #cart-value-reload>" );
-            $( ".cart-sidebar" ).load(window.location.href + " .cart-sidebar>" );
+                $( ".cart-total" ).load(window.location.href + " .cart-total>" );
+                $('#cart-to-order').load(window.location.href + " #cart-to-order>" );
             showAlertPopUp(response.data);
           }
         });
@@ -182,7 +184,8 @@
           },
           success: function (response) {
             $( "#cart-value-reload" ).load(window.location.href + " #cart-value-reload>" );
-            $( ".cart-sidebar" ).load(window.location.href + " .cart-sidebar>" );
+            $( ".cart-total" ).load(window.location.href + " .cart-total>" );
+            $('#cart-to-order').load(window.location.href + " #cart-to-order>" );
             showAlertPopUp(response.data);
           }
         });
@@ -375,6 +378,7 @@
                 $('#cart-to-order').load(window.location.href + " #cart-to-order>" );
                 showAlertPopUp(response.data);
                 window.location.href = "{{ route('profile.index') }}#order-pesanan";
+                $( ".order-table-profile" ).load(window.location.href + " .order-table-profile>" );
             },
             error: function(response) {
                 // Jika terjadi kesalahan, tampilkan pesan error

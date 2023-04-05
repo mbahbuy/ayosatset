@@ -63,14 +63,16 @@
       </a>
       @if (sizeof($categories))          
         <div class="header-widget dropdown-megamenu">
-          <a class="navbar-link dropdown-arrow" href="#">category</a>
+          <button class="navbar-link link">category</button>
           <div class="megamenu">
             <div class="container megamenu-scroll">
               <div class="row row-cols-5">
                 @foreach ($categories as $item)
                   <div class="col">
                     <div class="megamenu-wrap">
-                      <h5 class="megamenu-title">{{ $item->name }}</h5>
+                      <a href="{{ route('find') . '?category=' . $item->slug }}">
+                        <h5 class="megamenu-title">{{ $item->name }}</h5>
+                      </a>
                     </div>
                   </div>
                 @endforeach
@@ -299,9 +301,9 @@
           </div>
         </div>
       @endif
-      <form class="header-form">
-        <input type="text" placeholder="Search anything...">
-        <button>
+      <form class="header-form" action="{{ route('find') }}">
+        <input type="text" placeholder="Search anything..." name="search" value="{{ request('search') }}">
+        <button type="submit">
           <i class="fas fa-search"></i>
         </button>
       </form>
@@ -637,10 +639,10 @@
                         <input type="checkbox" class="cart-checkbox form-check-input" onchange="cartCheck(this)" name="checkbox_order[]" value="{{ $p['product_hash'] }}" harga="{{ $p['price'] }}" data-pcs="1">
                       </div>
                       <div class="cart-media">
-                        <a href="#" onclick="cartDelete('{{ $p['product_hash'] }}')">
+                        <a href="#" onclick="cartDelete('{{ $p['cart_hash'] }}')">
                           <img src="{{ asset('assets') . '/' . $p['image'] }}" alt="product" class="img-fluid">
                         </a>
-                        <button class="cart-delete" onclick="cartDelete('{{ $p['product_hash'] }}')">
+                        <button class="cart-delete" onclick="cartDelete('{{ $p['cart_hash'] }}')">
                           <i class="far fa-trash-alt"></i>
                         </button>
                       </div>
@@ -803,9 +805,6 @@
           <a href="{{ route('product.show', $item->product->product_hash) }}">
             <img src="{{ asset('assets') . '/' . $item->product->image }}" alt="product" class="img-fluid">
           </a>
-          {{-- <button class="wish-delete" onclick="wishToggle('{{ $item->cart_hash }}')">
-            <i class="far fa-trash-alt"></i>
-          </button> --}}
         </div>
         <div class="wish-info-group">
           <div class="wish-info">
@@ -827,6 +826,11 @@
             <h6>$56.98</h6>
           </div> --}}
         </div>
+        {{-- <div class="wish-media">
+          <button class="wish-delete" target-wish="{{ $item->product_hash }}" onclick="wishToggle(this)">
+            <i class="far fa-trash-alt"></i>
+          </button>
+        </div> --}}
       </li>
     @endforeach
   </ul>

@@ -14,4 +14,9 @@ class Rating extends Model
     {
         return $this->belongsTo('\App\Models\Product', 'product_hash', 'product_hash');
     }
+
+    public function user()
+    {
+        return $this->belongsTo('\App\Models\User', 'user_hash', 'user_hash');
+    }
 }

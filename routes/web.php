@@ -17,7 +17,7 @@ Route::post('/cart', ['as' => 'cart.store', 'uses' => 'CartController@store']); 
 Route::post('/wish', ['as' => 'wish.store', 'uses' => 'CartController@wish']); // Wish
 Route::delete('/cart/{cart:cart_hash}', ['as' => 'cart.destroy', 'uses' => 'CartController@destroy']);
 
-Route::get('/data_produk', ['as' => 'produk.json', 'uses' => 'ProductController@productJson']);
+// Route::get('/data_produk', ['as' => 'product.json', 'uses' => 'ProductController@productJson']);
 
 // order
 Route::post('/order', ['as' => 'order.store', 'uses' => 'OrderController@store']);

@@ -43,9 +43,13 @@
                         <div class="product-card">
                             <div class="product-media">
                                 <div class="product-label">
-                                    <label class="label-text sale">sale</label>
+                                    @if (Carbon\Carbon::parse($item->created_at)->diffInWeeks(now()) <= 1)
+                                        <label class="details-label new">new</label>
+                                    @else
+                                        <label class="label-text sale">sale</label>
+                                    @endif
                                 </div>
-                                <button class="product-wish wish">
+                                <button class="product-wish wish {{ ($item->wish) ? 'active' : '' }}" target-wish="{{ $item->product_hash }}" onclick="wishToggle(this)">
                                     <i class="fas fa-heart"></i>
                                 </button>
                                 <a class="product-image" href="{{ route('product.show', $item->product_hash) }}">
@@ -53,24 +57,27 @@
                                 </a>
                                 <div class="product-widget">
                                     <a title="Product View" href="{{ route('product.show', $item->product_hash) }}" class="fas fa-eye"></a>
+                                    <button class="fas fa-shopping-basket" onclick="cartAdd('{{ $item->product_hash }}')"></button>
                                 </div>
                             </div>
                             <div class="product-content">
                                 <div class="product-rating">
-                                    <i class="active icofont-star"></i>
-                                    <i class="active icofont-star"></i>
-                                    <i class="active icofont-star"></i>
-                                    <i class="active icofont-star"></i>
-                                    <i class="icofont-star"></i>
-                                    <a href="#">(3)</a>
+                                    @php
+                                        $rating = $item->ratings ? $item->ratings->average('rating') : 0;
+                                    @endphp
+                                    <i class="{{ $rating >= 1 ? 'active' : '' }} icofont-star"></i>
+                                    <i class="{{ $rating >= 2 ? 'active' : ''  }} icofont-star"></i>
+                                    <i class="{{ $rating >= 3 ? 'active' : ''  }} icofont-star"></i>
+                                    <i class="{{ $rating >= 4 ? 'active' : ''  }} icofont-star"></i>
+                                    <i class="{{ $rating >= 5 ? 'active' : ''  }} icofont-star"></i>
+                                    <a href="#">({{ $item->ratings ? $item->ratings->count() : 0 }})</a>
                                 </div>
                                 <h6 class="product-name">
                                     <a href="{{ route('product.show', $item->product_hash) }}">{{ $item->name }}</a>
                                 </h6>
                                 <h6 class="product-price">
-                                    <del>$34</del>
-                                    <span>$28 <small>/piece</small>
-                                    </span>
+                                    {{-- <del>$34</del> --}}
+                                    <span>Rp. {{ number_format($item->price,0,',','.') }}</span>
                                 </h6>
                                 {{-- <button class="product-add" title="Add to Cart">
                                     <i class="fas fa-shopping-basket"></i>
@@ -89,6 +96,17 @@
                         </div>
                     </div>
                 @endforeach
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-btn-25">
+                        {{-- <a href="#" class="btn btn-outline">
+                            <i class="fas fa-eye"></i>
+                            <span>show more</span>
+                        </a> --}}
+                        {{ $products->links() }}
+                    </div>
+                </div>
             </div>
         @else
             <div class="row">

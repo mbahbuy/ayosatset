@@ -67,7 +67,7 @@ class ShopController extends Controller
     public function show(Shop $shop)
     {
         return view('home.shop', [
-            'products' => Product::where('shop_hash', $shop->shop_hash)->latest()->get(),
+            'products' => Product::where('shop_hash', $shop->shop_hash)->latest()->paginate(10),
             'shop' => $shop
         ]);
     }
