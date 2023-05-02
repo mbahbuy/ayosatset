@@ -3,8 +3,12 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\City;
+use App\Models\Province;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\{Http, Hash};
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -126,7 +130,7 @@ class DatabaseSeeder extends Seeder
 
         $products = \App\Models\Product::factory(50)->make();
         foreach ($products as $product) {
-            $caegory = fake()->randomElement(['jasa', 'makanan-minuman', 'pakaian']);
+            $category = fake()->randomElement(['jasa', 'makanan-minuman', 'pakaian']);
             \App\Models\Product::create([
                 'name' => $product->name,
                 'description' => $product->description,
@@ -134,7 +138,7 @@ class DatabaseSeeder extends Seeder
                 'image' => 'product/' . fake()->randomElement(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20']) . '.jpg',
                 'quantity' => $product->quantity,
                 'shop_hash' => $wawanShop,
-                'categories' => $caegory,
+                'categories' => $category,
                 'product_hash' => md5($wawanShop . $product->name)
             ]);
         }
@@ -174,7 +178,7 @@ class DatabaseSeeder extends Seeder
 
         $products = \App\Models\Product::factory(50)->make();
         foreach ($products as $product) {
-            $caegory = fake()->randomElement(['jasa', 'makanan-minuman', 'pakaian']);
+            $category = fake()->randomElement(['jasa', 'makanan-minuman', 'pakaian']);
             \App\Models\Product::create([
                 'name' => $product->name,
                 'description' => $product->description,
@@ -182,7 +186,7 @@ class DatabaseSeeder extends Seeder
                 'image' => 'product/' . fake()->randomElement(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20']) . '.jpg',
                 'quantity' => $product->quantity,
                 'shop_hash' => $irfanShop,
-                'categories' => $caegory,
+                'categories' => $category,
                 'product_hash' => md5($irfanShop . $product->name)
             ]);
         }
@@ -222,7 +226,7 @@ class DatabaseSeeder extends Seeder
 
         $products = \App\Models\Product::factory(50)->make();
         foreach ($products as $product) {
-            $caegory = fake()->randomElement(['jasa', 'makanan-minuman', 'pakaian']);
+            $category = fake()->randomElement(['jasa', 'makanan-minuman', 'pakaian']);
             \App\Models\Product::create([
                 'name' => $product->name,
                 'description' => $product->description,
@@ -230,7 +234,7 @@ class DatabaseSeeder extends Seeder
                 'image' => 'product/' . fake()->randomElement(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20']) . '.jpg',
                 'quantity' => $product->quantity,
                 'shop_hash' => $faizulShop,
-                'categories' => $caegory,
+                'categories' => $category,
                 'product_hash' => md5($faizulShop . $product->name)
             ]);
         }
@@ -268,7 +272,7 @@ class DatabaseSeeder extends Seeder
 
         //                 $products = \App\Models\Product::factory(10)->make();
         //                 foreach ($products as $product) {
-        //                     $caegory = fake()->randomElement(['jasa', 'makanan-minuman', 'pakaian']);
+        //                     $category = fake()->randomElement(['jasa', 'makanan-minuman', 'pakaian']);
         //                     \App\Models\Product::create([
         //                         'name' => $product->name,
         //                         'description' => $product->description,
@@ -276,11 +280,38 @@ class DatabaseSeeder extends Seeder
         //                         'image' => 'product/' . fake()->randomElement(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20']) . '.jpg',
         //                         'quantity' => $product->quantity,
         //                         'shop_hash' => $shop->shop_hash,
-        //                         'categories' => $caegory,
+        //                         'categories' => $category,
         //                         'product_hash' => md5($shop->shop_hash . $product->name)
         //                     ]);
         //                 }
         //             });
         //     });
+
+        $tokenRajaOngkir = "68bff9293fa5067ce7186bf8c148c0e3";
+
+        $responseProvinsi = Http::withHeaders([
+            "key" => $tokenRajaOngkir
+        ])->get("https://api.rajaongkir.com/starter/province");
+        $provinsies = $responseProvinsi['rajaongkir']['results'];
+        foreach ($provinsies as $provinsi) {
+            $dataProvince = new Province;
+            $dataProvince->province_id = $provinsi['province_id'];
+            $dataProvince->province = $provinsi['province'];
+            $dataProvince->save();
+        }
+
+        $responseCity = Http::withHeaders([
+            "key" => $tokenRajaOngkir
+        ])->get("https://api.rajaongkir.com/starter/city");
+        $semuakota = $responseCity['rajaongkir']['results'];
+        foreach ($semuakota as $kota) {
+            $city = new City;
+            $city->city_id = $kota['city_id'];
+            $city->province_id = $kota['province_id'];
+            $city->type = $kota['type'];
+            $city->city_name = $kota['city_name'];
+            $city->postal_code = $kota['postal_code'];
+            $city->save();
+        }
     }
 }

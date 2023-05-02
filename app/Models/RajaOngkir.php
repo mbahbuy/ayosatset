@@ -10,24 +10,6 @@ class RajaOngkir extends Model
 {
     protected static $token = "68bff9293fa5067ce7186bf8c148c0e3";
 
-    public static function ProvinceAll()
-    {
-        $response = Http::withHeaders([
-            "key" => self::$token
-        ])->get("https://api.rajaongkir.com/starter/province");
-        $provinsi = $response['rajaongkir']['results'];
-        return response()->json($provinsi);
-    }
-
-    public static function CityOfProvince($province = 11)
-    {
-        $response = Http::withHeaders([
-            "key" => self::$token
-        ])->get("https://api.rajaongkir.com/starter/city?province=" . $province);
-        $kotadariprovinsi = $response['rajaongkir']['results'];
-        return response()->json($kotadariprovinsi);
-    }
-
     public static function Ongkir($origin = 6, $destination = 444, $courier = 'jne')
     {
         $response = Http::asForm()->withHeaders([
