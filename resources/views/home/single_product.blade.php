@@ -1,8 +1,10 @@
 @extends('layout.main')
 
 @section('container')
-
-<section class="inner-section">
+@php
+    $productHash = $produk->product_hash;
+@endphp
+  <section class="inner-section">
     <div class="container">
       <div class="row">
         <div class="col-lg-6">
@@ -29,24 +31,6 @@
           </div>
         </div>
         <div class="col-lg-6">
-          {{-- <ul class="product-navigation">
-            <li class="product-nav-prev">
-              <a href="#">
-                <i class="icofont-arrow-left"></i>prev product <span class="product-nav-popup">
-                  <img src="images/product/02.jpg" alt="product">
-                  <small>green chilis</small>
-                </span>
-              </a>
-            </li>
-            <li class="product-nav-next">
-              <a href="#">next product <i class="icofont-arrow-right"></i>
-                <span class="product-nav-popup">
-                  <img src="images/product/03.jpg" alt="product">
-                  <small>green chilis</small>
-                </span>
-              </a>
-            </li>
-          </ul> --}}
           <div class="details-content">
             <h3 class="details-name">
                 <p>{{ $produk->name }}</p>
@@ -104,13 +88,13 @@
               </ul>
             </div> --}}
             <div class="details-add-group">
-              <button class="product-add" onclick="cartAdd('{{ $produk->product_hash }}')" title="Add to Cart">
+              <button class="product-add" onclick="cartAdd('{{ $productHash }}')" title="Add to Cart">
                 <i class="fas fa-shopping-basket"></i>
                 <span>add to cart</span>
               </button>
             </div>
             <div class="details-action-group">
-              <a class="details-wish wish" style="cursor: pointer" onclick="wishToggle(this)" target-wish="{{ $produk->product_hash }}" title="Add Your Wishlist">
+              <a class="details-wish wish" style="cursor: pointer" onclick="wishToggle(this)" target-wish="{{ $productHash }}" title="Add Your Wishlist">
                 <i class="icofont-heart"></i>
                 <span>add to wish</span>
               </a>
@@ -120,153 +104,150 @@
       </div>
     </div>
   </section>
-  <section class="inner-section">
+  <section class="inner-section reload-data">
     <div class="container">
       <div class="row">
         <div class="col-lg-12">
-          {{-- <div class="product-details-frame">
-            <h3 class="frame-title">Description</h3>
-            <div class="tab-descrip">
-                {!! $produk->description !!}
-            </div>
-          </div> --}}
-          {{-- <div class="product-details-frame">
-            <h3 class="frame-title">Spacification</h3>
-            <table class="table table-bordered">
-              <tbody>
-                <tr>
-                  <th scope="row">Product code</th>
-                  <td>SKU: 101783</td>
-                </tr>
-                <tr>
-                  <th scope="row">Weight</th>
-                  <td>1kg, 2kg</td>
-                </tr>
-                <tr>
-                  <th scope="row">Styles</th>
-                  <td>@Girly</td>
-                </tr>
-                <tr>
-                  <th scope="row">Properties</th>
-                  <td>Short Dress</td>
-                </tr>
-              </tbody>
-            </table>
-          </div> --}}
-          <div class="product-details-frame">
-            @if ($produk->ratings)
-              <h3 class="frame-title">Reviews ({{ $produk->ratings->count() }})</h3>
-              <ul class="review-list">
-                @foreach ($produk->ratings as $item)                    
+          <ul class="nav nav-tabs">
+            <li>
+              <button type="button" href="#tab-disc" class="tab-link active" data-bs-toggle="tab">Diskusi ({{ $produk->discuss->count() }})</button>
+            </li>
+            <li>
+              <button type="button" href="#tab-reve" class="tab-link" data-bs-toggle="tab">Reviews ({{ $produk->ratings->count() }})</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="tab-pane fade show active" id="tab-disc">
+        <div class="row">
+          <div class="col-lg-12">
+            @if (sizeof($produk->discussion))
+              <div class="product-details-frame">
+                <ul class="review-list">
+                  @foreach ($produk->discussion as $disc)                      
                   <li class="review-item">
                     <div class="review-media">
                       <a class="review-avatar">
-                        <img src="{{ $item->user->image ? asset('assets') . '/' . $item->user->image : asset('images/user.png') }}" alt="review">
+                        <img src="{{ $disc->user->image ? asset('assets') . '/' . $disc->user->image : asset('images/user.png') }}" alt="">
                       </a>
                       <h5 class="review-meta">
-                        <a >{{ $item->user->name }}</a>
-                        <span>{{ Carbon\Carbon::parse($item->created_at)->diffInHours(now()) < 24 ? Carbon\Carbon::parse($item->created_at)->diffForHumans() : Carbon\Carbon::parse($item->created_at)->translatedFormat('l, d F Y') }}</span>
+                        <a >{{ $disc->user->name }}</a>
+                        <span>{{ Carbon\Carbon::parse($disc->created_at)->diffInHours(now()) < 24 ? Carbon\Carbon::parse($disc->created_at)->diffForHumans() : Carbon\Carbon::parse($disc->created_at)->translatedFormat('l, d F Y') }}</span>
                       </h5>
                     </div>
-                    <ul class="review-rating">
-                      @php
-                          $rating = $item->ratings ? $item->ratings->average('rating') : 0;
-                      @endphp
-                      <i class="{{ $rating >= 1 ? 'icofont-ui-rating' : 'icofont-ui-rate-blank' }}"></i>
-                      <i class="{{ $rating >= 2 ? 'icofont-ui-rating' : 'icofont-ui-rate-blank'  }}"></i>
-                      <i class="{{ $rating >= 3 ? 'icofont-ui-rating' : 'icofont-ui-rate-blank'  }}"></i>
-                      <i class="{{ $rating >= 4 ? 'icofont-ui-rating' : 'icofont-ui-rate-blank'  }}"></i>
-                      <i class="{{ $rating >= 5 ? 'icofont-ui-rating' : 'icofont-ui-rate-blank'  }}"></i>
-                    </ul>
-                    <p class="review-desc">{!! $item->message !!}</p>
-                    {{-- <ul class="review-reply-list">
-                      <li class="review-reply-item">
-                        <div class="review-media">
-                          <a class="review-avatar" href="#">
-                            <img src="images/avatar/02.jpg" alt="review">
-                          </a>
-                          <h5 class="review-meta">
-                            <a href="#">labonno khan</a>
-                            <span>
-                              <b>author -</b>June 02, 2020 </span>
-                          </h5>
+                    <p class="review-desc">{!! $disc->message !!}</p>
+                    @if (sizeof($disc->children))
+                      <ul class="review-reply-list">
+                        @foreach ($disc->children as $child)                            
+                          <li class="review-reply-item">
+                            <div class="review-media">
+                              <a class="review-avatar">
+                                <img src="{{ $child->user->shop && $child->user->shop->shop_hash == $produk->shop->shop_hash ? ($produk->shop->image ? asset('assets') . '/' . $produk->shop->image : asset('images/brand/02.jpg')) : ($child->user->image ? asset('assets') . '/' . $child->user->image : asset('images/user.png')) }}" alt="">
+                              </a>
+                              <h5 class="review-meta">
+                                <a >{{ $child->user->shop && $child->user->shop->shop_hash == $produk->shop->shop_hash ? $child->user->shop->name : $child->user->name }}</a>
+                                <span>{{ Carbon\Carbon::parse($child->created_at)->diffInHours(now()) < 24 ? Carbon\Carbon::parse($child->created_at)->diffForHumans() : Carbon\Carbon::parse($child->created_at)->translatedFormat('l, d F Y') }}</span>
+                              </h5>
+                            </div>
+                            <p class="review-desc">{!! $child->message !!}</p>
+                          </li>
+                        @endforeach
+                        @auth                            
+                          <li class="review-reply-item">
+                            <div class="review-reply">
+                              <textarea class="form-control text-bg-light discuss h-25" placeholder="Tanya aja.." onkeyup="btnAble(this)" onfocus="showButton(this)"></textarea>
+                              <button class="btn btn-inline discuss-push visually-hidden" type="button" data-product="{{ $productHash }}" data-parent="{{ $disc->discussion_hash }}" onclick="pushDiscussion(this)" disabled>
+                                <i class="icofont-reply"></i>
+                                <span>Jawab</span>
+                              </button>
+                            </div>
+                          </li>
+                          @else
+                          <li class="text-center">Anda harus login dulu!</li>
+                        @endauth
+                      </ul>
+                    @else
+                      @auth                         
+                        <div class="review-reply">
+                          <textarea class="form-control text-bg-light discuss h-25" placeholder="Tanya aja.." onkeyup="btnAble(this)" onfocus="showButton(this)"></textarea>
+                          <button class="btn btn-inline discuss-push visually-hidden" type="button" data-product="{{ $productHash }}" data-parent="{{ $disc->discussion_hash }}" onclick="pushDiscussion(this)" disabled>
+                            <i class="icofont-reply"></i>
+                            <span>Jawab</span>
+                          </button>
                         </div>
-                        <p class="review-desc">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus hic amet qui velit, molestiae suscipit perferendis, autem doloremque blanditiis dolores nulla excepturi ea nobis!</p>
-                        <form class="review-reply">
-                          <input type="text" placeholder="reply your thoughts">
-                          <button>
-                            <i class="icofont-reply"></i>reply </button>
-                        </form>
-                      </li>
-                      <li class="review-reply-item">
-                        <div class="review-media">
-                          <a class="review-avatar" href="#">
-                            <img src="images/avatar/03.jpg" alt="review">
-                          </a>
-                          <h5 class="review-meta">
-                            <a href="#">tahmina bonny</a>
-                            <span>June 02, 2020</span>
-                          </h5>
-                        </div>
-                        <p class="review-desc">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus hic amet qui velit, molestiae suscipit perferendis, autem doloremque blanditiis dolores nulla excepturi ea nobis!</p>
-                        <form class="review-reply">
-                          <input type="text" placeholder="reply your thoughts">
-                          <button>
-                            <i class="icofont-reply"></i>reply </button>
-                        </form>
-                      </li>
-                    </ul> --}}
+                      @else
+                        <div class="text-center">Anda harus login dulu!</div>
+                      @endauth
+                    @endif
                   </li>
-                @endforeach
-              </ul>
-            @else
-              <h3 class="frame-title">Reviews (0)</h3>
-              <div class="review-list">Belum ada review</div>
-            @endif
-          </div>
-          {{-- <div class="product-details-frame">
-            <h3 class="frame-title">add your review</h3>
-            <form class="review-form">
-              <div class="row">
-                <div class="col-lg-12">
-                  <div class="star-rating">
-                    <input type="radio" name="rating" id="star-1">
-                    <label for="star-1"></label>
-                    <input type="radio" name="rating" id="star-2">
-                    <label for="star-2"></label>
-                    <input type="radio" name="rating" id="star-3">
-                    <label for="star-3"></label>
-                    <input type="radio" name="rating" id="star-4">
-                    <label for="star-4"></label>
-                    <input type="radio" name="rating" id="star-5">
-                    <label for="star-5"></label>
-                  </div>
-                </div>
-                <div class="col-lg-12">
-                  <div class="form-group">
-                    <textarea class="form-control" placeholder="Describe"></textarea>
-                  </div>
-                </div>
-                <div class="col-lg-6">
-                  <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Name">
-                  </div>
-                </div>
-                <div class="col-lg-6">
-                  <div class="form-group">
-                    <input type="email" class="form-control" placeholder="Email">
-                  </div>
-                </div>
-                <div class="col-lg-12">
-                  <button class="btn btn-inline">
-                    <i class="icofont-water-drop"></i>
-                    <span>drop your review</span>
-                  </button>
-                </div>
+                  @endforeach
+                </ul>
               </div>
-            </form>
-          </div> --}}
+            @endif
+            @auth
+              @if (auth()->user()->shop == false || (auth()->user()->shop && auth()->user()->shop->shop_hash !== $produk->shop->shop_hash))
+                <div class="product-details-frame">
+                  <h3 class="frame-title">Tanya Penjual</h3>
+                  <div class="review-form">
+                    <div class="row">
+                      <div class="col-lg-12">          
+                        <div class="form-group">
+                          <textarea class="form-control" placeholder="Tanya aja.." onkeyup="btnAble(this)"></textarea>
+                          <button class="btn btn-inline" type="button" data-product="{{ $productHash }}" data-parent="" onclick="pushDiscussion(this)" disabled>
+                            <i class="icofont-water-drop"></i>
+                            <span>kirim pertanyaan</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              @endif
+            @else
+              <div class="product-details-frame">
+                <div class="text-center">Anda harus login dulu!</div>
+              </div>
+            @endauth
+          </div>
         </div>
+      </div>
+      <div class="tab-pane fade" id="tab-reve">
+        @if ( sizeof($produk->ratings) )
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="product-details-frame">
+                <ul class="review-list">
+                  @foreach ($produk->ratings as $item)                    
+                    <li class="review-item">
+                      <div class="review-media">
+                        <a class="review-avatar">
+                          <img src="{{ $item->user->image ? asset('assets') . '/' . $item->user->image : asset('images/user.png') }}" alt="review">
+                        </a>
+                        <h5 class="review-meta">
+                          <a >{{ $item->user->name }}</a>
+                          <span>{{ Carbon\Carbon::parse($item->created_at)->diffInHours(now()) < 24 ? Carbon\Carbon::parse($item->created_at)->diffForHumans() : Carbon\Carbon::parse($item->created_at)->translatedFormat('l, d F Y') }}</span>
+                        </h5>
+                      </div>
+                      <ul class="review-rating">
+                        @php
+                            $rating = $item->ratings ? $item->ratings->average('rating') : 0;
+                        @endphp
+                        <i class="{{ $rating >= 1 ? 'icofont-ui-rating' : 'icofont-ui-rate-blank' }}"></i>
+                        <i class="{{ $rating >= 2 ? 'icofont-ui-rating' : 'icofont-ui-rate-blank'  }}"></i>
+                        <i class="{{ $rating >= 3 ? 'icofont-ui-rating' : 'icofont-ui-rate-blank'  }}"></i>
+                        <i class="{{ $rating >= 4 ? 'icofont-ui-rating' : 'icofont-ui-rate-blank'  }}"></i>
+                        <i class="{{ $rating >= 5 ? 'icofont-ui-rating' : 'icofont-ui-rate-blank'  }}"></i>
+                      </ul>
+                      <p class="review-desc">{!! $item->message !!}</p>
+                    </li>
+                  @endforeach
+                </ul>
+              </div>
+            </div>
+          </div>
+        @else
+          <div class="text-center">Belum ada reviews</div>
+        @endif
       </div>
     </div>
   </section>
@@ -295,5 +276,50 @@
     }
   };
 
+  @auth
+    $('body').click(function(e) {
+      if (!$(e.target).is('textarea.discuss') && !$(e.target).is('button.discuss-push')) {
+        $('textarea.discuss').addClass("h-25");
+        $('textarea.discuss').val(null);
+        $('button.discuss-push').addClass("visually-hidden");
+        $('button.discuss-push').prop("disabled", true);
+      }
+    });
+    function showButton(btn) {
+      var btntar = $(btn).next('button.btn');
+      $(btn).removeClass("h-25");
+      btntar.removeClass("visually-hidden");
+    }
+
+    function btnAble(btn) {
+      if ($(btn).val().length == 0) {
+        $(btn).next('button.btn').prop("disabled", true);
+      } else {
+        $(btn).next('button.btn').prop("disabled", false);
+      }
+    }
+
+    function pushDiscussion(hub) {
+      var parent = $(hub).attr('data-parent');
+      var product = $(hub).attr('data-product');
+      var message = $(hub).prev('textarea.form-control').val();
+      $.ajax({
+        url:"{{ route('discuss.store') }}",
+        method: 'POST',
+        dataType: 'json',
+        data: {
+          '_token': '{{ csrf_token() }}',
+          'parent': parent,
+          'product_hash': product,
+          'message': message
+        },
+        success: function (response) {
+          $( ".reload-data" ).load(window.location.href + " .reload-data>" );
+          showAlertPopUp(response.data);
+        }
+      });
+    }
+      
+  @endauth
 </script>
 @endsection

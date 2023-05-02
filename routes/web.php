@@ -56,6 +56,9 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::put('/product/{product:product_hash}/update', ['as' => 'product.update', 'uses' => 'ProductController@update']);
     Route::delete('/product/{product:product_hash}', ['as' => 'product.destroy', 'uses' => 'ProductController@destroy']);
 
+    // Discuss
+    Route::post('/p/discuss', ['as' => 'discuss.store', 'uses' => 'DiscussionController@store']);
+
     // Order
     Route::put('/order/{order:order_hash}/midtrans', ['as' => 'order.user.midtrans', 'uses' => 'OrderController@midtrans']);
     Route::put('/order/{order:order_hash}/resi', ['as' => 'payment.resi', 'uses' => 'OrderController@resi']);

@@ -10,7 +10,7 @@ class Product extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
-    protected $with = ['shop', 'category', 'wish', 'cart', 'ratings'];
+    protected $with = ['shop', 'category', 'wish', 'cart', 'ratings', 'discuss', 'discussion'];
 
     public function getRouteKeyName()
     {
@@ -84,5 +84,15 @@ class Product extends Model
         //         $query->where('username', $author)
         //     )
         // );
+    }
+
+    public function discuss()
+    {
+        return $this->hasMany('\App\Models\Discussion', 'product_hash', 'product_hash');
+    }
+
+    public function discussion()
+    {
+        return $this->hasMany('\App\Models\Discussion', 'product_hash', 'product_hash')->where('parent', null);
     }
 }

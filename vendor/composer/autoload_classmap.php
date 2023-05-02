@@ -46,6 +46,7 @@ return array(
     'App\\Models\\Category' => $baseDir . '/app/Models/Category.php',
     'App\\Models\\Chat' => $baseDir . '/app/Models/Chat.php',
     'App\\Models\\Dashboard' => $baseDir . '/app/Models/Dashboard.php',
+    'App\\Models\\Discussion' => $baseDir . '/app/Models/Discussion.php',
     'App\\Models\\Order' => $baseDir . '/app/Models/Order.php',
     'App\\Models\\Product' => $baseDir . '/app/Models/Product.php',
     'App\\Models\\RajaOngkir' => $baseDir . '/app/Models/RajaOngkir.php',

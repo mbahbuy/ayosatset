@@ -564,6 +564,7 @@ class ComposerStaticInit4e20cbe6175e605d6bcc25e41ede1f3b
         'App\\Models\\Category' => __DIR__ . '/../..' . '/app/Models/Category.php',
         'App\\Models\\Chat' => __DIR__ . '/../..' . '/app/Models/Chat.php',
         'App\\Models\\Dashboard' => __DIR__ . '/../..' . '/app/Models/Dashboard.php',
+        'App\\Models\\Discussion' => __DIR__ . '/../..' . '/app/Models/Discussion.php',
         'App\\Models\\Order' => __DIR__ . '/../..' . '/app/Models/Order.php',
         'App\\Models\\Product' => __DIR__ . '/../..' . '/app/Models/Product.php',
         'App\\Models\\RajaOngkir' => __DIR__ . '/../..' . '/app/Models/RajaOngkir.php',
