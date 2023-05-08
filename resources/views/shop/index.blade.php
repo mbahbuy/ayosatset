@@ -10,6 +10,8 @@
         $name_value_product_add = ($errors->product_store->any()) ? old('name') : '';
         $price_class_product_add = ($errors->product_store->has('price')) ? 'is-invalid' : '' ;
         $price_value_product_add = ($errors->product_store->any()) ? old('price') : '';
+        $quantity_class_product_add = ($errors->product_store->has('quantity')) ? 'is-invalid' : '' ;
+        $quantity_value_product_add = ($errors->product_store->any()) ? old('quantity') : '';
         $desc_class_product_add = ($errors->product_store->has('description')) ? 'is-invalid' : '' ;
         $desc_value_product_add = ($errors->product_store->any()) ? old('description') : '';
         $ctg_class_product_add = ($errors->product_store->has('categories')) ? 'is-invalid' : '' ;
@@ -60,6 +62,10 @@
                                     <div class="form-group">
                                         <label for="productPrice">Price</label>
                                         <input type="number" class="form-control {{ $price_class_product_add }}" id="productPrice" name="price" placeholder="Enter price" value="{{ $price_value_product_add }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="productQuantity">Stock</label>
+                                        <input type="number" class="form-control {{ $quantity_class_product_add }}" id="productQuantity" name="quantity" placeholder="Enter quantity" value="{{ $quantity_value_product_add }}">
                                     </div>
                                     <!-- Input Field -->
                                     <div class="form-group">
@@ -243,115 +249,91 @@
 </div>
 <section class="inner-section shop-part">
     <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-            <div class="top-filter">
-                <div class="filter-show">
-                <label class="filter-label">Show :</label>
-                <select class="form-select filter-select">
-                    <option value="1">12</option>
-                    <option value="2">24</option>
-                    <option value="3">36</option>
-                </select>
-                </div>
-                <div class="filter-short">
-                <label class="filter-label">Short by :</label>
-                <select class="form-select filter-select">
-                    <option selected>default</option>
-                    <option value="3">trending</option>
-                    <option value="1">featured</option>
-                    <option value="2">recommend</option>
-                </select>
+        <div class="row m-2">
+            <div class="col-lg-6">
+                <div class="text-center">
+                    <button data-bs-toggle="modal" class="btn btn-outline-success" data-bs-target="#add-product-card">
+                        <i class="fas fa-box"></i>
+                        <span>add product</span>
+                    </button>
                 </div>
             </div>
-            </div>
-        </div>
-        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-5">
-            @if ($product->count())
-                @foreach ($product as $item)
-                    <div class="col">
-                        <div class="product-card">
-                            <div class="product-media">
-                                {{-- <div class="product-label">
-                                    <label class="label-text new">new</label>
-                                </div>
-                                <button class="product-wish wish">
-                                    <i class="fas fa-heart"></i>
-                                </button> --}}
-                                <div class="product-image">
-                                    <img src="{{ asset('assets') . '/' . $item->image }}" alt="product">
-                                </div>
-                                <div class="product-widget">
-                                    <a title="Product View" href="{{ route('product.show', $item->product_hash) }}" class="fas fa-eye"></a>
-                                    <button title="Edit Product" class="bi bi-wrench"data-bs-toggle="modal" data-bs-target="#updateProduct-{{ $item->product_hash }}"></button>
-                                    <form action="{{ route('product.destroy', $item->product_hash) }}" method="post">
-                                        @method('DELETE')
-                                        @csrf
-                                        <button title="Hapus Product" class="bi bi-trash" onclick="return confirm('Anda mau menghapus product(`{{ $item->name }}`)?')"></button>
-                                    </form>
-                                </div>
-                            </div>
-                            <div class="product-content">
-                            <div class="product-rating">
-                                <i class="active icofont-star"></i>
-                                <i class="active icofont-star"></i>
-                                <i class="active icofont-star"></i>
-                                <i class="active icofont-star"></i>
-                                <i class="icofont-star"></i>
-                            </div>
-                            <h6 class="product-name">
-                                <a href="#">{{ $item->name }}</a>
-                            </h6>
-                            <h6 class="product-price">
-                                <span>Rp {{ number_format($item->price,0,',','.') }}</span>
-                            </h6>
-                            </div>
+            <div class="col-lg-6">
+                <div class="text-end">
+                    <form action="{{ route('switch.visibility.shop', auth()->user()->shop->shop_hash) }}" method="post">
+                        @csrf
+                        @method('put')
+                        <div class="form-floating">
+                            <select class="form-select" id="openClosed" name="status" onchange="$(this).parent().parent().trigger( 'submit')">
+                              <option value="1" {{ auth()->user()->shop->status == true ? 'selected' : '' }}>Buka</option>
+                              <option value="0" {{ auth()->user()->shop->status == false ? 'selected' : '' }}>Tutup/Libur</option>
+                            </select>
+                            <label for="openClosed">Status Toko</label>
                         </div>
-                    </div>
-                @endforeach
-            @else
-                <div class="col-lg-12">
-                    <p class="text-center">Belum ada produk</p>
+                    </form>
                 </div>
-            @endif
+            </div>
         </div>
         <div class="row col-lg-12">
-            <button data-bs-toggle="modal" class="btn btn-outline-success" data-bs-target="#add-product-card">
-                <i class="fas fa-box"></i>
-                <span>add product</span>
-            </button>
-        </div>
-        <div class="row">
-            <div class="col-lg-12">
-            <div class="bottom-paginate">
-                <p class="page-info">Showing 12 of 60 Results</p>
-                <ul class="pagination">
-                <li class="page-item">
-                    <a class="page-link" href="#">
-                    <i class="fas fa-long-arrow-alt-left"></i>
-                    </a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link active" href="#">1</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="#">2</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="#">3</a>
-                </li>
-                <li class="page-item">...</li>
-                <li class="page-item">
-                    <a class="page-link" href="#">60</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="#">
-                    <i class="fas fa-long-arrow-alt-right"></i>
-                    </a>
-                </li>
-                </ul>
-            </div>
-            </div>
+            <table class="table-list">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Nama</th>
+                        <th scope="col">Harga</th>
+                        <th scope="col">Stock</th>
+                        <th scope="col">Rating</th>
+                        <th scope="col">Visibility</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if ($product->count())
+                        @foreach ($product as $item)
+                            <tr>
+                                <td scope="row">{{ $loop->iteration }}</td>
+                                <td><div class="text-wrap">{{ $item->name }}</div></td>
+                                <td><span>Rp {{ number_format($item->price,0,',','.') }}</span></td>
+                                <td>{{ $item->quantity }}</td>
+                                <td>
+                                    @php
+                                        $rating = $item->ratings ? $item->ratings->average('rating') : 0;
+                                    @endphp
+                                    <div class="d-flex nowrap">
+                                        <i class="{{ $rating >= 1 ? 'active' : '' }} icofont-star"></i>
+                                        <i class="{{ $rating >= 2 ? 'active' : ''  }} icofont-star"></i>
+                                        <i class="{{ $rating >= 3 ? 'active' : ''  }} icofont-star"></i>
+                                        <i class="{{ $rating >= 4 ? 'active' : ''  }} icofont-star"></i>
+                                        <i class="{{ $rating >= 5 ? 'active' : ''  }} icofont-star"></i>
+                                        <span >({{ $item->ratings ? $item->ratings->count() : 0 }})</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input type="checkbox" class="form-check-input" id="visibilityProduct-{{ $item->product_hash }}" onchange="switchProdactVisibility(this)" data-product="{{ $item->product_hash }}" {{ $item->status == true ? "checked" : "" }}>
+                                        <label class="form-check-label" for="visibilityProduct-{{ $item->product_hash }}">{{ $item->status == true ? "Hide" : "Show" }} product</label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex nowrap">
+                                        {{-- <a title="Product View" href="{{ route('product.show', $item->product_hash) }}" class="fas fa-eye"></a> --}}
+                                        <button title="Edit Product" class="bi bi-wrench p-1" data-bs-toggle="modal" data-bs-target="#updateProduct-{{ $item->product_hash }}"></button>
+                                        <form class="p-1" action="{{ route('product.destroy', $item->product_hash) }}" method="post">
+                                            @method('DELETE')
+                                            @csrf
+                                            <button title="Hapus Product" class="bi bi-trash" onclick="return confirm('Anda mau menghapus product(`{{ $item->name }}`)?')"></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @else
+                        <tr>
+                            <td colspan="7">Anda belum memasukkan produk</td>
+                        </tr>
+                    @endif
+                </tbody>
+            </table>
         </div>
     </div>
 </section>
@@ -486,6 +468,9 @@
                                                     @case(5)
                                                         <span>konfirmasi barang sampai</span>
                                                         @break
+                                                    @case(0)
+                                                        <span>Canceled</span>
+                                                        @break
                                                     @default
                                                         <span>-</span>
                     
@@ -517,6 +502,8 @@
                 $name_value_product[$item->product_hash] = $errors->get($keyerror[$item->product_hash]) ? old('name') != '' ? old('image') : $item->name : $item->name;
                 $price_class_product[$item->product_hash] = $errors->first('price', $keyerror[$item->product_hash]) ? 'is-invalid' : '' ;
                 $price_value_product[$item->product_hash] = $errors->get($keyerror[$item->product_hash]) ? old('price') != '' ? old('price') : $item->price : $item->price;
+                $quantity_class_product[$item->product_hash] = $errors->first('quantity', $keyerror[$item->product_hash]) ? 'is-invalid' : '' ;
+                $quantity_value_product[$item->product_hash] = $errors->get($keyerror[$item->product_hash]) ? old('quantity') != '' ? old('quantity') : $item->quantity : $item->quantity;
                 $desc_class_product[$item->product_hash] = $errors->first('description', $keyerror[$item->product_hash]) ? 'is-invalid' : '' ;
                 $desc_value_product[$item->product_hash] = $errors->get($keyerror[$item->product_hash]) ? old('description') != '' ? old('description') : $item->description : $item->description;
                 $ctg_class_product[$item->product_hash] = $errors->first('categories', $keyerror[$item->product_hash]) ? 'is-invalid' : '' ;
@@ -541,20 +528,20 @@
                                 <div class="row clearfix">
                                     <div class="col-lg-6 float-start">
                                         <div class="mb-3">
-                                            <input type="file" class="form-control {{ $img_class_product[$item->product_hash] }}" placeholder="image" name="image" id="product-img-update" onchange="productPreview(this)" value="">
+                                            <input type="file" class="form-control {{ $img_class_product[$item->product_hash] }}" placeholder="image" name="image" onchange="productPreview(this)" value="">
                                         </div>
                                         <input type="hidden" name="old_image" value="{{ $img_value_product[$item->product_hash] }}">
                                         <img src="{{ asset('assets') . '/' . $img_value_product[$item->product_hash] }}" class="img-fluid">
                                     </div>
                                     <div class="col-lg-6 float-end">
                                         <div class="form-group">
-                                            <label for="productName">Product Name</label>
-                                            <input type="text" class="form-control {{ $name_class_product[$item->product_hash] }}" id="productName" name="name" placeholder="Enter product name" value="{{ $name_value_product[$item->product_hash] }}">
+                                            <label for="productName-{{ $item->product_hash }}">Product Name</label>
+                                            <input type="text" class="form-control {{ $name_class_product[$item->product_hash] }}" id="productName-{{ $item->product_hash }}" name="name" placeholder="Enter product name" value="{{ $name_value_product[$item->product_hash] }}">
                                         </div>
                                         @if (sizeof($categories))
                                             <div class="form-group">
-                                                <label for="productCategory">Category</label>
-                                                <select class="form-select {{ $ctg_class_product[$item->product_hash] }}" id="productCategory" name="categories">
+                                                <label for="productCategory-{{ $item->product_hash }}">Category</label>
+                                                <select class="form-select {{ $ctg_class_product[$item->product_hash] }}" id="productCategory-{{ $item->product_hash }}" name="categories">
                                                     @foreach ($categories as $category)
                                                     @if ($ctg_value_product[$item->product_hash] == $category->slug)
                                                         <option value="{{ $category->slug }}" selected>{{ $category->name }}</option>
@@ -566,13 +553,17 @@
                                             </div>
                                         @endif
                                         <div class="form-group">
-                                            <label for="productPrice">Price</label>
-                                            <input type="number" class="form-control {{ $price_class_product[$item->product_hash] }}" id="productPrice" name="price" placeholder="Enter price" value="{{ $price_value_product[$item->product_hash] }}">
+                                            <label for="productPrice-{{ $item->product_hash }}">Price</label>
+                                            <input type="number" class="form-control {{ $price_class_product[$item->product_hash] }}" id="productPrice-{{ $item->product_hash }}" name="price" placeholder="Enter price" value="{{ $price_value_product[$item->product_hash] }}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="productQuantity-{{ $item->product_hash }}">Stock</label>
+                                            <input type="number" class="form-control {{ $quantity_class_product[$item->product_hash] }}" id="productQuantity-{{ $item->product_hash }}" name="quantity" placeholder="Enter quantity" value="{{ $quantity_value_product[$item->product_hash] }}">
                                         </div>
                                         <!-- Input Field -->
                                         <div class="form-group">
-                                            <label for="productDescription">Description</label>
-                                            <textarea class="form-control {{ $desc_class_product[$item->product_hash] }}" id="productDescription" rows="3" name="description">{{ $desc_value_product[$item->product_hash] }}</textarea>
+                                            <label for="productDescription-{{ $item->product_hash }}">Description</label>
+                                            <textarea class="form-control {{ $desc_class_product[$item->product_hash] }}" id="productDescription-{{ $item->product_hash }}" rows="3" name="description">{{ $desc_value_product[$item->product_hash] }}</textarea>
                                         </div>
                                         <div class="form-button">
                                             <button type="submit">Rubah</button>
@@ -667,24 +658,24 @@
     @if (auth()->user()->shop->alamat)
         function provinsi() {
             $.ajax({
-            type: "GET",
-            url: "{{ route('data.provinsi') }}",
-            data: null,
-            dataType: "JSON",
-            success: function (response) {
-                const provinsiSelect = $('#provinsi');
-                const provinsiSelected = provinsiSelect.attr('data-selected');
-                var data = '';
-                for (let i = 0; i < response.length; i++) {
-                    let selectedData = response[i].province_id == provinsiSelected ? 'selected' : '';
-                    data += "<option value='" + response[i].province_id  + "' " + selectedData + ">" + response[i].province + "</option>";
-                };
-                provinsiSelect.html(data);
-                getCity(provinsiSelect);
-            },
-            error: function (response) {
-                console.log(response);
-            }
+                type: "GET",
+                url: "{{ route('data.provinsi') }}",
+                data: null,
+                dataType: "JSON",
+                success: function (response) {
+                    const provinsiSelect = $('#provinsi');
+                    const provinsiSelected = provinsiSelect.attr('data-selected');
+                    var data = '';
+                    for (let i = 0; i < response.length; i++) {
+                        let selectedData = response[i].province_id == provinsiSelected ? 'selected' : '';
+                        data += "<option value='" + response[i].province_id  + "' " + selectedData + ">" + response[i].province + "</option>";
+                    };
+                    provinsiSelect.html(data);
+                    getCity(provinsiSelect);
+                },
+                error: function (response) {
+                    console.log(response);
+                }
             });
         }
 
@@ -761,5 +752,51 @@
 
         provinsi();
     @endif
+    function switchProdactVisibility(pro){
+        const input = $(pro);
+        const product = input.attr('data-product');
+        const label = input.next('.form-check-label');
+        const data = input.is(':checked') ? 1 : 0;
+        const labelText = input.is(':checked') ? "Hide product" : "Show product";
+
+        $.ajax({
+            type: "POST",
+            url: "{{ route('home') }}/product/visibility/" + product,
+            data: {
+                '_token': '{{ csrf_token() }}',
+                '_method': 'put',
+                'status': data
+            },
+            dataType: "JSON",
+            success: function (response) { 
+                showAlertPopUp(response.data);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+        label.html(labelText);
+    }
+    // $('#openClosed').on('select', function() { 
+    //     const data = this.val();
+    //     const shop = {{ auth()->user()->shop->shop_hash }};
+
+    //     $.ajax({
+    //         type: "POST",
+    //         url: "{{ route('home') }}/shop/visibility/" + shop,
+    //         data: {
+    //             '_token': '{{ csrf_token() }}',
+    //             '_method': 'put',
+    //             'status': data
+    //         },
+    //         dataType: "JSON",
+    //         success: function (response) { 
+    //             showAlertPopUp(response.data);
+    //         },
+    //         error: function (response) {
+    //             console.log(response);
+    //         }
+    //     });
+    // });
 </script>
 @endsection

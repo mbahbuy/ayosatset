@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\{Category, Order, Product, Shop};
 use Illuminate\Http\{Request};
-use Illuminate\Support\Facades\{Validator};
+use Illuminate\Support\Facades\{Storage, Validator, Response};
+use Illuminate\Validation\{Rule};
 
 class ShopController extends Controller
 {
@@ -118,5 +119,24 @@ class ShopController extends Controller
     public function destroy(Shop $shop)
     {
         //
+    }
+
+    public function visibility(Request $request, Shop $shop)
+    {
+        $rules = Validator::make($request->all(), [
+            'status' => 'required|numeric|in:1,0'
+        ]);
+        if ($rules->fails()) {
+            return Response::json(array(
+                'success' => false,
+                'errors' => $rules->getMessageBag()->toArray()
+            ), 400);
+        }
+        $data = $rules->validated();
+        $shop->update(['status' => (int)$data['status']]);
+        if ($data['status'] == 0) {
+            return back()->with('success', 'Toko anda bersetatus libur dan semua barang disembunyikan dari pencarian!');
+        }
+        return back()->with('success', 'Toko anda bersetatus buka dan semua barang ditampilkan pada pencarian!');
     }
 }

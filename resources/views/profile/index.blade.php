@@ -195,11 +195,11 @@
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">Nama Toko</th>
+                                    <th scope="col">Nama toko</th>
                                     <th scope="col">Produk</th>
                                     <th scope="col">Sub total</th>
                                     <th scope="col">Ongkir</th>
-                                    <th scope="col">Total</th>
+                                    <th scope="col">Total harga</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
@@ -226,7 +226,7 @@
                                                                             <th scope="col">Nama produk</th>
                                                                             <th scope="col">Harga produk</th>
                                                                             <th scope="col">Pcs</th>
-                                                                            <th scope="col">Total Harga</th>
+                                                                            <th scope="col">Sub Total</th>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
@@ -323,10 +323,13 @@
                                                     @case(6)
                                                         <span>-</span>
                                                         @break
+                                                    @case(0)
+                                                        <span>Canceled</span>
+                                                        @break
                                                     @default
                                                         
-
                                                         <button type="button" class="btn btn-outline" onclick="payment(this)" data-code-payment="{{ $item->code }}">Pilih pembayaran</button>
+                                                        <button type="button" class="btn btn-inline-danger" onclick="if(confirm('Anda mau membatalkan pesanan?')) cancel(this);" data-order="{{ $item->order_hash }}" data-code-payment="{{ $item->code }}">Batalkan</button>
 
                                                 @endswitch
                                             </td>
@@ -952,6 +955,25 @@
             success: function (response) {
                 $( ".order-table-profile" ).load(window.location.href + " .order-table-profile>" );
                 showAlertPopUp(response.data);
+            }
+        });
+      }
+      function cancel(ord) {
+        const target = $(ord).attr('data-code-payment');
+        const order = $(ord).attr('data-order');
+        $.ajax({
+            url:"{{ route('home') }}/order/" + order + "/cancel",
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                '_token': '{{ csrf_token() }}',
+                '_method': 'PUT',
+                'code': target
+            },
+            success: function (response) {
+                $( ".order-table-profile" ).load(window.location.href + " .order-table-profile>" );
+                showAlertPopUp(response.data);
+
             }
         });
       }

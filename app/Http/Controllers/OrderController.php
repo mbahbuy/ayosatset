@@ -34,6 +34,8 @@ class OrderController extends Controller
         $rules = Validator::make($request->all(), [
             'data.*.shop_hash' => 'required|string',
             'data.*.products.*.product_hash' => 'required|string',
+            'data.*.products.*.cart_hash' => 'required|string',
+            'data.*.products.*.price' => 'required|numeric|max:99999999999999999999',
             'data.*.products.*.pcs' => 'required|integer|min:1',
             'data.*.ongkir' => 'required|numeric|max:99999999999999999999'
         ]);
@@ -47,20 +49,19 @@ class OrderController extends Controller
 
         foreach ($data as $item) {
             $subTotal = 0;
+            $products = array();
             foreach ($item['products'] as $product) {
-                $price = Product::select('price')->where('product_hash', $product['product_hash'])->first();
-                $subTotal += (int)$price['price'] * (int)$product['pcs'];
-                Cart::where([
-                    ['user_hash', '=', auth()->user()->user_hash],
-                    ['product_hash', '=', $product['product_hash']],
-                    ['parent_id', '=', 1]
-                ])->delete();
+                $subTotal += (int)$product['price'] * (int)$product['pcs'];
+                Cart::where('cart_hash', $product['cart_hash'])->delete();
+                $quantity = Product::select('quantity')->where('product_hash', $product['product_hash'])->first();
+                Product::where('product_hash', $product['product_hash'])->update(['quantity' => (int)$quantity['quantity'] - (int)$product['pcs']]);
+                array_push($products, ['product_hash' => $product['product_hash'], 'pcs' => $product['pcs']]);
             }
             $makeorder = new Order;
             $makeorder->user_hash = auth()->user()->user_hash;
             $makeorder->shop_hash = $item['shop_hash'];
             $makeorder->order_hash = md5($makeorder->user_hash . $makeorder->shop_hash . now());
-            $makeorder->products = json_encode($item['products']);
+            $makeorder->products = json_encode($products);
             $makeorder->sub_total = $subTotal;
             $makeorder->ongkir = $item['ongkir'];
             $makeorder->payment = (int)$subTotal + (int)$item['ongkir'];
@@ -146,5 +147,15 @@ class OrderController extends Controller
         }
         $order->update(['status' => 6]);
         return response()->json(['data' => 'Terimakasih telah belanja di market kami']);
+    }
+
+    public function cancel(Order $order)
+    {
+        foreach (json_decode($order->products) as  $p) {
+            $quantity = Product::select('quantity')->where('product_hash', $p->product_hash)->first();
+            Product::where('product_hash', $p->product_hash)->update(['quantity' => (int)$quantity->quantity + (int)$p->pcs]);
+        }
+        $order->update(['status' => 0]);
+        return response()->json(['data' => 'Orderan dibatalkan!']);
     }
 }

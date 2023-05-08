@@ -601,7 +601,7 @@
   <div class="cart-header">
     <div class="cart-total">
       <i class="fas fa-shopping-basket"></i>
-      <span>Keranjang ({{ (sizeof($cart_products)) ? $cart_products->count() : 0 }})</span>
+      <span>Keranjang ({{ sizeof($carts) ? (sizeof($cartzero) ? $carts->count() + $cartzero->count() : $carts->count()) : (sizeof($cartzero) ? $cartzero->count() : 0) }})</span>
     </div>
     <button class="cart-close">
       <i class="icofont-close"></i>
@@ -612,7 +612,7 @@
       <div class="carousel-item active">
         
         
-        @if (sizeof($carts))
+        @if (sizeof($carts) || sizeof($cartzero))
           <div class="cart-list">
             <div>
               <div class="form-check">
@@ -623,6 +623,7 @@
               </div>
             </div>
           </div>
+          <div class="border border-info border-5"></div>
           <ul class="cart-list">
             @foreach ($carts as $item)
               <li>
@@ -636,7 +637,7 @@
                   @foreach ($item['products'] as $p)
                     <li class="cart-item">
                       <div class="form-check">
-                        <input type="checkbox" class="cart-checkbox form-check-input" onchange="cartCheck(this)" name="checkbox_order[]" value="{{ $p['product_hash'] }}" harga="{{ $p['price'] }}" data-pcs="1">
+                        <input type="checkbox" class="cart-checkbox form-check-input" onchange="cartCheck(this)" name="checkbox_order[]" value="{{ $p['product_hash'] }}" data-cart="{{ $p['cart_hash'] }}" harga="{{ $p['price'] }}" data-pcs="1">
                       </div>
                       <div class="cart-media">
                         <a href="#" onclick="cartDelete('{{ $p['cart_hash'] }}')">
@@ -651,18 +652,19 @@
                           <h6>
                             <a href="{{ route('product.show', $p['product_hash']) }}">{{ $p['name'] }}</a>
                           </h6>
-                          <p>Rp. {{ number_format($p['price'],0,',','.') }}</p>
+                          <p>Stock : <span>{{ $p['quantity'] }}</span></p>
                         </div>
                         <div class="cart-action-group">
                           <div class="product-action">
                             <button class="action-minus" title="Quantity Minus" onclick="pcsMinus(this)">
                               <i class="icofont-minus"></i>
                             </button>
-                            <input class="action-input" title="Quantity Number" type="text" name="quantity" value="1">
+                            <input class="action-input" style="-moz-appearance: textfield" title="Quantity Number" type="number" max="{{ $p['quantity'] }}" data-quantity="{{ $p['quantity'] }}" name="quantity" value="1" oninput="checkQuantity(this)">
                             <button class="action-plus" title="Quantity Plus" onclick="pcsPlus(this)">
                               <i class="icofont-plus"></i>
                             </button>
                           </div>
+                          <h6>Rp. {{ number_format($p['price'],0,',','.') }}</h6>
                         </div>
                       </div>
                     </li>
@@ -670,7 +672,58 @@
 
                 </ul>
               </li>
-              <li class="border border-primary border-3 opacity-75 mb-3 mt-5"></li>
+              <li class="border border-primary border-1 opacity-75 mb-3 mt-5"></li>
+              
+            @endforeach
+            <li class="border border-secondary border-5"></li>
+            @foreach ($cartzero as $zero)
+              <li>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="pilih-shop-{{ $zero['shop_hash'] }}" value="{{ $zero['shop_hash'] }}" data-address="{{ $zero['address'] }}" disabled>
+                  <label class="form-check-label" for="pilih-shop-{{ $zero['shop_hash'] }}">
+                    {{ $zero['name'] }} {{ $zero['status'] == false ? '(Toko tutup)' : '' }} 
+                  </label>
+                </div>
+                <ul>
+                  @foreach ($zero['products'] as $z)
+                    <li class="cart-item">
+                      <div class="form-check">
+                        <input type="checkbox" class="form-check-input" onchange="cartCheck(this)" name="checkbox_order[]" value="{{ $z['product_hash'] }}" harga="{{ $z['price'] }}" data-pcs="1" disabled>
+                      </div>
+                      <div class="cart-media">
+                        <a href="#" onclick="cartDelete('{{ $z['cart_hash'] }}')">
+                          <img src="{{ asset('assets') . '/' . $z['image'] }}" alt="product" class="img-fluid">
+                        </a>
+                        <button class="cart-delete" onclick="cartDelete('{{ $z['cart_hash'] }}')">
+                          <i class="far fa-trash-alt"></i>
+                        </button>
+                      </div>
+                      <div class="cart-info-group">
+                        <div class="cart-info">
+                          <h6>
+                            <a href="{{ route('product.show', $z['product_hash']) }}">{{ $z['name'] }}</a>
+                          </h6>
+                          {{ $z['status'] == false ? '<p>(Product telah disembunyikan oleh toko)</p>' : '' }}
+                          <p>Stock : <span>{{ $z['quantity'] }}</span></p>
+                        </div>
+                        <div class="cart-action-group">
+                          <div class="product-action">
+                            <button class="action-minus" title="Quantity Minus" disabled>
+                              <i class="icofont-minus"></i>
+                            </button>
+                            <input class="action-input" title="Quantity Number" type="text" name="quantity" value="0" disabled>
+                            <button class="action-plus" title="Quantity Plus" disabled>
+                              <i class="icofont-plus"></i>
+                            </button>
+                          </div>
+                          <h6>Rp. {{ number_format($z['price'],0,',','.') }}</h6>
+                        </div>
+                      </div>
+                    </li>
+                  @endforeach
+  
+                </ul>
+              </li>
             @endforeach
           </ul>
           <div class="cart-footer">
@@ -696,7 +749,7 @@
             @if (auth()->user()->alamat)
               <div class="cart-item">
                 <div class='form-check'>
-                  <input class='visually-hidden alamat-pengiriman' id='pilihan-alamat-{{ auth()->user()->alamat->id }}' type='checkbox' onchange='pilihAlamat(this)' value="{{ auth()->user()->alamat->city_id }}" checked>
+                  <input class='visually-hidden alamat-pengiriman' id='pilihan-alamat-{{ auth()->user()->alamat->id }}' type='checkbox' onchange='pilihAlamat(this)' value="{{ auth()->user()->alamat->city_id }}" checked='checked'>
                   <label class='form-check-label' for='pilihan-alamat-{{ auth()->user()->alamat->id }}'>
                     <div class='card'>
                       <div class='card-body'>

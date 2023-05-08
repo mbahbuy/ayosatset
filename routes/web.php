@@ -41,6 +41,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/myshop', ['as' => 'shop.index', 'uses' => 'ShopController@index']);
     Route::post('/shop/store', ['as' => 'shop.store', 'uses' => 'ShopController@store']);
     Route::put('/shop/{shop:shop_hash}/update', ['as' => 'shop.update', 'uses' => 'ShopController@update']);
+    Route::put('/shop/visibility/{shop:shop_hash}', ['as' => 'switch.visibility.shop', 'uses' => 'ShopController@visibility']);
 
     // Address
     Route::post('/profile/address', ['as' => 'profile.address', 'uses' => 'AddressController@storeProfile']);
@@ -55,6 +56,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::post('/product/store', ['as' => 'product.store', 'uses' => 'ProductController@store']);
     Route::put('/product/{product:product_hash}/update', ['as' => 'product.update', 'uses' => 'ProductController@update']);
     Route::delete('/product/{product:product_hash}', ['as' => 'product.destroy', 'uses' => 'ProductController@destroy']);
+    Route::put('/product/visibility/{product:product_hash}', ['as' => 'switch.visibility.product', 'uses' => 'ProductController@visibility']);
 
     // Discuss
     Route::post('/p/discuss', ['as' => 'discuss.store', 'uses' => 'DiscussionController@store']);
@@ -64,6 +66,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::put('/order/{order:order_hash}/resi', ['as' => 'payment.resi', 'uses' => 'OrderController@resi']);
     Route::put('/order/{order:order_hash}/kurir', ['as' => 'order.kurir', 'uses' => 'OrderController@kurir']);
     Route::put('/order/{order:order_hash}/product_confirm', ['as' => 'product.confirm', 'uses' => 'OrderController@productConfirm']);
+    Route::put('/order/{order:order_hash}/cancel', ['as' => 'product.cancel', 'uses' => 'OrderController@cancel']);
 
     Route::get('/dashboard', ['as' => 'dashboard.index', 'uses' => 'DashboardController@index']);
 

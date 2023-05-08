@@ -24,6 +24,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->bigInteger('quantity')->default(true);
             $table->bigInteger('price');
+            $table->foreignId('status')->default(true);
             $table->timestamps();
         });
     }

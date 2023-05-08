@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\{Product};
 use Illuminate\Http\{Request};
-use Illuminate\Support\Facades\{Storage, Validator};
+use Illuminate\Support\Facades\{Storage, Validator, Response};
 use Illuminate\Validation\{Rule};
+
 
 class ProductController extends Controller
 {
@@ -41,6 +42,7 @@ class ProductController extends Controller
         $rules = Validator::make($request->all(), [
             'name' => 'required|max:255',
             'price' => 'required|numeric|max:99999999999999999999',
+            'quantity' => 'required|numeric|max:999999999',
             'categories' => [
                 'required',
                 Rule::exists('categories', 'slug')
@@ -97,7 +99,8 @@ class ProductController extends Controller
     {
         $rules = Validator::make($request->all(), [
             'name' => 'required|max:255',
-            'price' => 'required|max:20',
+            'price' => 'required|numeric|max:99999999999999999999',
+            'quantity' => 'required|numeric|max:999999999',
             'categories' => [
                 'required',
                 Rule::exists('categories', 'slug')
@@ -127,5 +130,24 @@ class ProductController extends Controller
         Storage::delete($product->image);
         $product->delete();
         return back()->with('success', $product->name . ' telah dihapus!');
+    }
+
+    public function visibility(Request $request, Product $product)
+    {
+        $rules = Validator::make($request->all(), [
+            'status' => 'required|numeric|in:1,0'
+        ]);
+        if ($rules->fails()) {
+            return Response::json(array(
+                'success' => false,
+                'errors' => $rules->getMessageBag()->toArray()
+            ), 400);
+        }
+        $data = $rules->validated();
+        $product->update(['status' => (int)$data['status']]);
+        if ($data['status'] == 0) {
+            return response()->json(['data' => 'Produk(' . $product->name . ') telah disembunyikan!']);
+        }
+        return response()->json(['data' => 'Produk(' . $product->name . ') telah ditampilkan!']);
     }
 }

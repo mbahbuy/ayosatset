@@ -60,13 +60,31 @@
   <body>
       @php
         $cartData = [];
+        $cartZero = [];
         if (auth()->check()) {
           $data = \App\Models\Cart::with(['product.shop' => function ($query) {
               $query->select('shop_hash', 'name')->with('alamat');
           }])->where([
               ['user_hash', '=', auth()->user()->user_hash],
               ['parent_id', '=', 1]
-          ])->get();
+          ])->whereHas('product', function($p){
+            $p->where([
+              ['quantity', '>', 0],
+              ['status', '=', true]]
+            )->whereHas('shop', function($s){
+              $s->where('status', true);
+            });
+          })->get();
+          $dataZero = \App\Models\Cart::with(['product.shop' => function ($query) {
+              $query->select('shop_hash', 'name')->with('alamat');
+          }])->where([
+              ['user_hash', '=', auth()->user()->user_hash],
+              ['parent_id', '=', 1]
+          ])->whereHas('product', function($p){
+            $p->where('quantity', '=', 0)->orWhere('status', '=', 0)->orWhereHas('shop', function($s){
+              $s->where('status', '=', 0);
+            });
+          })->get();
           $cartData = $data->groupBy(function ($item) {
               return $item->product->shop->shop_hash;
           })->map(function ($items, $shop_hash) {
@@ -74,13 +92,37 @@
                   'shop_hash' => $shop_hash,
                   'name' => $items[0]->product->shop->name,
                   'address' => $items[0]->product->shop->alamat->city_id,
+                  'status' => $items[0]->product->shop->status,
                   'products' => $items->map(function ($item) {
                       return [
                           'product_hash' => $item->product->product_hash,
                           'name' => $item->product->name,
                           'image' => $item->product->image,
                           'price' => $item->product->price,
-                          'cart_hash' => $item->cart_hash
+                          'cart_hash' => $item->cart_hash,
+                          'quantity' => $item->product->quantity,
+                          'status' => $item->product->status
+                      ];
+                  })
+              ];
+          })->values();
+          $cartZero = $dataZero->groupBy(function ($item) {
+              return $item->product->shop->shop_hash;
+          })->map(function ($items, $shop_hash) {
+              return [
+                  'shop_hash' => $shop_hash,
+                  'name' => $items[0]->product->shop->name,
+                  'status' => $items[0]->product->shop->status,
+                  'address' => $items[0]->product->shop->alamat->city_id,
+                  'products' => $items->map(function ($item) {
+                      return [
+                          'product_hash' => $item->product->product_hash,
+                          'name' => $item->product->name,
+                          'image' => $item->product->image,
+                          'price' => $item->product->price,
+                          'cart_hash' => $item->cart_hash,
+                          'quantity' => $item->product->quantity,
+                          'status' => $item->product->status
                       ];
                   })
               ];
@@ -90,6 +132,7 @@
       @include('layout.header',[
         'categories' => \App\Models\Category::all(),
         'carts' => $cartData,
+        'cartzero' => $cartZero,
         'cart_products' => auth()->check() ? \App\Models\Cart::where([
           ['user_hash', '=', auth()->user()->user_hash],
           ['parent_id', '=', 1]
@@ -259,7 +302,7 @@
       }
 
       function cariOngkir(){
-        const kota = $('input.alamat-pengiriman:checkbox:checked');
+        const kota = $('input.alamat-pengiriman:checkbox');
         const jasa = $('#pemilihan-jasa').find('.jasa-pilihan-ongkir');
         jasa.each(function() {
           let nameShop = $(this).attr('data-name');
@@ -343,6 +386,8 @@
           var shopHash = $(this).closest('.cart-item').parent().prev('.form-check').children('input.cart-shop:checkbox').attr('value');
           var value = $(this).val();
           var pcs = parseInt($(this).data('pcs'));
+          var cart = $(this).attr('data-cart');
+          var price = $(this).attr('harga');
           var ongkirShop = $("#jasa-ongkir").find("input.harga-ongkir[type='checkbox'][data-shop='" + shopHash + "']:checked");
 
           // Cek apakah toko sudah ada dalam array
@@ -354,12 +399,12 @@
           if (checkIndex === -1) {
               data.push({
                   shop_hash: shopHash,
-                  products: [{ 'product_hash': value, 'pcs': pcs }],
+                  products: [{ 'product_hash': value, 'pcs': pcs, 'cart_hash': cart, 'price': price  }],
                   ongkir: ongkirShop.val()
               });
           } else {
               // Jika toko sudah ada, tambahkan ID produk ke array products
-              data[checkIndex].products.push({ 'product_hash': value, 'pcs': pcs });
+              data[checkIndex].products.push({ 'product_hash': value, 'pcs': pcs, 'cart_hash': cart, 'price': price });
           }
         });
 
@@ -390,12 +435,19 @@
       function pcsPlus(plus) {
         var totalHarga = 0;
         var checkboxChecked = $("input.cart-checkbox:checkbox:checked");
-        var e = $(plus).closest(".product-action").children(".action-input").get(0).value++,
-          c = $(plus).closest(".product-action").children(".action-minus");
-        e > 0 && c.removeAttr("disabled");
+        var quantity = $(plus).siblings('input.action-input');
+        var maxQuantity = quantity.attr('data-quantity');
+        var c = $(plus).closest(".product-action").children(".action-minus");
         var dataPcs = $(plus).closest(".cart-item").children(".form-check").children(".cart-checkbox");
         var pcsValue = parseInt(dataPcs.attr("data-pcs"));
-        dataPcs.attr("data-pcs", pcsValue + 1);
+        if (quantity.val() == maxQuantity) {
+          showAlertPopUp('Stock tidak cukup');
+        } else {
+          let v = +quantity.val() + 1;
+          quantity.val(v);
+          dataPcs.attr("data-pcs", pcsValue + 1);
+        }
+        c.removeAttr("disabled");
         checkboxChecked.each(function() {
             totalHarga += parseInt($(this).attr('harga')) * parseInt($(this).attr('data-pcs'));
         });
@@ -414,6 +466,21 @@
         var dataPcs = $(minus).closest(".cart-item").children(".form-check").children(".cart-checkbox");
         var pcsValue = parseInt(dataPcs.attr("data-pcs")) == 1 ? 2 : parseInt(dataPcs.attr("data-pcs"));
         dataPcs.attr("data-pcs", pcsValue - 1);
+        checkboxChecked.each(function() {
+            totalHarga += parseInt($(this).attr('harga')) * parseInt($(this).attr('data-pcs'));
+        });
+        $('.sub-total').html('Rp ' + totalHarga.toLocaleString('id-ID'));
+      }
+      function checkQuantity(q) {
+        var totalHarga = 0;
+        var checkboxChecked = $("input.cart-checkbox:checkbox:checked");
+        var maxQuantity = $(q).attr('data-quantity');
+        if ($(q).val() > maxQuantity) {
+          showAlertPopUp('Stock tidak cukup');
+          $(q).val(maxQuantity);
+        }
+        var dataPcs = $(q).closest(".cart-item").children(".form-check").children(".cart-checkbox");
+        dataPcs.attr("data-pcs", $(q).val());
         checkboxChecked.each(function() {
             totalHarga += parseInt($(this).attr('harga')) * parseInt($(this).attr('data-pcs'));
         });
