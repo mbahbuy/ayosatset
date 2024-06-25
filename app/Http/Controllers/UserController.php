@@ -6,7 +6,6 @@ use App\Models\{Order, User, Product};
 use Illuminate\Http\{Request};
 use Illuminate\Support\Facades\{Hash, Validator, Storage};
 
-
 class UserController extends Controller
 {
     /**

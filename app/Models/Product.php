@@ -10,7 +10,6 @@ class Product extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
-    protected $with = ['shop', 'category', 'wish', 'cart', 'ratings', 'discuss', 'discussion'];
 
     public function getRouteKeyName()
     {

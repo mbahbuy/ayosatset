@@ -58,76 +58,84 @@
     </style>
   </head>
   <body>
-      @php
-        $cartData = [];
-        $cartZero = [];
-        if (auth()->check()) {
-          $data = \App\Models\Cart::with(['product.shop' => function ($query) {
-              $query->select('shop_hash', 'name')->with('alamat');
-          }])->where([
-              ['user_hash', '=', auth()->user()->user_hash],
-              ['parent_id', '=', 1]
-          ])->whereHas('product', function($p){
-            $p->where([
-              ['quantity', '>', 0],
-              ['status', '=', true]]
-            )->whereHas('shop', function($s){
-              $s->where('status', true);
-            });
-          })->get();
-          $dataZero = \App\Models\Cart::with(['product.shop' => function ($query) {
-              $query->select('shop_hash', 'name')->with('alamat');
-          }])->where([
-              ['user_hash', '=', auth()->user()->user_hash],
-              ['parent_id', '=', 1]
-          ])->whereHas('product', function($p){
-            $p->where('quantity', '=', 0)->orWhere('status', '=', 0)->orWhereHas('shop', function($s){
-              $s->where('status', '=', 0);
-            });
-          })->get();
-          $cartData = $data->groupBy(function ($item) {
-              return $item->product->shop->shop_hash;
-          })->map(function ($items, $shop_hash) {
-              return [
-                  'shop_hash' => $shop_hash,
-                  'name' => $items[0]->product->shop->name,
-                  'address' => $items[0]->product->shop->alamat->city_id,
-                  'status' => $items[0]->product->shop->status,
-                  'products' => $items->map(function ($item) {
-                      return [
-                          'product_hash' => $item->product->product_hash,
-                          'name' => $item->product->name,
-                          'image' => $item->product->image,
-                          'price' => $item->product->price,
-                          'cart_hash' => $item->cart_hash,
-                          'quantity' => $item->product->quantity,
-                          'status' => $item->product->status
-                      ];
+    @php
+          $cartData = [];
+          $cartZero = [];
+          if (auth()->check()) {
+              $userHash = auth()->user()->user_hash;
+
+              $data = \App\Models\Cart::with(['product.shop.alamat'])
+                  ->where([
+                      ['user_hash', '=', $userHash],
+                      ['parent_id', '=', 1]
+                  ])
+                  ->whereHas('product', function ($query) {
+                      $query->where('quantity', '>', 0)
+                            ->where('status', true)
+                            ->whereHas('shop', function ($shopQuery) {
+                                $shopQuery->where('status', true);
+                            });
                   })
-              ];
-          })->values();
-          $cartZero = $dataZero->groupBy(function ($item) {
-              return $item->product->shop->shop_hash;
-          })->map(function ($items, $shop_hash) {
-              return [
-                  'shop_hash' => $shop_hash,
-                  'name' => $items[0]->product->shop->name,
-                  'status' => $items[0]->product->shop->status,
-                  'address' => $items[0]->product->shop->alamat->city_id,
-                  'products' => $items->map(function ($item) {
-                      return [
-                          'product_hash' => $item->product->product_hash,
-                          'name' => $item->product->name,
-                          'image' => $item->product->image,
-                          'price' => $item->product->price,
-                          'cart_hash' => $item->cart_hash,
-                          'quantity' => $item->product->quantity,
-                          'status' => $item->product->status
-                      ];
+                  ->get();
+
+              $dataZero = \App\Models\Cart::with(['product.shop.alamat'])
+                  ->where([
+                      ['user_hash', '=', $userHash],
+                      ['parent_id', '=', 1]
+                  ])
+                  ->whereHas('product', function ($query) {
+                      $query->where('quantity', '=', 0)
+                            ->orWhere('status', '=', 0)
+                            ->whereHas('shop', function ($shopQuery) {
+                                $shopQuery->where('status', '=', 0);
+                            });
                   })
-              ];
-          })->values();
-        }
+                  ->get();
+
+              $cartData = $data->groupBy(function ($item) {
+                  return $item->product->shop->shop_hash;
+              })->map(function ($items, $shop_hash) {
+                  return [
+                      'shop_hash' => $shop_hash,
+                      'name' => $items[0]->product->shop->name,
+                      'address' => $items[0]->product->shop->alamat->city_id,
+                      'status' => $items[0]->product->shop->status,
+                      'products' => $items->map(function ($item) {
+                          return [
+                              'product_hash' => $item->product->product_hash,
+                              'name' => $item->product->name,
+                              'image' => $item->product->image,
+                              'price' => $item->product->price,
+                              'cart_hash' => $item->cart_hash,
+                              'quantity' => $item->product->quantity,
+                              'status' => $item->product->status
+                          ];
+                      })->values()
+                  ];
+              })->values();
+
+              $cartZero = $dataZero->groupBy(function ($item) {
+                  return $item->product->shop->shop_hash;
+              })->map(function ($items, $shop_hash) {
+                  return [
+                      'shop_hash' => $shop_hash,
+                      'name' => $items[0]->product->shop->name,
+                      'address' => $items[0]->product->shop->alamat->city_id,
+                      'status' => $items[0]->product->shop->status,
+                      'products' => $items->map(function ($item) {
+                          return [
+                              'product_hash' => $item->product->product_hash,
+                              'name' => $item->product->name,
+                              'image' => $item->product->image,
+                              'price' => $item->product->price,
+                              'cart_hash' => $item->cart_hash,
+                              'quantity' => $item->product->quantity,
+                              'status' => $item->product->status
+                          ];
+                      })->values()
+                  ];
+              })->values();
+          }
       @endphp
       @include('layout.header',[
         'categories' => \App\Models\Category::all(),

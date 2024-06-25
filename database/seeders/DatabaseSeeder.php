@@ -238,54 +238,6 @@ class DatabaseSeeder extends Seeder
                 'product_hash' => md5($faizulShop . $product->name)
             ]);
         }
-        // \App\Models\User::factory(10)
-        //     ->create()
-        //     ->each(function ($user) {
-        //         \App\Models\Address::create([
-        //             'user_hash' => $user->user_hash,
-        //             'province_id' => 6,
-        //             'city_id' => 152,
-        //             'address' => 'east tejturi bazar, dhaka-1200. word no-04, road no-13/c, house no-4/b',
-        //             'phone' => '081234567890',
-        //             'status' => true,
-        //             'use' => true
-        //         ]);
-
-        //         $shopName = $user->name . ' Shop';
-        //         $shopHash = md5($user->user_hash . $shopName);
-
-        //         \App\Models\Shop::create([
-        //             'user_hash' => $user->user_hash,
-        //             'name' => $shopName,
-        //             'shop_hash' => $shopHash,
-        //         ])
-        //             ->creating(function ($shop) {
-        //                 \App\Models\Address::create([
-        //                     'shop_hash' => $shop->shop_hash,
-        //                     'province_id' => 6,
-        //                     'city_id' => 152,
-        //                     'address' => 'east tejturi bazar, dhaka-1200. word no-04, road no-13/c, house no-4/b',
-        //                     'phone' => '081234567890',
-        //                     'status' => true,
-        //                     'use' => true
-        //                 ]);
-
-        //                 $products = \App\Models\Product::factory(10)->make();
-        //                 foreach ($products as $product) {
-        //                     $category = fake()->randomElement(['jasa', 'makanan-minuman', 'pakaian']);
-        //                     \App\Models\Product::create([
-        //                         'name' => $product->name,
-        //                         'description' => $product->description,
-        //                         'price' => $product->price,
-        //                         'image' => 'product/' . fake()->randomElement(['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20']) . '.jpg',
-        //                         'quantity' => $product->quantity,
-        //                         'shop_hash' => $shop->shop_hash,
-        //                         'categories' => $category,
-        //                         'product_hash' => md5($shop->shop_hash . $product->name)
-        //                     ]);
-        //                 }
-        //             });
-        //     });
 
         $tokenRajaOngkir = "68bff9293fa5067ce7186bf8c148c0e3";
 

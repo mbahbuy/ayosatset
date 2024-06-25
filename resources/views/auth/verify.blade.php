@@ -32,7 +32,7 @@
           </form>
         </div>
         <div class="user-form-remind">
-          <p>Go Back To <a href="login.html">login here</a>
+          <p>Go Back To <a href="login">login here</a>
           </p>
         </div>
         <div class="user-form-footer">
